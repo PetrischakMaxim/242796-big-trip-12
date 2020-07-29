@@ -1,8 +1,9 @@
 "use strict";
 
+const TASK_COUNT = 3;
+
 const createTripInfo = () => {
   return `
-
   <section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">
     <h1 class="trip-info__title">Amsterdam — Chamonix — Geneva</h1>
@@ -31,17 +32,14 @@ const createTripFilter = () => {
     <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked="">
     <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
   </div>
-
   <div class="trip-filters__filter">
     <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future">
     <label class="trip-filters__filter-label" for="filter-future">Future</label>
   </div>
-
   <div class="trip-filters__filter">
     <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past">
     <label class="trip-filters__filter-label" for="filter-past">Past</label>
   </div>
-
   <button class="visually-hidden" type="submit">Accept filter</button>
 </form>`;
 };
@@ -71,7 +69,6 @@ const createTripSortForm = () => {
       </svg>
     </label>
   </div>
-
   <span class="trip-sort__item  trip-sort__item--offers">Offers</span>
 </form>`;
 };
@@ -92,51 +89,41 @@ const createTripEventForm = () => {
             <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
             <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
           </div>
-
           <div class="event__type-item">
             <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
             <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
           </div>
-
           <div class="event__type-item">
             <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
             <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
           </div>
-
           <div class="event__type-item">
             <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
             <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
           </div>
-
           <div class="event__type-item">
             <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport">
             <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
           </div>
-
           <div class="event__type-item">
             <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
             <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
           </div>
-
           <div class="event__type-item">
             <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked="">
             <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
           </div>
         </fieldset>
-
         <fieldset class="event__type-group">
           <legend class="visually-hidden">Activity</legend>
-
           <div class="event__type-item">
             <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
             <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
           </div>
-
           <div class="event__type-item">
             <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
             <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
           </div>
-
           <div class="event__type-item">
             <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
             <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
@@ -240,12 +227,10 @@ const createTripEventForm = () => {
 </form>`;
 };
 
-const createTripDayList = () => {
-  return `<ul class="trip-days"></ul>`;
-};
+const createTripDayList = () => `<ul class="trip-days"></ul>`;
 
 const createTripDay = () => {
-  return `<li class="trip-days__item  day">
+  return `<li class="trip-days__item day">
   <div class="day__info">
     <span class="day__counter">1</span>
     <time class="day__date" datetime="2019-03-18">MAR 18</time>
@@ -254,9 +239,7 @@ const createTripDay = () => {
 `;
 };
 
-const createEventList = () => {
-  return `<ul class="trip-events__list"></ul>`;
-};
+const createEventList = () => `<ul class="trip-events__list"></ul>`;
 
 const createEventItem = () => {
   return `<li class="trip-events__item">
@@ -265,7 +248,6 @@ const createEventItem = () => {
       <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
     </div>
     <h3 class="event__title">Taxi to Amsterdam</h3>
-
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
@@ -274,11 +256,9 @@ const createEventItem = () => {
       </p>
       <p class="event__duration">30M</p>
     </div>
-
     <p class="event__price">
       €&nbsp;<span class="event__price-value">20</span>
     </p>
-
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
       <li class="event__offer">
@@ -287,7 +267,6 @@ const createEventItem = () => {
         €&nbsp;<span class="event__offer-price">20</span>
        </li>
     </ul>
-
     <button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
     </button>
@@ -309,19 +288,26 @@ const tripControlsElement = tripMainInfoElement.querySelector(`.trip-controls`);
 renderTemplate(tripControlsElement, createTripMenu(), `afterbegin`);
 renderTemplate(tripControlsElement, createTripFilter(), `beforeend`);
 
-const pageMainElement = document.querySelector(
-  `.page-main .page-body__container`
+const pageMainElement = document.querySelector(`.page-main`);
+const pageMainContainer = pageMainElement.querySelector(
+  `.page-body__container`
 );
-const tripEventsElement = pageMainElement.querySelector(`.trip-events`);
+const tripEventsElement = pageMainContainer.querySelector(`.trip-events`);
 
 renderTemplate(tripEventsElement, createTripSortForm(), `beforeend`);
 renderTemplate(tripEventsElement, createTripEventForm(), `beforeend`);
-renderTemplate(pageMainElement, createTripDayList(), `beforeend`);
-const tripDayListElement = pageMainElement.querySelector(`.trip-days`);
+renderTemplate(pageMainContainer, createTripDayList(), `beforeend`);
+
+const tripDayListElement = pageMainContainer.querySelector(`.trip-days`);
+
 renderTemplate(tripDayListElement, createTripDay(), `beforeend`);
 
 const tripDayItemElement = tripDayListElement.querySelector(`.trip-days__item`);
+
 renderTemplate(tripDayItemElement, createEventList(), `beforeend`);
 
-const tripEventList = tripDayItemElement.querySelector(".trip-events__list");
-renderTemplate(tripEventList, createEventItem(), `beforeend`);
+const tripEventList = tripDayItemElement.querySelector(`.trip-events__list`);
+
+for (let i = 0; i < TASK_COUNT; i++) {
+  renderTemplate(tripEventList, createEventItem(), `beforeend`);
+}
