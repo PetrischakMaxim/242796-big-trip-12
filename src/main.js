@@ -7,8 +7,10 @@ import {createTripDayList} from "./view/trip-day-list";
 import {createTripDay} from "./view/trip-day";
 import {createEventList} from "./view/event-list";
 import {createEventItem} from "./view/event-item";
+import {generateRoute} from "./mock/route.js";
 
-const TASK_COUNT = 3;
+const TASK_COUNT = 20;
+const routes = new Array(TASK_COUNT).fill().map(generateRoute);
 
 const renderTemplate = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -45,5 +47,5 @@ renderTemplate(tripDayItemElement, createEventList(), `beforeend`);
 const tripEventList = tripDayItemElement.querySelector(`.trip-events__list`);
 
 for (let i = 0; i < TASK_COUNT; i++) {
-  renderTemplate(tripEventList, createEventItem(), `beforeend`);
+  renderTemplate(tripEventList, createEventItem(routes[i]), `beforeend`);
 }

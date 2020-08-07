@@ -6,8 +6,8 @@ export const getRandomInteger = (a = 0, b = 1) => {
 };
 
 const generateWayPoint = () => {
-  const wayponintList = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check`, `Sightseeing`, `Restaurant`];
-  const randomIndex = getRandomInteger(0, wayponintList.length);
+  const wayponintList = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeing`, `Restaurant`];
+  const randomIndex = getRandomInteger(0, wayponintList.length - 1);
   return wayponintList[randomIndex];
 };
 
@@ -22,7 +22,7 @@ const getRandomDestination = () => {
     `Winston`,
     `Winter Haven`,
   ];
-  const randomIndex = getRandomInteger(0, cityList.length);
+  const randomIndex = getRandomInteger(0, cityList.length - 1);
   return cityList[randomIndex];
 };
 
@@ -45,7 +45,7 @@ const generateImage = (maxLenght = 5) => {
 
 const getRandomOffer = () => {
   const offersList = [`Add luggage`, `Switch to comfort class`, `Add meal`, `Choose seats`];
-  const randomIndex = getRandomInteger(0, offersList.length);
+  const randomIndex = getRandomInteger(0, offersList.length - 1);
   return offersList[randomIndex];
 };
 
@@ -54,6 +54,8 @@ export const generateRoute = () => {
   return {
     waypoint: generateWayPoint(),
     destination: getRandomDestination(),
+    cost: getRandomInteger(30, 200),
+    durationOfTrip: null,
     destinationInfo: {
       description: generateSentence(),
       photo: generateImage(),
