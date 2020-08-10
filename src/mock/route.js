@@ -1,20 +1,6 @@
-import {CITY_LIST, WAYPOINT_LIST, activity, transfer, OFFER_LIST, TRIP_IMAGE_URL, TRIP_SENTENCE} from "../const.js";
+import {CITY_LIST, WAYPOINT_LIST, activity, transfer} from "../const.js";
 import {getRandomInteger, getRandomIndex} from "../utils.js";
 
-const generateSentence = (maxLength = 5) => {
-  const sentenceQuantity = getRandomInteger(1, maxLength);
-  return TRIP_SENTENCE.repeat(sentenceQuantity);
-};
-
-const generateImage = (maxLength = 5) => {
-  const imagesQuantity = getRandomInteger(1, maxLength);
-  const imagesList = new Array(imagesQuantity).fill().map(()=> {
-    const imageParam = getRandomInteger(1, 10);
-    return `${TRIP_IMAGE_URL}${imageParam}`;
-  });
-
-  return [...new Set(imagesList)];
-};
 
 export const generateRoute = () => {
   return {
@@ -25,13 +11,9 @@ export const generateRoute = () => {
     },
     destination: getRandomIndex(CITY_LIST),
     cost: getRandomInteger(30, 200),
-    destinationInfo: {
-      description: generateSentence(),
-      photo: generateImage(),
-    },
-    offers: {
-      offerDescription: getRandomIndex(OFFER_LIST),
-      offerPrice: getRandomInteger(5, 100)
-    },
+    isOffers: Boolean(getRandomInteger(0, 1)),
+    isDestinationInfo: Boolean(getRandomInteger(0, 1)),
+    destinationInfo: null,
+    offers: null,
   };
 };
