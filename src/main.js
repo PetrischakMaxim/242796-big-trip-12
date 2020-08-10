@@ -11,6 +11,7 @@ import {generateRoute} from "./mock/route.js";
 
 const TASK_COUNT = 20;
 const routes = new Array(TASK_COUNT).fill().map(generateRoute);
+const tripEventFormRoute = routes[0];
 
 const renderTemplate = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -33,7 +34,7 @@ const pageMainContainer = pageMainElement.querySelector(
 const tripEventsElement = pageMainContainer.querySelector(`.trip-events`);
 
 renderTemplate(tripEventsElement, createTripSortForm(), `beforeend`);
-renderTemplate(tripEventsElement, createTripEventForm(), `beforeend`);
+renderTemplate(tripEventsElement, createTripEventForm(tripEventFormRoute), `beforeend`);
 renderTemplate(pageMainContainer, createTripDayList(), `beforeend`);
 
 const tripDayListElement = pageMainContainer.querySelector(`.trip-days`);
@@ -46,6 +47,6 @@ renderTemplate(tripDayItemElement, createEventList(), `beforeend`);
 
 const tripEventList = tripDayItemElement.querySelector(`.trip-events__list`);
 
-for (let i = 0; i < TASK_COUNT; i++) {
+for (let i = 1; i < TASK_COUNT; i++) {
   renderTemplate(tripEventList, createEventItem(routes[i]), `beforeend`);
 }
