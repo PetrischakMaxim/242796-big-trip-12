@@ -1,26 +1,26 @@
 import {CITY_LIST, OFFER_LIST, TRIP_IMAGE_URL, TRIP_SENTENCE} from "../const.js";
-import {getRandomInteger} from "../utils.js";
+import {getRandomInteger, getRandomIndex} from "../utils.js";
 
 
-const createTripOfferTemplate = (offers = OFFER_LIST) => {
-  return offers.map(((offer)=> {
+const createTripOffersTemplate = (offers) => {
+
+  const offersTemplate = offers.map((offer)=> {
+    const offerType = offer.split(` `).pop();
     return `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked="">
-    <label class="event__offer-label" for="event-offer-luggage-1">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerType}-1"
+    type="checkbox" name="event-offer-${offerType}" ${getRandomInteger(0, 1) ? `checked` : ``} >
+    <label class="event__offer-label" for="event-offer-${offerType}-1">
       <span class="event__offer-title">${offer}</span>
       +
-      €&nbsp;<span class="event__offer-price">${getRandomInteger(5, 100)}</span>
+      €&nbsp;<span class="event__offer-price">${getRandomInteger(20, 50)}</span>
     </label>
   </div>`;
-  })).join(``);
+  }).join(``);
 
-};
-
-const createTripOffersTemplate = () => {
   return `<section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
       <div class="event__available-offers">
-          ${createTripOfferTemplate()}
+          ${offersTemplate}
       </div>
     </section>`;
 };
@@ -90,7 +90,10 @@ export const createTripEventForm = (route) => {
       images: generateImage(),
     };
   }
-  console.log(route);
+
+  if (isOffers) {
+    route.offers = OFFER_LIST;
+  }
 
   const [transferType, activityType] = Object.keys(waypointTypes);
 
@@ -140,7 +143,7 @@ export const createTripEventForm = (route) => {
     </header>
   </form>
   <section class="event__details">
-    ${isOffers ? createTripOffersTemplate() : `` }
+    ${isOffers ? createTripOffersTemplate(route.offers) : `` }
     ${isDestinationInfo ? createTripDetailsTemplate(route.destinationInfo.description, route.destinationInfo.images) : `` }
   </section>`;
 };
