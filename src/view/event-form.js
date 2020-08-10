@@ -1,4 +1,22 @@
-import {CITY_LIST} from "../const.js";
+import {CITY_LIST, OFFER_LIST, TRIP_IMAGE_URL, TRIP_SENTENCE} from "../const.js";
+import {getRandomInteger} from "../utils.js";
+
+
+const generateSentence = (maxLength = 5) => {
+  const sentenceQuantity = getRandomInteger(1, maxLength);
+  return TRIP_SENTENCE.repeat(sentenceQuantity);
+};
+
+const generateImage = (maxLength = 5) => {
+  const imagesQuantity = getRandomInteger(1, maxLength);
+  const imagesList = new Array(imagesQuantity).fill().map(()=> {
+    const imageParam = getRandomInteger(1, 10);
+    return `${TRIP_IMAGE_URL}${imageParam}`;
+  });
+
+  return [...new Set(imagesList)];
+};
+
 
 const createTripOffersTemplate = () => {
   return `<section class="event__section  event__section--offers">
@@ -48,26 +66,25 @@ const createTripOffersTemplate = () => {
     </section>`;
 };
 
+const createDescriptionImageTemplate = (images = generateImage()) => {
+  return images.map((imageUrl)=> `<img class="event__photo" src="${imageUrl}" alt="Event photo"/>`).join(``);
+};
+
+const createDescriptionTemplate = (description = generateSentence()) => `<p class="event__destination-description">${description}</p>`;
+
 const createTripDetailsTemplate = () => {
   return `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
+      ${createDescriptionTemplate()}
       <div class="event__photos-container">
         <div class="event__photos-tape">
-          <img class="event__photo" src="img/photos/1.jpg" alt="Event photo">
-          <img class="event__photo" src="img/photos/2.jpg" alt="Event photo">
-          <img class="event__photo" src="img/photos/3.jpg" alt="Event photo">
-          <img class="event__photo" src="img/photos/4.jpg" alt="Event photo">
-          <img class="event__photo" src="img/photos/5.jpg" alt="Event photo">
+            ${createDescriptionImageTemplate()}
         </div>
       </div>
     </section>`;
 };
 
-const createTripCityListTemplate = (cities) => {
-  return cities.map((city) => `<option value="${city}"></option>`).join(``);
-};
-
+const createTripCityListTemplate = (cities) => cities.map((city) => `<option value="${city}"></option>`).join(``);
 
 const createTripWaypointTemplate = (type, waypoints) => {
   const waypointTemplate = waypoints.map((waypoint) => {
@@ -92,9 +109,9 @@ export const createTripEventForm = (route) => {
       transfer,
       activity,
     },
-    destination,
     cost,
-    offers: {offerDescription, offerPrice}} = route;
+    destination,
+    isDestinationInfo} = route;
 
   const [transferType, activityType] = Object.keys(waypointTypes);
 
@@ -145,7 +162,8 @@ export const createTripEventForm = (route) => {
   </form>
   <section class="event__details">
     ${createTripOffersTemplate()}
-    ${createTripDetailsTemplate()}
+    ${isDestinationInfo ? createTripDetailsTemplate() : `` }
+
   </section>`;
 };
 
