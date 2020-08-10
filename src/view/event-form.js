@@ -2,6 +2,29 @@ import {CITY_LIST, OFFER_LIST, TRIP_IMAGE_URL, TRIP_SENTENCE} from "../const.js"
 import {getRandomInteger} from "../utils.js";
 
 
+const createTripOfferTemplate = (offers = OFFER_LIST) => {
+  return offers.map(((offer)=> {
+    return `<div class="event__offer-selector">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked="">
+    <label class="event__offer-label" for="event-offer-luggage-1">
+      <span class="event__offer-title">${offer}</span>
+      +
+      €&nbsp;<span class="event__offer-price">${getRandomInteger(5, 100)}</span>
+    </label>
+  </div>`;
+  })).join(``);
+
+};
+
+const createTripOffersTemplate = () => {
+  return `<section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">
+          ${createTripOfferTemplate()}
+      </div>
+    </section>`;
+};
+
 const generateSentence = (maxLength = 5) => {
   const sentenceQuantity = getRandomInteger(1, maxLength);
   return TRIP_SENTENCE.repeat(sentenceQuantity);
@@ -18,67 +41,13 @@ const generateImage = (maxLength = 5) => {
 };
 
 
-const createTripOffersTemplate = () => {
-  return `<section class="event__section  event__section--offers">
-      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-      <div class="event__available-offers">
-        <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked="">
-          <label class="event__offer-label" for="event-offer-luggage-1">
-            <span class="event__offer-title">Add luggage</span>
-            +
-            €&nbsp;<span class="event__offer-price">30</span>
-          </label>
-        </div>
-        <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked="">
-          <label class="event__offer-label" for="event-offer-comfort-1">
-            <span class="event__offer-title">Switch to comfort class</span>
-            +
-            €&nbsp;<span class="event__offer-price">100</span>
-          </label>
-        </div>
-        <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
-          <label class="event__offer-label" for="event-offer-meal-1">
-            <span class="event__offer-title">Add meal</span>
-            +
-            €&nbsp;<span class="event__offer-price">15</span>
-          </label>
-        </div>
-        <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
-          <label class="event__offer-label" for="event-offer-seats-1">
-            <span class="event__offer-title">Choose seats</span>
-            +
-            €&nbsp;<span class="event__offer-price">5</span>
-          </label>
-        </div>
-        <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
-          <label class="event__offer-label" for="event-offer-train-1">
-            <span class="event__offer-title">Travel by train</span>
-            +
-            €&nbsp;<span class="event__offer-price">40</span>
-          </label>
-        </div>
-      </div>
-    </section>`;
-};
-
-const createDescriptionImageTemplate = (images = generateImage()) => {
-  return images.map((imageUrl)=> `<img class="event__photo" src="${imageUrl}" alt="Event photo"/>`).join(``);
-};
-
-const createDescriptionTemplate = (description = generateSentence()) => `<p class="event__destination-description">${description}</p>`;
-
-const createTripDetailsTemplate = () => {
+const createTripDetailsTemplate = (description, images) => {
   return `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      ${createDescriptionTemplate()}
+      <p class="event__destination-description">${description}</p>
       <div class="event__photos-container">
         <div class="event__photos-tape">
-            ${createDescriptionImageTemplate()}
+            ${images.map((imageUrl)=> `<img class="event__photo" src="${imageUrl}" alt="Event photo"/>`).join(``)}
         </div>
       </div>
     </section>`;
@@ -111,7 +80,17 @@ export const createTripEventForm = (route) => {
     },
     cost,
     destination,
-    isDestinationInfo} = route;
+    isDestinationInfo,
+    isOffers,
+  } = route;
+
+  if (isDestinationInfo) {
+    route.destinationInfo = {
+      description: generateSentence(),
+      images: generateImage(),
+    };
+  }
+  console.log(route);
 
   const [transferType, activityType] = Object.keys(waypointTypes);
 
@@ -161,9 +140,8 @@ export const createTripEventForm = (route) => {
     </header>
   </form>
   <section class="event__details">
-    ${createTripOffersTemplate()}
-    ${isDestinationInfo ? createTripDetailsTemplate() : `` }
-
+    ${isOffers ? createTripOffersTemplate() : `` }
+    ${isDestinationInfo ? createTripDetailsTemplate(route.destinationInfo.description, route.destinationInfo.images) : `` }
   </section>`;
 };
 
