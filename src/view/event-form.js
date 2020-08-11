@@ -141,11 +141,12 @@ export const createTripEventForm = (route) => {
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Cancel</button>
     </header>
-  </form>
-  <section class="event__details">
+    <section class="event__details">
     ${isOffers ? createTripOffersTemplate(route.offers) : `` }
     ${isDestinationInfo ? createTripDetailsTemplate(route.destinationInfo.description, route.destinationInfo.images) : `` }
-  </section>`;
+  </section>
+  </form>`;
+
 };
 
 
