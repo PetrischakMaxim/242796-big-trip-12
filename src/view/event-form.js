@@ -1,5 +1,5 @@
 import {CITY_LIST, OFFER_LIST, TRIP_IMAGE_URL, TRIP_SENTENCE} from "../const.js";
-import {getRandomInteger, getRandomIndex} from "../utils.js";
+import {getRandomInteger} from "../utils.js";
 
 
 const createTripOffersTemplate = (offers) => {

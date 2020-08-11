@@ -1,4 +1,4 @@
-import {OFFER_LIST} from "../const.js";
+import {OFFER_LIST, WAYPOINT} from "../const.js";
 import {getRandomInteger, getRandomIndex} from "../utils.js";
 
 const createOffersTemplate = (offer) => {
@@ -11,14 +11,22 @@ const createOffersTemplate = (offer) => {
 };
 
 export const createEventItem = (route) => {
-  const {waypoint, destination, cost} = route;
+  const {
+    waypoint,
+    waypointTypes: {
+      transfer,
+    },
+    destination,
+    cost
+  } = route;
+
   route.offers = getRandomIndex(OFFER_LIST);
   return `<li class="trip-events__item">
   <div class="event">
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${waypoint}.png" alt="Event type icon">
     </div>
-    <h3 class="event__title">${waypoint} to ${destination}</h3>
+    <h3 class="event__title">${waypoint} ${transfer.includes(waypoint) ? ` to` : ` in`} ${destination}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
