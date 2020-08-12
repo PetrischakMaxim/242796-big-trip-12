@@ -3,7 +3,6 @@ import {getRandomInteger} from "../utils.js";
 
 
 const createTripOffersTemplate = (offers) => {
-
   const offersTemplate = offers.map((offer)=> {
     const offerType = offer.split(` `).pop();
     return `<div class="event__offer-selector">
@@ -84,16 +83,31 @@ export const createTripEventForm = (route) => {
     isOffers,
   } = route;
 
-  if (isDestinationInfo) {
-    route.destinationInfo = {
-      description: generateSentence(),
-      images: generateImage(),
-    };
-  }
+  const createTripEventsTemplate = () => {
+    let tripDetails = ``;
+    let tripOffers = ``;
+    if (isDestinationInfo) {
+      route.destinationInfo = {
+        description: generateSentence(),
+        images: generateImage(),
+      };
+      const {description, images} = route.destinationInfo;
+      tripDetails = createTripDetailsTemplate(description, images);
+    }
 
-  if (isOffers) {
-    route.offers = OFFER_LIST;
-  }
+    if (isOffers) {
+      route.offers = OFFER_LIST;
+      tripOffers = createTripOffersTemplate(route.offers);
+    }
+
+    return (isOffers || isDestinationInfo) ?
+      `<section class="event__details">
+        ${tripOffers}
+        ${tripDetails}
+      </section>`
+      :
+      ``;
+  };
 
   const [transferType, activityType] = Object.keys(waypointTypes);
 
@@ -141,10 +155,7 @@ export const createTripEventForm = (route) => {
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Cancel</button>
     </header>
-    <section class="event__details">
-    ${isOffers ? createTripOffersTemplate(route.offers) : `` }
-    ${isDestinationInfo ? createTripDetailsTemplate(route.destinationInfo.description, route.destinationInfo.images) : `` }
-  </section>
+    ${createTripEventsTemplate()}
   </form>`;
 
 };
