@@ -1,3 +1,5 @@
+import {getDateAndTimeFormat, getTimeFormat, getTimeOfTrip} from "../../utils.js";
+
 const createOffersTemplate = (offers) => {
   const offersTemplate = offers.map(({name, cost})=> {
     return `<li class="event__offer">
@@ -21,6 +23,11 @@ export const createEventItem = (route) => {
     offers,
     destination,
     cost,
+    tripDates: {
+      start,
+      end
+    },
+
   } = route;
 
 
@@ -32,11 +39,11 @@ export const createEventItem = (route) => {
     <h3 class="event__title">${waypoint} ${transfer.includes(waypoint) ? ` to` : ` in`} ${destination}</h3>
     <div class="event__schedule">
       <p class="event__time">
-        <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+        <time class="event__start-time" datetime="${getDateAndTimeFormat(start)}">${getTimeFormat(start)}</time>
         —
-        <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+        <time class="event__end-time" datetime="${getDateAndTimeFormat(end)}">${getTimeFormat(end)}</time>
       </p>
-      <p class="event__duration">30M</p>
+      <p class="event__duration">${getTimeOfTrip(start, end)}</p>
     </div>
     <p class="event__price">
       €&nbsp;<span class="event__price-value">${cost}</span>
