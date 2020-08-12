@@ -1,26 +1,39 @@
-import {OFFER_LIST, WAYPOINT} from "../const.js";
+import {OFFER_LIST} from "../const.js";
 import {getRandomInteger, getRandomIndex} from "../utils.js";
 
 const createOffersTemplate = (offer) => {
+  const {offerName, offerPrice} = offer;
   const offersTemplate = `<li class="event__offer">
-        <span class="event__offer-title">${offer}</span>
-        +
-        €&nbsp;<span class="event__offer-price">${getRandomInteger(20, 50)}</span>
-       </li>`;
-  return `<ul class="event__selected-offers">${offersTemplate}</ul>`;
+    <span class="event__offer-title">${offerName}</span>
+     +
+     €&nbsp;<span class="event__offer-price">${offerPrice}</span>
+ </li>`;
+
+  return `<h4 class="visually-hidden">Offers:</h4>
+  <ul class="event__selected-offers">${offersTemplate}</ul>`;
 };
 
 export const createEventItem = (route) => {
+
   const {
     waypoint,
     waypointTypes: {
       transfer,
     },
     destination,
-    cost
+    cost,
+    isOffers,
   } = route;
 
-  route.offers = getRandomIndex(OFFER_LIST);
+  let offerList = ``;
+  if (isOffers) {
+    route.offers = {
+      offerName: getRandomIndex(OFFER_LIST),
+      offerPrice: getRandomInteger(20, 50),
+    };
+    offerList = createOffersTemplate(route.offers);
+  }
+
   return `<li class="trip-events__item">
   <div class="event">
     <div class="event__type">
@@ -38,8 +51,7 @@ export const createEventItem = (route) => {
     <p class="event__price">
       €&nbsp;<span class="event__price-value">${cost}</span>
     </p>
-    <h4 class="visually-hidden">Offers:</h4>
-    ${createOffersTemplate(route.offers)}
+    ${offerList}
     <button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
     </button>
