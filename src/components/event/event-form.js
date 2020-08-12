@@ -1,16 +1,16 @@
-import {CITY_LIST, OFFER_LIST, TRIP_IMAGE_URL, TRIP_SENTENCE} from "../../const.js";
+import {CITY_LIST} from "../../const.js";
 import {getRandomInteger} from "../../utils.js";
 
 const createTripOffersTemplate = (offers) => {
-  const offersTemplate = offers.map((offer)=> {
-    const offerType = offer.split(` `).pop();
+  const offersTemplate = offers.map(({name, cost})=> {
+    const offerType = name.split(` `).pop();
     return `<div class="event__offer-selector">
     <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerType}-1"
     type="checkbox" name="event-offer-${offerType}" ${getRandomInteger(0, 1) ? `checked` : ``} >
     <label class="event__offer-label" for="event-offer-${offerType}-1">
-      <span class="event__offer-title">${offer}</span>
+      <span class="event__offer-title">${name}</span>
       +
-      €&nbsp;<span class="event__offer-price">${getRandomInteger(20, 50)}</span>
+      €&nbsp;<span class="event__offer-price">${cost}</span>
     </label>
   </div>`;
   }).join(``);
@@ -23,29 +23,14 @@ const createTripOffersTemplate = (offers) => {
     </section>`;
 };
 
-const generateSentence = (maxLength = 5) => {
-  const sentenceQuantity = getRandomInteger(1, maxLength);
-  return TRIP_SENTENCE.repeat(sentenceQuantity);
-};
-
-const generateImage = (maxLength = 5) => {
-  const imagesQuantity = getRandomInteger(1, maxLength);
-  const imagesList = new Array(imagesQuantity).fill().map(()=> {
-    const imageParam = getRandomInteger(1, 10);
-    return `${TRIP_IMAGE_URL}${imageParam}`;
-  });
-
-  return [...new Set(imagesList)];
-};
-
-
-const createTripDetailsTemplate = (description, images) => {
+const createTripDetailsTemplate = (info) => {
+  const {description, images} = info;
   return `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
       <p class="event__destination-description">${description}</p>
       <div class="event__photos-container">
         <div class="event__photos-tape">
-            ${images.map((imageUrl)=> `<img class="event__photo" src="${imageUrl}" alt="Event photo"/>`).join(``)}
+            ${images.map((url)=> `<img class="event__photo" src="${url}" alt="Event photo"/>`).join(``)}
         </div>
       </div>
     </section>`;
@@ -53,11 +38,12 @@ const createTripDetailsTemplate = (description, images) => {
 
 const createTripCityListTemplate = (cities) => cities.map((city) => `<option value="${city}"></option>`).join(``);
 
-const createTripWaypointTemplate = (type, waypoints) => {
+const createTripWaypointTemplate = (type, waypoints, currentPoint) => {
   const waypointTemplate = waypoints.map((waypoint) => {
     const waypointName = waypoint.toLowerCase();
     return `<div class="event__type-item">
-       <input id="event-type-${waypointName}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${waypointName} ">
+       <input id="event-type-${waypointName}-1" class="event__type-input  visually-hidden" type="radio" name="event-type"
+        value="${waypointName}" ${(waypoint === currentPoint) ? `checked` : ``}>
        <label class="event__type-label event__type-label--${waypointName}" for="event-type-${waypointName}-1">${waypoint}</label>
     </div>`;
   }).join(``);
@@ -78,31 +64,17 @@ export const createTripEventForm = (route) => {
     },
     cost,
     destination,
-    isDestinationInfo,
+    offers,
+    info,
     isOffers,
+    isInfo,
   } = route;
 
   const createTripEventsTemplate = () => {
-    let tripDetails = ``;
-    let tripOffers = ``;
-    if (isDestinationInfo) {
-      route.destinationInfo = {
-        description: generateSentence(),
-        images: generateImage(),
-      };
-      const {description, images} = route.destinationInfo;
-      tripDetails = createTripDetailsTemplate(description, images);
-    }
-
-    if (isOffers) {
-      route.offers = OFFER_LIST;
-      tripOffers = createTripOffersTemplate(route.offers);
-    }
-
-    return (isOffers || isDestinationInfo) ?
+    return (isOffers || isInfo) ?
       `<section class="event__details">
-        ${tripOffers}
-        ${tripDetails}
+        ${createTripOffersTemplate(offers)}
+        ${createTripDetailsTemplate(info)}
       </section>`
       :
       ``;
@@ -120,8 +92,8 @@ export const createTripEventForm = (route) => {
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
         <div class="event__type-list">
-            ${createTripWaypointTemplate(transferType, transfer)}
-            ${createTripWaypointTemplate(activityType, activity)}
+            ${createTripWaypointTemplate(transferType, transfer, waypoint)}
+            ${createTripWaypointTemplate(activityType, activity, waypoint)}
         </div>
       </div>
       <div class="event__field-group  event__field-group--destination">
