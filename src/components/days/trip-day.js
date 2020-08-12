@@ -1,4 +1,4 @@
-import {getDateTimeFormat, getFormatedDate} from "../utils.js";
+import {getDateTimeFormat, getFormatedDate} from "../../utils.js";
 
 export const createTripDay = () => {
   const date = new Date();

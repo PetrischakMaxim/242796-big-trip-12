@@ -1,5 +1,5 @@
-import {OFFER_LIST} from "../const.js";
-import {getRandomInteger, getRandomIndex} from "../utils.js";
+import {OFFER_LIST} from "../../const.js";
+import {getRandomInteger, getRandomIndex} from "../../utils.js";
 
 const createOffersTemplate = (offer) => {
   const {offerName, offerPrice} = offer;

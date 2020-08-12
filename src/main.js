@@ -1,13 +1,18 @@
-import {createTripInfo} from "./view/trip-info";
-import {createTripMenu} from "./view/trip-menu";
-import {createTripFilter} from "./view/trip-filter";
-import {createTripSortForm} from "./view/sort-form";
-import {createTripEventForm} from "./view/event-form";
-import {createTripDayList} from "./view/trip-day-list";
-import {createTripDay} from "./view/trip-day";
-import {createEventList} from "./view/event-list";
-import {createEventItem} from "./view/event-item";
+
+import {
+  createTripDayList,
+  createTripDay,
+  createTripEventForm,
+  createEventItem,
+  createEventList,
+  createTripFilter,
+  createTripInfo,
+  createTripMenu,
+  createTripSortForm
+} from "./components/index.js";
+
 import {generateRoute} from "./mock/route.js";
+
 
 const TASK_COUNT = 20;
 const routes = new Array(TASK_COUNT).fill().map(generateRoute);
