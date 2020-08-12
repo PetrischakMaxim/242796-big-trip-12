@@ -5,7 +5,6 @@ const generateOffers = (offers, count) => {
   return new Array(count).fill().map(() => ({name: getRandomIndex(offers), cost: getRandomInteger(10, 100)}));
 };
 
-
 const generateSentence = (maxLength = 5) => {
   const sentenceQuantity = getRandomInteger(1, maxLength);
   return TRIP_SENTENCE.repeat(sentenceQuantity);
@@ -23,6 +22,22 @@ const generateImage = (maxLength = 5) => {
 
 const generateDescription = () => ({description: generateSentence(), images: generateImage()});
 
+const maxDaysGap = 5;
+const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap);
+let currentDate = Number(new Date().setSeconds(0, 0)) + daysGap * 24 * 3600000;
+
+const generateTripDates = () => {
+  const startData = currentDate + getRandomInteger(0, 2) * 3600000 + getRandomInteger(1, 60) * 60000;
+  const endData = startData + getRandomInteger(1, 12) * 3600000 + getRandomInteger(1, 60) * 60000;
+  const eventData = {
+    start: new Date(startData),
+    end: new Date(endData)
+  };
+  currentDate = endData;
+
+  return eventData;
+};
+
 export const generateRoute = () => {
   return {
     waypoint: getRandomIndex(WAYPOINT_LIST),
@@ -30,6 +45,7 @@ export const generateRoute = () => {
       activity,
       transfer
     },
+    tripDates: generateTripDates(),
     destination: getRandomIndex(CITY_LIST),
     cost: getRandomInteger(30, 200),
     isDestinationInfo: Boolean(getRandomInteger(0, 1)),
