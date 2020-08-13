@@ -4,7 +4,6 @@ import {
   createTripDay,
   createTripEventForm,
   createEventItem,
-  createEventList,
   createTripFilter,
   createTripInfo,
   createTripMenu,
@@ -43,22 +42,32 @@ renderTemplate(tripEventsElement, createTripEventForm(tripEventFormRoute), `befo
 renderTemplate(pageMainContainer, createTripDayList(), `beforeend`);
 
 const tripDayListElement = pageMainContainer.querySelector(`.trip-days`);
-
-let currentDay = routes[1].tripDates.start.getDate();
-const lastDay = routes[routes.length - 1].tripDates.start.getDate();
-let currentDate = routes[1].tripDates.start;
 let dayCounter = 1;
 let index = 1;
+const {start: startDate} = routes[1].tripDates;
+let currentDay = startDate.getDate();
+const lastDay = routes[routes.length - 1].tripDates.start.getDate();
+let currentDate = startDate;
 
+for (let day = currentDay; day < lastDay; day++) {
 
-renderTemplate(tripDayListElement, createTripDay(currentDate, dayCounter), `beforeend`);
+  renderTemplate(tripDayListElement, createTripDay(currentDate, dayCounter), `beforeend`);
+  const tripEventList = tripDayListElement.querySelectorAll(`.trip-events__list`);
+  const tripEventListElement = tripEventList[tripEventList.length - 1];
 
-const tripDayItemElement = tripDayListElement.querySelector(`.trip-days__item`);
+  for (let i = index; i < TASK_COUNT; i++) {
+    const {start} = routes[i].tripDates;
+    if (start.getDate() === currentDay) {
+      renderTemplate(tripEventListElement, createEventItem(routes[i]), `beforeend`);
+    } else {
+      currentDay = start.getDate();
+      currentDate = start;
+      dayCounter++;
+      index = i;
+      break;
+    }
+  }
 
-renderTemplate(tripDayItemElement, createEventList(), `beforeend`);
-
-const tripEventList = tripDayItemElement.querySelector(`.trip-events__list`);
-
-for (let i = 1; i < TASK_COUNT; i++) {
-  renderTemplate(tripEventList, createEventItem(routes[i]), `beforeend`);
 }
+
+
