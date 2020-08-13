@@ -44,7 +44,14 @@ renderTemplate(pageMainContainer, createTripDayList(), `beforeend`);
 
 const tripDayListElement = pageMainContainer.querySelector(`.trip-days`);
 
-renderTemplate(tripDayListElement, createTripDay(), `beforeend`);
+let currentDay = routes[1].tripDates.start.getDate();
+const lastDay = routes[routes.length - 1].tripDates.start.getDate();
+let currentDate = routes[1].tripDates.start;
+let dayCounter = 1;
+let index = 1;
+
+
+renderTemplate(tripDayListElement, createTripDay(currentDate, dayCounter), `beforeend`);
 
 const tripDayItemElement = tripDayListElement.querySelector(`.trip-days__item`);
 
