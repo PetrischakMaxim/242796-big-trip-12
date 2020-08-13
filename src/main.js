@@ -1,14 +1,21 @@
-import {createTripInfo} from "./view/trip-info";
-import {createTripMenu} from "./view/trip-menu";
-import {createTripFilter} from "./view/trip-filter";
-import {createTripSortForm} from "./view/sort-form";
-import {createTripEventForm} from "./view/event-form";
-import {createTripDayList} from "./view/trip-day-list";
-import {createTripDay} from "./view/trip-day";
-import {createEventList} from "./view/event-list";
-import {createEventItem} from "./view/event-item";
 
-const TASK_COUNT = 3;
+import {
+  createEventDayList,
+  createEventDay,
+  createEventForm,
+  createEventItem,
+  createTripFilter,
+  createTripInfo,
+  createTripMenu,
+  createTripSortForm
+} from "./components/index.js";
+
+import {generateRoute} from "./mock/route.js";
+
+
+const TASK_COUNT = 20;
+const routes = new Array(TASK_COUNT).fill().map(generateRoute);
+const tripEventFormRoute = routes[0];
 
 const renderTemplate = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -17,7 +24,7 @@ const renderTemplate = (container, template, place) => {
 const pageHeaderElement = document.querySelector(`.page-header`);
 const tripMainInfoElement = pageHeaderElement.querySelector(`.trip-main`);
 
-renderTemplate(tripMainInfoElement, createTripInfo(), `afterbegin`);
+renderTemplate(tripMainInfoElement, createTripInfo(routes), `afterbegin`);
 
 const tripControlsElement = tripMainInfoElement.querySelector(`.trip-controls`);
 
@@ -31,19 +38,36 @@ const pageMainContainer = pageMainElement.querySelector(
 const tripEventsElement = pageMainContainer.querySelector(`.trip-events`);
 
 renderTemplate(tripEventsElement, createTripSortForm(), `beforeend`);
-renderTemplate(tripEventsElement, createTripEventForm(), `beforeend`);
-renderTemplate(pageMainContainer, createTripDayList(), `beforeend`);
+renderTemplate(tripEventsElement, createEventForm(tripEventFormRoute), `beforeend`);
+renderTemplate(pageMainContainer, createEventDayList(), `beforeend`);
 
 const tripDayListElement = pageMainContainer.querySelector(`.trip-days`);
+let dayCounter = 1;
+let index = 1;
+const {start: startDate} = routes[1].tripDates;
+let currentDay = startDate.getDate();
+const lastDay = routes[routes.length - 1].tripDates.start.getDate();
+let currentDate = startDate;
 
-renderTemplate(tripDayListElement, createTripDay(), `beforeend`);
+for (let day = currentDay; day <= lastDay; day++) {
 
-const tripDayItemElement = tripDayListElement.querySelector(`.trip-days__item`);
+  renderTemplate(tripDayListElement, createEventDay(currentDate, dayCounter), `beforeend`);
+  const tripEventList = tripDayListElement.querySelectorAll(`.trip-events__list`);
+  const tripEventListElement = tripEventList[tripEventList.length - 1];
 
-renderTemplate(tripDayItemElement, createEventList(), `beforeend`);
+  for (let i = index; i < TASK_COUNT; i++) {
+    const {start} = routes[i].tripDates;
+    if (start.getDate() === currentDay) {
+      renderTemplate(tripEventListElement, createEventItem(routes[i]), `beforeend`);
+    } else {
+      currentDay = start.getDate();
+      currentDate = start;
+      dayCounter++;
+      index = i;
+      break;
+    }
+  }
 
-const tripEventList = tripDayItemElement.querySelector(`.trip-events__list`);
-
-for (let i = 0; i < TASK_COUNT; i++) {
-  renderTemplate(tripEventList, createEventItem(), `beforeend`);
 }
+
+
