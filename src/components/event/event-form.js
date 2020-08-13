@@ -53,7 +53,7 @@ const createTripWaypointTemplate = (type, waypoints, currentPoint) => {
     </fieldset>`;
 };
 
-export const createTripEventForm = (route) => {
+export const createEventForm = (route) => {
 
   const {
     waypoint,

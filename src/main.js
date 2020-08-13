@@ -1,8 +1,8 @@
 
 import {
-  createTripDayList,
-  createTripDay,
-  createTripEventForm,
+  createEventDayList,
+  createEventDay,
+  createEventForm,
   createEventItem,
   createTripFilter,
   createTripInfo,
@@ -38,8 +38,8 @@ const pageMainContainer = pageMainElement.querySelector(
 const tripEventsElement = pageMainContainer.querySelector(`.trip-events`);
 
 renderTemplate(tripEventsElement, createTripSortForm(), `beforeend`);
-renderTemplate(tripEventsElement, createTripEventForm(tripEventFormRoute), `beforeend`);
-renderTemplate(pageMainContainer, createTripDayList(), `beforeend`);
+renderTemplate(tripEventsElement, createEventForm(tripEventFormRoute), `beforeend`);
+renderTemplate(pageMainContainer, createEventDayList(), `beforeend`);
 
 const tripDayListElement = pageMainContainer.querySelector(`.trip-days`);
 let dayCounter = 1;
@@ -49,9 +49,9 @@ let currentDay = startDate.getDate();
 const lastDay = routes[routes.length - 1].tripDates.start.getDate();
 let currentDate = startDate;
 
-for (let day = currentDay; day < lastDay; day++) {
+for (let day = currentDay; day <= lastDay; day++) {
 
-  renderTemplate(tripDayListElement, createTripDay(currentDate, dayCounter), `beforeend`);
+  renderTemplate(tripDayListElement, createEventDay(currentDate, dayCounter), `beforeend`);
   const tripEventList = tripDayListElement.querySelectorAll(`.trip-events__list`);
   const tripEventListElement = tripEventList[tripEventList.length - 1];
 
