@@ -9,7 +9,7 @@ export const getRandomIndex = (array) => array[getRandomInteger(0, array.length 
 
 export const getDateTimeFormat = (date) => date.toJSON().split(`T`)[0];
 
-export const formatDateToPlaceholder = (date) => `${getDateTimeFormat(date).split(`-`).reverse().join(`/`).slice(0, -2)} 00:00`;
+export const formatDateToPlaceholder = (date) => `${getDateTimeFormat(date).split(`-`).reverse().join(`/`).slice(0, -2)}`;
 
 export const getDateAndTimeFormat = (date) => date.toJSON().split(`.`)[0];
 

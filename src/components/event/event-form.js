@@ -1,5 +1,5 @@
 import {CITY_LIST} from "../../const.js";
-import {getRandomInteger, formatDateToPlaceholder} from "../../utils.js";
+import {getRandomInteger, getTimeFormat, formatDateToPlaceholder} from "../../utils.js";
 
 const createTripOffersTemplate = (offers) => {
   const offersTemplate = offers.map(({name, cost})=> {
@@ -85,6 +85,8 @@ export const createTripEventForm = (route) => {
   };
 
   const [transferType, activityType] = Object.keys(waypointTypes);
+  const startDate = `${formatDateToPlaceholder(start)} ${getTimeFormat(start)}`;
+  const endDate = `${formatDateToPlaceholder(end)} ${getTimeFormat(end)}`;
 
   return `
   <form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -113,12 +115,12 @@ export const createTripEventForm = (route) => {
         <label class="visually-hidden" for="event-start-time-1">
           From
         </label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDateToPlaceholder(start)}">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
         —
         <label class="visually-hidden" for="event-end-time-1">
           To
         </label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDateToPlaceholder(end)}">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
       </div>
       <div class="event__field-group  event__field-group--price">
         <label class="event__label" for="event-price-1">
