@@ -25,7 +25,7 @@ const renderTemplate = (container, template, place) => {
 const pageHeaderElement = document.querySelector(`.page-header`);
 const tripMainInfoElement = pageHeaderElement.querySelector(`.trip-main`);
 
-renderTemplate(tripMainInfoElement, createTripInfo(), `afterbegin`);
+renderTemplate(tripMainInfoElement, createTripInfo(routes), `afterbegin`);
 
 const tripControlsElement = tripMainInfoElement.querySelector(`.trip-controls`);
 
