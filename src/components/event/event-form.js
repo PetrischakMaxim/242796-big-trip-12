@@ -53,25 +53,26 @@ const createTripWaypointTemplate = (type, waypoints, currentPoint) => {
     </fieldset>`;
 };
 
-export const createEventForm = (route) => {
+export const createEventForm = (route = {}) => {
+
 
   const {
-    waypoint,
-    waypointTypes,
+    waypoint = `Taxi`,
+    waypointTypes = {},
     waypointTypes: {
-      transfer,
-      activity,
+      transfer = `Taxi`,
+      activity = `Check-in`
     },
-    cost,
-    destination,
+    cost = `199`,
+    destination = `Westminster`,
+    tripDates: {
+      start = new Date(),
+      end = new Date(),
+    },
     offers,
     info,
-    tripDates: {
-      start,
-      end,
-    },
-    isOffers,
-    isInfo,
+    isOffers = false,
+    isInfo = false,
   } = route;
 
   const createTripEventsTemplate = () => {
