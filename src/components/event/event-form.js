@@ -23,8 +23,8 @@ export const createEventForm = (route = {}) => {
     },
     offers,
     info,
-    isOffers = false,
-    isInfo = false,
+    hasOffers = false,
+    hasInfo = false,
   } = route;
 
   const [transferType, activityType] = Object.keys(waypointTypes);
@@ -32,7 +32,7 @@ export const createEventForm = (route = {}) => {
   const endDate = `${formatDateToPlaceholder(end)} ${getTimeFormat(end)}`;
 
   const createTripEventsTemplate = () => {
-    return (isOffers || isInfo) ?
+    return (hasOffers || hasInfo) ?
       `<section class="event__details">
         ${createTripOffersTemplate(offers)}
         ${createTripDetailsTemplate(info)}
