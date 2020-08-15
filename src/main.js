@@ -6,6 +6,7 @@ import EventFormView from "./components/event/event-form.js";
 import EventDayListView from "./components/event/event-day-list.js";
 import EventDayView from "./components/event/event-day.js";
 import EventItemView from "./components/event/event-item.js";
+import NoWaypointView from "./components/event/no-event-waypoint.js";
 
 import {generateRoute} from "./mock/route.js";
 import {render, RenderPosition} from "./utils/dom-utils.js";
@@ -76,16 +77,20 @@ for (let day = currentDay; day <= lastDay; day++) {
   const tripEventList = dayListComponent.getElement().querySelectorAll(`.trip-events__list`);
   const tripEventListElement = tripEventList[tripEventList.length - 1];
 
-  for (let i = routeIndex; i < TASK_COUNT; i++) {
-    const {start} = routes[i].tripDates;
-    if (start.getDate() === currentDay) {
-      renderEvent(tripEventListElement, routes[i]);
-    } else {
-      currentDay = start.getDate();
-      currentDate = start;
-      dayCounter++;
-      routeIndex = i;
-      break;
+  if (routes.every((route) => !route.hasWaypoint)) {
+    render(tripEventsElement, new NoWaypointView().getElement());
+  } else {
+    for (let i = routeIndex; i < TASK_COUNT; i++) {
+      const {start} = routes[i].tripDates;
+      if (start.getDate() === currentDay) {
+        renderEvent(tripEventListElement, routes[i]);
+      } else {
+        currentDay = start.getDate();
+        currentDate = start;
+        dayCounter++;
+        routeIndex = i;
+        break;
+      }
     }
   }
 }

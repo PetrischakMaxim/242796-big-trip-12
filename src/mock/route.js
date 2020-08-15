@@ -39,8 +39,10 @@ const generateTripDates = () => {
 };
 
 export const generateRoute = () => {
+  const wayPoint = getRandomIndex(WAYPOINT_LIST);
   return {
-    waypoint: getRandomIndex(WAYPOINT_LIST),
+    waypoint: wayPoint,
+    hasWaypoint: (wayPoint) ? true : false,
     waypointTypes: {
       activity,
       transfer

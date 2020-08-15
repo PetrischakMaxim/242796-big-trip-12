@@ -1,7 +1,7 @@
 import {getFormatedDate} from '../../utils/utils.js';
 
 export const createRoutesInfo = (routes) => {
-  const startRoute = routes[1].destination;
+  const startRoute = routes[0].destination;
   const middleRoute = routes[Math.floor(routes.length) / 2].destination;
   const endRoute = routes[routes.length - 1].destination;
   const startDate = getFormatedDate(routes[1].tripDates.start);
