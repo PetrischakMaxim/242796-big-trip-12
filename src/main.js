@@ -1,17 +1,15 @@
-
 import TripInfoView from "./components/info/trip-info.js";
-import FilterFormView from "./components/menu-controls/filter-form.js";
+import FilterView from "./components/menu-controls/filter-form.js";
 import TabsView from "./components/menu-controls/tabs.js";
-import SortFormView from "./components/sort-form/sort-form.js";
+import SortView from "./components/sort-form/sort-form.js";
 import EventFormView from "./components/event/event-form.js";
 import EventDayListView from "./components/event/event-day-list.js";
 import EventDayView from "./components/event/event-day.js";
 import EventItemView from "./components/event/event-item.js";
 
 import {generateRoute} from "./mock/route.js";
-import {render, RenderPosition} from "./utils.js";
+import {render, RenderPosition} from "./utils/dom-utils.js";
 
-const {AFTERBEGIN, BEFOREEND} = RenderPosition;
 const TASK_COUNT = 8;
 const routes = new Array(TASK_COUNT).fill().map(generateRoute);
 
@@ -19,9 +17,9 @@ const pageHeaderElement = document.querySelector(`.page-header`);
 const tripMainInfoElement = pageHeaderElement.querySelector(`.trip-main`);
 const controlsWrapper = tripMainInfoElement.querySelector(`.trip-controls`);
 
-render(tripMainInfoElement, new TripInfoView(routes).getElement(), AFTERBEGIN);
-render(controlsWrapper, new TabsView().getElement(), AFTERBEGIN);
-render(controlsWrapper, new FilterFormView().getElement(), BEFOREEND);
+render(tripMainInfoElement, new TripInfoView(routes).getElement(), RenderPosition.AFTERBEGIN);
+render(controlsWrapper, new TabsView().getElement(), RenderPosition.AFTERBEGIN);
+render(controlsWrapper, new FilterView().getElement());
 
 const pageMainElement = document.querySelector(`.page-main`);
 const pageMainContainer = pageMainElement.querySelector(
@@ -29,10 +27,10 @@ const pageMainContainer = pageMainElement.querySelector(
 );
 
 const tripEventsElement = pageMainContainer.querySelector(`.trip-events`);
-render(tripEventsElement, new SortFormView().getElement(), BEFOREEND);
+render(tripEventsElement, new SortView().getElement());
 
 const dayListComponent = new EventDayListView();
-render(pageMainContainer, dayListComponent.getElement(), BEFOREEND);
+render(pageMainContainer, dayListComponent.getElement());
 
 let dayCounter = 1;
 let routeIndex = 0;
@@ -59,13 +57,12 @@ const renderEvent = (eventListElement, route) => {
     replaceEventItemState(eventComponent, eventFormComponent);
   });
 
-  render(eventListElement, eventComponent.getElement(), BEFOREEND);
+  render(eventListElement, eventComponent.getElement());
 };
-
 
 for (let day = currentDay; day <= lastDay; day++) {
 
-  render(dayListComponent.getElement(), new EventDayView(currentDate, dayCounter).getElement(), BEFOREEND);
+  render(dayListComponent.getElement(), new EventDayView(currentDate, dayCounter).getElement());
   const tripEventList = dayListComponent.getElement().querySelectorAll(`.trip-events__list`);
   const tripEventListElement = tripEventList[tripEventList.length - 1];
 

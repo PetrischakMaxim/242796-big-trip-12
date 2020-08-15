@@ -1,4 +1,4 @@
-import {createElement} from "../../utils.js";
+import {createElement} from "../../utils/dom-utils.js";
 
 const createEventDayListTemplate = () => {
   return `<ul class="trip-days"></ul>`;

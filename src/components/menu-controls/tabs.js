@@ -1,4 +1,4 @@
-import {createElement} from "../../utils.js";
+import {createElement} from "../../utils/dom-utils.js";
 
 export const createTabsTemplate = () => {
   return `<div class="trip-controls-wrapper">

@@ -1,5 +1,6 @@
 import {CITY_LIST, BLANK_TASK} from "../../const.js";
-import {getTimeFormat, formatDateToPlaceholder, createElement} from "../../utils.js";
+import {getTimeFormat, formatDateToPlaceholder} from "../../utils/utils.js";
+import {createElement} from "../../utils/dom-utils.js";
 import {createTripOffersTemplate} from "./event-offers.js";
 import {createTripDetailsTemplate} from "./event-details.js";
 import {createTripCityListTemplate} from "./event-city-list.js";

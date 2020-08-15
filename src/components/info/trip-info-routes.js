@@ -1,4 +1,4 @@
-import {getFormatedDate} from '../../utils.js';
+import {getFormatedDate} from '../../utils/utils.js';
 
 export const createRoutesInfo = (routes) => {
   const startRoute = routes[1].destination;
