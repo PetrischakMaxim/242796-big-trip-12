@@ -1,15 +1,14 @@
-
 import {
   createEventDayList,
   createEventDay,
-  createEventForm,
   createEventItem,
-  createTripInfo,
 } from "./components/index.js";
 
+import TripInfoView from "./components/info/trip-info.js";
 import FilterFormView from "./components/menu-controls/filter-form.js";
 import TabsView from "./components/menu-controls/tabs.js";
 import SortFormView from "./components/sort-form/sort-form.js";
+import EventFormView from "./components/event/event-form.js";
 
 import {generateRoute} from "./mock/route.js";
 import {renderTemplate, renderElement, RenderPosition} from "./utils.js";
@@ -23,11 +22,9 @@ const pageHeaderElement = document.querySelector(`.page-header`);
 const tripMainInfoElement = pageHeaderElement.querySelector(`.trip-main`);
 const controlsWrapper = tripMainInfoElement.querySelector(`.trip-controls`);
 
+renderElement(tripMainInfoElement, new TripInfoView(routes).getElement(), AFTERBEGIN);
 renderElement(controlsWrapper, new TabsView().getElement(), AFTERBEGIN);
 renderElement(controlsWrapper, new FilterFormView().getElement(), BEFOREEND);
-
-
-renderTemplate(tripMainInfoElement, createTripInfo(routes), AFTERBEGIN);
 
 const pageMainElement = document.querySelector(`.page-main`);
 const pageMainContainer = pageMainElement.querySelector(
@@ -36,7 +33,7 @@ const pageMainContainer = pageMainElement.querySelector(
 const tripEventsElement = pageMainContainer.querySelector(`.trip-events`);
 
 renderElement(tripEventsElement, new SortFormView().getElement(), BEFOREEND);
-renderTemplate(tripEventsElement, createEventForm(tripEventFormRoute), BEFOREEND);
+renderElement(tripEventsElement, new EventFormView(tripEventFormRoute).getElement(), BEFOREEND);
 renderTemplate(pageMainContainer, createEventDayList(), BEFOREEND);
 
 const tripDayListElement = pageMainContainer.querySelector(`.trip-days`);

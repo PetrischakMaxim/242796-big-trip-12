@@ -1,5 +1,5 @@
-import {CITY_LIST} from "../../const.js";
-import {getTimeFormat, formatDateToPlaceholder} from "../../utils.js";
+import {CITY_LIST, BLANK_TASK} from "../../const.js";
+import {getTimeFormat, formatDateToPlaceholder, createElement} from "../../utils.js";
 import {createTripOffersTemplate} from "./event-offers.js";
 import {createTripDetailsTemplate} from "./event-details.js";
 import {createTripCityListTemplate} from "./event-city-list.js";
@@ -7,20 +7,14 @@ import {createTripWaypointTemplate} from "./event-waypoint.js";
 import {createEventTimeGroupTemplate} from "./event-time.js";
 import {createEventPriceTemplate} from "./event-price.js";
 
-export const createEventForm = (route = {}) => {
+const createEventFormTemplate = (route) => {
   const {
-    waypoint = `Taxi`,
-    waypointTypes = {},
-    waypointTypes: {
-      transfer = `Taxi`,
-      activity = `Check-in`
-    },
-    cost = `199`,
-    destination = `Westminster`,
-    tripDates: {
-      start = new Date(),
-      end = new Date(),
-    },
+    waypoint,
+    waypointTypes,
+    waypointTypes: {transfer, activity},
+    cost,
+    destination,
+    tripDates: {start, end},
     offers,
     info,
     hasOffers = false,
@@ -49,8 +43,7 @@ export const createEventForm = (route = {}) => {
     </div>`;
   };
 
-  return `
-  <form class="trip-events__item  event  event--edit" action="#" method="post">
+  return `<form class="trip-events__item  event  event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -80,4 +73,27 @@ export const createEventForm = (route = {}) => {
   </form>`;
 };
 
+
+export default class EventForm {
+  constructor(task) {
+    this._task = task || BLANK_TASK;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventFormTemplate(this._task);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
 
