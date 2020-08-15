@@ -43,7 +43,8 @@ const createEventFormTemplate = (route) => {
     </div>`;
   };
 
-  return `<form class="trip-events__item  event  event--edit" action="#" method="post">
+  return `<li class="trip-events__item">
+  <form class="event  event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -70,7 +71,8 @@ const createEventFormTemplate = (route) => {
       <button class="event__reset-btn" type="reset">Cancel</button>
     </header>
     ${createTripEventsTemplate()}
-  </form>`;
+  </form>
+  </li>`;
 };
 
 
