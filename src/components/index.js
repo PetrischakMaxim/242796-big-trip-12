@@ -1,7 +1,5 @@
 import {createEventForm, createEventItem, createEventList, createEventDayList, createEventDay} from "./event/index.js";
-import {createTripFilter} from "./filter/index.js";
 import {createTripInfo} from "./info/index.js";
-import {createTripSortForm} from "./sort-form/index.js";
 
 export {
   createEventDayList,
@@ -9,7 +7,5 @@ export {
   createEventForm,
   createEventItem,
   createEventList,
-  createTripFilter,
   createTripInfo,
-  createTripSortForm
 };
