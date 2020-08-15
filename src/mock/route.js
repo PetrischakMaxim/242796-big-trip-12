@@ -48,8 +48,8 @@ export const generateRoute = () => {
     tripDates: generateTripDates(),
     destination: getRandomIndex(CITY_LIST),
     cost: getRandomInteger(30, 200),
-    isDestinationInfo: Boolean(getRandomInteger(0, 1)),
-    isOffers: Boolean(getRandomInteger(0, 1)),
+    hasInfo: Boolean(getRandomInteger(0, 1)),
+    hasOffers: Boolean(getRandomInteger(0, 1)),
     info: generateDescription(),
     offers: generateOffers(OFFER_LIST, getRandomInteger(0, 3)),
   };

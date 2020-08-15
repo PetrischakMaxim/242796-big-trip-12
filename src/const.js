@@ -42,3 +42,20 @@ export const OFFER_LIST = [
 export const TRIP_IMAGE_URL = `http://picsum.photos/248/152?r=`;
 
 export const TRIP_SENTENCE = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`;
+
+
+export const BLANK_TASK = {
+  waypoint: `Taxi`,
+  waypointTypes: {
+    transfer: `Taxi`,
+    activity: `Check-in`
+  },
+  cost: `199`,
+  destination: `Westminster`,
+  tripDates: {
+    start: new Date(),
+    end: new Date(),
+  },
+  hasOffers: false,
+  hasInfo: false,
+};
