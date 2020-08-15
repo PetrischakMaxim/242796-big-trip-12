@@ -1,24 +1,18 @@
-import {getDateAndTimeFormat, getTimeFormat, getTimeOfTrip} from "../../utils.js";
+import {getDateAndTimeFormat, getTimeFormat, getTimeOfTrip, createElement} from "../../utils.js";
 import {createOffersTemplate} from "./event-selected-offers.js";
 
-export const createEventItem = (route) => {
+export const createEventItemTemplate = (route) => {
 
   const {
     waypoint,
-    waypointTypes: {
-      transfer,
-    },
+    waypointTypes: {transfer},
     offers,
     destination,
     cost,
-    tripDates: {
-      start,
-      end
-    },
+    tripDates: {start, end},
   } = route;
 
-  return `
-  <li class="trip-events__item">
+  return `<li class="trip-events__item">
     <div class="event">
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42"
@@ -50,3 +44,28 @@ export const createEventItem = (route) => {
     </div>
 </li>`;
 };
+
+
+export default class EventItem {
+  constructor(route) {
+    this._element = null;
+    this._route = route;
+  }
+
+  getTemplate() {
+    return createEventItemTemplate(this._route);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+

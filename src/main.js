@@ -1,17 +1,15 @@
-import {
-  createEventDayList,
-  createEventDay,
-  createEventItem,
-} from "./components/index.js";
 
 import TripInfoView from "./components/info/trip-info.js";
 import FilterFormView from "./components/menu-controls/filter-form.js";
 import TabsView from "./components/menu-controls/tabs.js";
 import SortFormView from "./components/sort-form/sort-form.js";
 import EventFormView from "./components/event/event-form.js";
+import EventDayListView from "./components/event/event-day-list.js";
+import EventDayView from "./components/event/event-day.js";
+import EventItemView from "./components/event/event-item.js";
 
 import {generateRoute} from "./mock/route.js";
-import {renderTemplate, renderElement, RenderPosition} from "./utils.js";
+import {renderElement, RenderPosition} from "./utils.js";
 
 const {AFTERBEGIN, BEFOREEND} = RenderPosition;
 const TASK_COUNT = 20;
@@ -34,9 +32,9 @@ const tripEventsElement = pageMainContainer.querySelector(`.trip-events`);
 
 renderElement(tripEventsElement, new SortFormView().getElement(), BEFOREEND);
 renderElement(tripEventsElement, new EventFormView(tripEventFormRoute).getElement(), BEFOREEND);
-renderTemplate(pageMainContainer, createEventDayList(), BEFOREEND);
+const dayListComponent = new EventDayListView();
+renderElement(pageMainContainer, dayListComponent.getElement(), BEFOREEND);
 
-const tripDayListElement = pageMainContainer.querySelector(`.trip-days`);
 let dayCounter = 1;
 let index = 1;
 const {start: startDate} = routes[1].tripDates;
@@ -44,16 +42,17 @@ let currentDay = startDate.getDate();
 const lastDay = routes[routes.length - 1].tripDates.start.getDate();
 let currentDate = startDate;
 
+
 for (let day = currentDay; day <= lastDay; day++) {
 
-  renderTemplate(tripDayListElement, createEventDay(currentDate, dayCounter), BEFOREEND);
-  const tripEventList = tripDayListElement.querySelectorAll(`.trip-events__list`);
+  renderElement(dayListComponent.getElement(), new EventDayView(currentDate, dayCounter).getElement(), BEFOREEND);
+  const tripEventList = dayListComponent.getElement().querySelectorAll(`.trip-events__list`);
   const tripEventListElement = tripEventList[tripEventList.length - 1];
 
   for (let i = index; i < TASK_COUNT; i++) {
     const {start} = routes[i].tripDates;
     if (start.getDate() === currentDay) {
-      renderTemplate(tripEventListElement, createEventItem(routes[i]), BEFOREEND);
+      renderElement(tripEventListElement, new EventItemView(routes[i]).getElement(), BEFOREEND);
     } else {
       currentDay = start.getDate();
       currentDate = start;
@@ -62,7 +61,6 @@ for (let day = currentDay; day <= lastDay; day++) {
       break;
     }
   }
-
 }
 
 
