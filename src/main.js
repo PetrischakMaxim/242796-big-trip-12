@@ -32,13 +32,6 @@ render(tripEventsElement, new SortView().getElement());
 const dayListComponent = new EventDayListView();
 render(pageMainContainer, dayListComponent.getElement());
 
-let dayCounter = 1;
-let routeIndex = 0;
-const {start: startDate} = routes[0].tripDates;
-let currentDay = startDate.getDate();
-const lastDay = routes[routes.length - 1].tripDates.start.getDate();
-let currentDate = startDate;
-
 const renderEvent = (eventListElement, route) => {
   const eventComponent = new EventItemView(route);
   const eventFormComponent = new EventFormView(route);
@@ -46,19 +39,36 @@ const renderEvent = (eventListElement, route) => {
   const replaceEventItemState = (newElement, oldElement) => {
     eventListElement.replaceChild(newElement.getElement(), oldElement.getElement());
   };
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      replaceEventItemState(eventComponent, eventFormComponent);
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
 
   const eventComponentBtn = eventComponent.getElement().querySelector(`.event__rollup-btn`);
   eventComponentBtn.addEventListener(`click`, () => {
     replaceEventItemState(eventFormComponent, eventComponent);
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  const formComponentBtn = eventFormComponent.getElement().querySelector(`.event__reset-btn`);
-  formComponentBtn.addEventListener(`click`, () => {
+  const formComponent = eventFormComponent.getElement().querySelector(`.event`);
+  formComponent.addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
     replaceEventItemState(eventComponent, eventFormComponent);
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   render(eventListElement, eventComponent.getElement());
 };
+
+let dayCounter = 1;
+let routeIndex = 0;
+const {start: startDate} = routes[0].tripDates;
+let currentDay = startDate.getDate();
+const lastDay = routes[routes.length - 1].tripDates.start.getDate();
+let currentDate = startDate;
 
 for (let day = currentDay; day <= lastDay; day++) {
 
