@@ -14,7 +14,6 @@ import {render, RenderPosition} from "./utils.js";
 const {AFTERBEGIN, BEFOREEND} = RenderPosition;
 const TASK_COUNT = 20;
 const routes = new Array(TASK_COUNT).fill().map(generateRoute);
-const tripEventFormRoute = routes[0];
 
 const pageHeaderElement = document.querySelector(`.page-header`);
 const tripMainInfoElement = pageHeaderElement.querySelector(`.trip-main`);
@@ -31,12 +30,11 @@ const pageMainContainer = pageMainElement.querySelector(
 const tripEventsElement = pageMainContainer.querySelector(`.trip-events`);
 
 render(tripEventsElement, new SortFormView().getElement(), BEFOREEND);
-render(tripEventsElement, new EventFormView(tripEventFormRoute).getElement(), BEFOREEND);
 const dayListComponent = new EventDayListView();
 render(pageMainContainer, dayListComponent.getElement(), BEFOREEND);
 
 let dayCounter = 1;
-let index = 1;
+let routeIndex = 0;
 const {start: startDate} = routes[1].tripDates;
 let currentDay = startDate.getDate();
 const lastDay = routes[routes.length - 1].tripDates.start.getDate();
@@ -49,7 +47,7 @@ for (let day = currentDay; day <= lastDay; day++) {
   const tripEventList = dayListComponent.getElement().querySelectorAll(`.trip-events__list`);
   const tripEventListElement = tripEventList[tripEventList.length - 1];
 
-  for (let i = index; i < TASK_COUNT; i++) {
+  for (let i = routeIndex; i < TASK_COUNT; i++) {
     const {start} = routes[i].tripDates;
     if (start.getDate() === currentDay) {
       render(tripEventListElement, new EventItemView(routes[i]).getElement(), BEFOREEND);
@@ -57,7 +55,7 @@ for (let day = currentDay; day <= lastDay; day++) {
       currentDay = start.getDate();
       currentDate = start;
       dayCounter++;
-      index = i;
+      routeIndex = i;
       break;
     }
   }
