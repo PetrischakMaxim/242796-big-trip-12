@@ -5,10 +5,13 @@ const offersTemplate = (offers) => {
     const {name, cost} = offer;
     const offerType = name.split(` `).pop();
     return `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerType}-1"
+    <input class="event__offer-checkbox visually-hidden"
+    id="event-offer-${offerType}-1"
     type="checkbox"
-    name="event-offer-${offerType}" ${getRandomInteger(0, 1) ? `checked` : ``} >
-    <label class="event__offer-label" for="event-offer-${offerType}-1">
+    name="event-offer-${offerType}"
+    ${getRandomInteger(0, 1) ? `checked` : ``} >
+    <label class="event__offer-label"
+    for="event-offer-${offerType}-1">
       <span class="event__offer-title">${name}</span>
       +
       €&nbsp;<span class="event__offer-price">${cost}</span>

@@ -4,8 +4,10 @@ const waypointTemplate = (waypoints, currentPoint) => {
     const waypointName = waypoint.toLowerCase();
     return `<div class="event__type-item">
        <input id="event-type-${waypointName}-1"
-        class="event__type-input  visually-hidden" type="radio" name="event-type"
-        value="${waypointName}" ${(waypoint === currentPoint) ? `checked` : ``}>
+        class="event__type-input  visually-hidden"
+        type="radio" name="event-type"
+        value="${waypointName}"
+        ${(waypoint === currentPoint) ? `checked` : ``}>
        <label class="event__type-label event__type-label--${waypointName}"
         for="event-type-${waypointName}-1">${waypoint}</label>
     </div>`;

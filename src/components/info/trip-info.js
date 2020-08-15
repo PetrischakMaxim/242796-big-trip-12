@@ -2,7 +2,7 @@ import {createElement} from "../../utils.js";
 import {createRoutesInfo} from "./trip-info-routes.js";
 import {createTotalCostInfo} from "./trip-total-cost.js";
 
-const createTripInfo = (routes) => {
+const createTripInfoTempalte = (routes) => {
   return `<section class="trip-main__trip-info  trip-info">
     ${createRoutesInfo(routes)}
     ${createTotalCostInfo(routes)}
@@ -16,7 +16,7 @@ export default class TripInfo {
   }
 
   getTemplate() {
-    return createTripInfo(this._routes);
+    return createTripInfoTempalte(this._routes);
   }
 
   getElement() {

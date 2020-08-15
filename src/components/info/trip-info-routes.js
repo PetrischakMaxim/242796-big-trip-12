@@ -8,7 +8,11 @@ export const createRoutesInfo = (routes) => {
   const endDate = getFormatedDate(routes[routes.length - 1].tripDates.end);
   return `
   <div class="trip-info__main">
-    <h1 class="trip-info__title">${startRoute} — ${middleRoute} — ${endRoute}</h1>
-    <p class="trip-info__dates">${startDate}&nbsp;—&nbsp;${endDate}</p>
+    <h1 class="trip-info__title">
+      ${startRoute} — ${middleRoute} — ${endRoute}
+    </h1>
+    <p class="trip-info__dates">
+      ${startDate}&nbsp;—&nbsp;${endDate}
+    </p>
   </div>`;
 };

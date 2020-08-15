@@ -1,6 +1,6 @@
 import {createElement} from "../../utils.js";
 
-const createSortForm = () => {
+const createSortFormTemplate = () => {
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
   <span class="trip-sort__item  trip-sort__item--day">Day</span>
   <div class="trip-sort__item  trip-sort__item--event">
@@ -35,7 +35,7 @@ export default class SortForm {
   }
 
   getTemplate() {
-    return createSortForm();
+    return createSortFormTemplate();
   }
 
   getElement() {

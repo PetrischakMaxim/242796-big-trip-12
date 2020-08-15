@@ -19,7 +19,10 @@ export const createEventItemTemplate = (route) => {
           src="img/icons/${waypoint.toLowerCase()}.png"
           alt="${waypoint} icon">
       </div>
-      <h3 class="event__title">${waypoint} ${transfer.includes(waypoint) ? ` to` : ` in`} ${destination}</h3>
+      <h3 class="event__title">
+        ${waypoint} ${transfer.includes(waypoint) ? ` to` : ` in`}
+        ${destination}
+      </h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time"
@@ -32,7 +35,9 @@ export const createEventItemTemplate = (route) => {
             ${getTimeFormat(end)}
           </time>
         </p>
-        <p class="event__duration">${getTimeOfTrip(start, end)}</p>
+        <p class="event__duration">
+          ${getTimeOfTrip(start, end)}
+        </p>
       </div>
       <p class="event__price">
         €&nbsp;<span class="event__price-value">${cost}</span>

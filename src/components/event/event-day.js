@@ -1,7 +1,7 @@
 import {getDateTimeFormat, getFormatedDate, createElement} from "../../utils.js";
 import {createEventList} from "./event-list.js";
 
-const createEventDay = (date, count) => {
+const createEventDayTemplate = (date, count) => {
   const dateTime = getDateTimeFormat(date);
   const formatedDate = getFormatedDate(date).toLowerCase();
   return `<li class="trip-days__item day">
@@ -25,7 +25,7 @@ export default class EventDay {
   }
 
   getTemplate() {
-    return createEventDay(this._date, this._count);
+    return createEventDayTemplate(this._date, this._count);
   }
 
   getElement() {
