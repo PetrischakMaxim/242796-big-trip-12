@@ -1,5 +1,5 @@
 
-const waypointTemplate = (waypoints, currentPoint) => {
+const generateWaypointTemplate = (waypoints, currentPoint) => {
   return waypoints.map((waypoint) => {
     const waypointName = waypoint.toLowerCase();
     return `<div class="event__type-item">
@@ -17,6 +17,6 @@ const waypointTemplate = (waypoints, currentPoint) => {
 export const createTripWaypointTemplate = (type, waypoints, currentPoint) => {
   return `<fieldset class="event__type-group">
     <legend class="visually-hidden">${type}</legend>
-      ${waypointTemplate(waypoints, currentPoint)}
+      ${generateWaypointTemplate(waypoints, currentPoint)}
     </fieldset>`;
 };

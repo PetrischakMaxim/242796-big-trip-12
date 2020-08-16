@@ -1,4 +1,4 @@
-import {createElement} from "../../utils.js";
+import {createElement} from "../../utils/dom-utils.js";
 
 export const createFilterFormTemplate = () => {
   return `<div class="trip-filters-wrapper">
@@ -21,7 +21,7 @@ export const createFilterFormTemplate = () => {
   </div>`;
 };
 
-export default class FilterForm {
+export default class Filter {
   constructor() {
     this._element = null;
   }

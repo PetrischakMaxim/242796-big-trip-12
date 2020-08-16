@@ -1,16 +1,17 @@
 import {createElement} from "../../utils/dom-utils.js";
 
-const createEventDayListTemplate = () => {
-  return `<ul class="trip-days"></ul>`;
+const createNoWaypointTempate = () => {
+  return `<p class="trip-events__msg">Click New Event to create your first point</p>`;
 };
 
-export default class EventDayList {
+
+export default class NoWaypoint {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createEventDayListTemplate();
+    return createNoWaypointTempate();
   }
 
   getElement() {

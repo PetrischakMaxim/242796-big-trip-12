@@ -1,4 +1,4 @@
-const offersTemplate = (offers) => {
+const generateOffersTemplate = (offers) => {
   return offers.map((offer) => {
     const {name, cost} = offer;
     return `
@@ -14,7 +14,7 @@ export const createOffersTemplate = (offers) => {
   return `
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${offersTemplate(offers)}
+      ${generateOffersTemplate(offers)}
     </ul>
   `;
 };

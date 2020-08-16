@@ -1,4 +1,5 @@
-import {getDateAndTimeFormat, getTimeFormat, getTimeOfTrip, createElement} from "../../utils.js";
+import {getDateAndTimeFormat, getTimeFormat, getTimeOfTrip} from "../../utils/utils.js";
+import {createElement} from "../../utils/dom-utils.js";
 import {createOffersTemplate} from "./event-selected-offers.js";
 
 export const createEventItemTemplate = (route) => {

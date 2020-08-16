@@ -1,4 +1,5 @@
-import {getDateTimeFormat, getFormatedDate, createElement} from "../../utils.js";
+import {getDateTimeFormat, getFormatedDate} from "../../utils/utils.js";
+import {createElement} from "../../utils/dom-utils.js";
 import {createEventList} from "./event-list.js";
 
 const createEventDayTemplate = (date, count) => {

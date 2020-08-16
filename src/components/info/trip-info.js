@@ -1,4 +1,4 @@
-import {createElement} from "../../utils.js";
+import {createElement} from "../../utils/dom-utils.js";
 import {createRoutesInfo} from "./trip-info-routes.js";
 import {createTotalCostInfo} from "./trip-total-cost.js";
 

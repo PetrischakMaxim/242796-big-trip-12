@@ -1,5 +1,5 @@
 import {CITY_LIST, WAYPOINT_LIST, OFFER_LIST, TRIP_IMAGE_URL, TRIP_SENTENCE, activity, transfer} from "../const.js";
-import {getRandomInteger, getRandomIndex} from "../utils.js";
+import {getRandomInteger, getRandomIndex} from "../utils/utils.js";
 
 const generateOffers = (offers, count) => {
   return new Array(count).fill().map(() => ({name: getRandomIndex(offers), cost: getRandomInteger(10, 100)}));
@@ -39,8 +39,10 @@ const generateTripDates = () => {
 };
 
 export const generateRoute = () => {
+  const wayPoint = getRandomIndex(WAYPOINT_LIST);
   return {
-    waypoint: getRandomIndex(WAYPOINT_LIST),
+    waypoint: wayPoint,
+    hasWaypoint: (wayPoint) ? true : false,
     waypointTypes: {
       activity,
       transfer
