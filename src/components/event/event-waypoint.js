@@ -1,4 +1,3 @@
-
 const generateWaypointTemplate = (waypoints, currentPoint) => {
   return waypoints.map((waypoint) => {
     const waypointName = waypoint.toLowerCase();

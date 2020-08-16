@@ -1,28 +1,14 @@
-import {createElement} from "../../utils/dom-utils.js";
+import AbstractView from "../abstract.js";
 
 const createNoWaypointTempate = () => {
   return `<p class="trip-events__msg">Click New Event to create your first point</p>`;
 };
 
 
-export default class NoWaypoint {
-  constructor() {
-    this._element = null;
-  }
+export default class NoWaypoint extends AbstractView {
 
   getTemplate() {
     return createNoWaypointTempate();
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }

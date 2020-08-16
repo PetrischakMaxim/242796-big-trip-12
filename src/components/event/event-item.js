@@ -1,5 +1,5 @@
+import AbstractView from "../abstract.js";
 import {getDateAndTimeFormat, getTimeFormat, getTimeOfTrip} from "../../utils/utils.js";
-import {createElement} from "../../utils/dom-utils.js";
 import {createOffersTemplate} from "./event-selected-offers.js";
 
 export const createEventItemTemplate = (route) => {
@@ -52,26 +52,15 @@ export const createEventItemTemplate = (route) => {
 };
 
 
-export default class EventItem {
+export default class EventItem extends AbstractView {
   constructor(route) {
+    super();
     this._element = null;
     this._route = route;
   }
 
   getTemplate() {
     return createEventItemTemplate(this._route);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

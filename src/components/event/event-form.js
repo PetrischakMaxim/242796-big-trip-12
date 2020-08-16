@@ -1,6 +1,6 @@
+import AbstractView from "../abstract.js";
 import {CITY_LIST, BLANK_TASK} from "../../const.js";
 import {getTimeFormat, formatDateToPlaceholder} from "../../utils/utils.js";
-import {createElement} from "../../utils/dom-utils.js";
 import {createTripOffersTemplate} from "./event-offers.js";
 import {createTripDetailsTemplate} from "./event-details.js";
 import {createTripCityListTemplate} from "./event-city-list.js";
@@ -77,26 +77,15 @@ const createEventFormTemplate = (route) => {
 };
 
 
-export default class EventForm {
+export default class EventForm extends AbstractView {
   constructor(task) {
+    super();
     this._task = task || BLANK_TASK;
     this._element = null;
   }
 
   getTemplate() {
     return createEventFormTemplate(this._task);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
