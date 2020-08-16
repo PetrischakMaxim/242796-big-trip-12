@@ -63,23 +63,23 @@ const renderEvent = (eventListElement, route) => {
 
   render(eventListElement, eventComponent.getElement());
 };
+if (routes.every((route) => !route.hasWaypoint || routes.length === 0)) {
+  render(tripEventsElement, new NoWaypointView().getElement());
+} else {
+  let dayCounter = 1;
+  let routeIndex = 0;
+  const {start: startDate} = routes[0].tripDates;
+  let currentDay = startDate.getDate();
+  const lastDay = routes[routes.length - 1].tripDates.start.getDate();
+  let currentDate = startDate;
 
-let dayCounter = 1;
-let routeIndex = 0;
-const {start: startDate} = routes[0].tripDates;
-let currentDay = startDate.getDate();
-const lastDay = routes[routes.length - 1].tripDates.start.getDate();
-let currentDate = startDate;
+  for (let day = currentDay; day <= lastDay; day++) {
 
-for (let day = currentDay; day <= lastDay; day++) {
+    render(dayListComponent.getElement(), new EventDayView(currentDate, dayCounter).getElement());
+    const tripEventList = dayListComponent.getElement().querySelectorAll(`.trip-events__list`);
+    const tripEventListElement = tripEventList[tripEventList.length - 1];
 
-  render(dayListComponent.getElement(), new EventDayView(currentDate, dayCounter).getElement());
-  const tripEventList = dayListComponent.getElement().querySelectorAll(`.trip-events__list`);
-  const tripEventListElement = tripEventList[tripEventList.length - 1];
 
-  if (routes.every((route) => !route.hasWaypoint)) {
-    render(tripEventsElement, new NoWaypointView().getElement());
-  } else {
     for (let i = routeIndex; i < TASK_COUNT; i++) {
       const {start} = routes[i].tripDates;
       if (start.getDate() === currentDay) {
@@ -93,6 +93,7 @@ for (let day = currentDay; day <= lastDay; day++) {
       }
     }
   }
+
 }
 
 

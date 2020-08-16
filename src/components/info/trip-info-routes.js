@@ -1,11 +1,28 @@
-import {getFormatedDate} from '../../utils/utils.js';
+import {getFormatedDate, getRandomIndex} from '../../utils/utils.js';
+import {BLANK_TASK} from '../../const.js';
 
 export const createRoutesInfo = (routes) => {
-  const startRoute = routes[0].destination;
-  const middleRoute = routes[Math.floor(routes.length) / 2].destination;
-  const endRoute = routes[routes.length - 1].destination;
-  const startDate = getFormatedDate(routes[1].tripDates.start);
-  const endDate = getFormatedDate(routes[routes.length - 1].tripDates.end);
+  let startRoute;
+  let middleRoute;
+  let endRoute;
+  let startDate;
+  let endDate;
+  if (routes.length === 0) {
+    routes = BLANK_TASK;
+    startRoute = routes.destination;
+    middleRoute = ``;
+    endRoute = ``;
+    startDate = getFormatedDate(routes.tripDates.start);
+    endDate = getFormatedDate(routes.tripDates.end);
+  } else {
+    startRoute = routes[0].destination;
+    middleRoute = getRandomIndex(routes).destination;
+    endRoute = routes[routes.length - 1].destination;
+    startDate = getFormatedDate(routes[0].tripDates.start);
+    endDate = getFormatedDate(routes[routes.length - 1].tripDates.end);
+  }
+
+
   return `
   <div class="trip-info__main">
     <h1 class="trip-info__title">
