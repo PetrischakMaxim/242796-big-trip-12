@@ -9,7 +9,7 @@ import EventItemView from "./components/event/event-item.js";
 import NoWaypointView from "./components/event/no-event-waypoint.js";
 
 import {generateRoute} from "./mock/route.js";
-import {render, RenderPosition} from "./utils/dom-utils.js";
+import {render, replace, RenderPosition} from "./utils/dom-utils.js";
 
 const TASK_COUNT = 8;
 const routes = new Array(TASK_COUNT).fill().map(generateRoute);
@@ -18,9 +18,9 @@ const pageHeaderElement = document.querySelector(`.page-header`);
 const tripMainInfoElement = pageHeaderElement.querySelector(`.trip-main`);
 const controlsWrapper = tripMainInfoElement.querySelector(`.trip-controls`);
 
-render(tripMainInfoElement, new TripInfoView(routes).getElement(), RenderPosition.AFTERBEGIN);
-render(controlsWrapper, new TabsView().getElement(), RenderPosition.AFTERBEGIN);
-render(controlsWrapper, new FilterView().getElement());
+render(tripMainInfoElement, new TripInfoView(routes), RenderPosition.AFTERBEGIN);
+render(controlsWrapper, new TabsView(), RenderPosition.AFTERBEGIN);
+render(controlsWrapper, new FilterView());
 
 const pageMainElement = document.querySelector(`.page-main`);
 const pageMainContainer = pageMainElement.querySelector(
@@ -28,40 +28,37 @@ const pageMainContainer = pageMainElement.querySelector(
 );
 
 const tripEventsElement = pageMainContainer.querySelector(`.trip-events`);
-render(tripEventsElement, new SortView().getElement());
+render(tripEventsElement, new SortView());
 
 const dayListComponent = new EventDayListView();
-render(pageMainContainer, dayListComponent.getElement());
+render(pageMainContainer, dayListComponent);
 
 const renderEvent = (eventListElement, route) => {
   const eventComponent = new EventItemView(route);
   const eventFormComponent = new EventFormView(route);
 
-  const replaceEventItemState = (newElement, oldElement) => {
-    eventListElement.replaceChild(newElement.getElement(), oldElement.getElement());
-  };
   const onEscKeyDown = (evt) => {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
-      replaceEventItemState(eventComponent, eventFormComponent);
+      replace(eventComponent, eventFormComponent);
       document.removeEventListener(`keydown`, onEscKeyDown);
     }
   };
 
   eventComponent.setClickHandler(() => {
-    replaceEventItemState(eventFormComponent, eventComponent);
+    replace(eventFormComponent, eventComponent);
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   eventFormComponent.setFormSubmitHandler(() => {
-    replaceEventItemState(eventComponent, eventFormComponent);
+    replace(eventComponent, eventFormComponent);
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  render(eventListElement, eventComponent.getElement());
+  render(eventListElement, eventComponent);
 };
 if (routes.every((route) => !route.hasWaypoint || routes.length === 0)) {
-  render(tripEventsElement, new NoWaypointView().getElement());
+  render(tripEventsElement, new NoWaypointView());
 } else {
   let dayCounter = 1;
   let routeIndex = 0;
@@ -72,10 +69,9 @@ if (routes.every((route) => !route.hasWaypoint || routes.length === 0)) {
 
   for (let day = currentDay; day <= lastDay; day++) {
 
-    render(dayListComponent.getElement(), new EventDayView(currentDate, dayCounter).getElement());
+    render(dayListComponent, new EventDayView(currentDate, dayCounter));
     const tripEventList = dayListComponent.getElement().querySelectorAll(`.trip-events__list`);
     const tripEventListElement = tripEventList[tripEventList.length - 1];
-
 
     for (let i = routeIndex; i < TASK_COUNT; i++) {
       const {start} = routes[i].tripDates;
