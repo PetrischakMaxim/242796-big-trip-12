@@ -53,14 +53,29 @@ export const createEventItemTemplate = (route) => {
 
 
 export default class EventItem extends AbstractView {
+
   constructor(route) {
     super();
-    this._element = null;
     this._route = route;
+
+    this._onClilk = this._onClilk.bind(this);
+
   }
 
   getTemplate() {
     return createEventItemTemplate(this._route);
   }
+
+  _onClilk() {
+    this._clickHandler();
+  }
+
+  setClickHandler(callback) {
+    this._clickHandler = callback;
+    this.getElement()
+      .querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, this._onClilk);
+  }
+
 }
 

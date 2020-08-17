@@ -48,15 +48,12 @@ const renderEvent = (eventListElement, route) => {
     }
   };
 
-  const eventComponentBtn = eventComponent.getElement().querySelector(`.event__rollup-btn`);
-  eventComponentBtn.addEventListener(`click`, () => {
+  eventComponent.setClickHandler(() => {
     replaceEventItemState(eventFormComponent, eventComponent);
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  const formComponent = eventFormComponent.getElement().querySelector(`.event`);
-  formComponent.addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
+  eventFormComponent.setFormSubmitHandler(() => {
     replaceEventItemState(eventComponent, eventFormComponent);
     document.addEventListener(`keydown`, onEscKeyDown);
   });

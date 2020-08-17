@@ -81,11 +81,25 @@ export default class EventForm extends AbstractView {
   constructor(task) {
     super();
     this._task = task || BLANK_TASK;
-    this._element = null;
+    this._submitHandler = {};
+
+    this._onSubmit = this._onSubmit.bind(this);
   }
 
   getTemplate() {
     return createEventFormTemplate(this._task);
+  }
+
+  _onSubmit(evt) {
+    evt.preventDefault();
+    this._submitHandler();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._submitHandler = callback;
+    this.getElement()
+      .querySelector(`.event`)
+      .addEventListener(`submit`, this._onSubmit);
   }
 }
 
