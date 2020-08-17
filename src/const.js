@@ -59,3 +59,6 @@ export const BLANK_TASK = {
   hasOffers: false,
   hasInfo: false,
 };
+
+
+export const TASK_COUNT = 8;
