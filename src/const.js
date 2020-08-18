@@ -61,4 +61,4 @@ export const BLANK_TASK = {
 };
 
 
-export const TASK_COUNT = 8;
+export const TRIP_COUNT = 8;

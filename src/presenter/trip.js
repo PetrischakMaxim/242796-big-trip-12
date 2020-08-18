@@ -4,10 +4,8 @@ import EventDayView from "../components/event/event-day.js";
 import EventItemView from "../components/event/event-item.js";
 import EventFormView from "../components/event/event-form.js";
 import NoWaypointView from "../components/event/no-event-waypoint.js";
+
 import {render, replace} from "../utils/dom-utils.js";
-
-import {TASK_COUNT} from "../const.js";
-
 
 export default class Trip {
   constructor(container) {
@@ -21,8 +19,10 @@ export default class Trip {
     this._tripEventList = null;
   }
 
-  init(routes) {
+  init(routes, count) {
     this._routes = [...routes];
+    this._routesLength = this._routes.length;
+    this._tripCount = count;
 
     this._renderSort();
     this._renderDayList();
@@ -76,7 +76,7 @@ export default class Trip {
     let routeIndex = 0;
     const {start: startDate} = this._routes[0].tripDates;
     let currentDay = startDate.getDate();
-    const lastDay = this._routes[this._routes.length - 1].tripDates.start.getDate();
+    const lastDay = this._routes[this._routesLength - 1].tripDates.start.getDate();
     let currentDate = startDate;
 
     for (let day = currentDay; day <= lastDay; day++) {
@@ -85,7 +85,7 @@ export default class Trip {
 
       this._tripEventList = this._getTripDayList(this._dayListComponent);
 
-      for (let i = routeIndex; i < TASK_COUNT; i++) {
+      for (let i = routeIndex; i < this._tripCount; i++) {
         const {start} = this._routes[i].tripDates;
         if (start.getDate() === currentDay) {
           this._renderEvent(this._tripEventList, this._routes[i]);
@@ -101,7 +101,7 @@ export default class Trip {
   }
 
   _renderTrip() {
-    if (this._routes.every((route) => !route.hasWaypoint || this._routes.length === 0)) {
+    if (this._routes.every((route) => !route.hasWaypoint || this._routesLength === 0)) {
       this._renderNoWaypoints();
     } else {
       this._renderWaypoints();

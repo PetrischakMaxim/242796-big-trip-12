@@ -22,7 +22,6 @@ const createEventDayTemplate = (date, count) => {
 export default class EventDay extends AbstractView {
   constructor(date, count) {
     super();
-    this._element = null;
     this._date = date;
     this._count = count;
   }

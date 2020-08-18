@@ -5,9 +5,9 @@ import TripPresenter from "./presenter/trip.js";
 
 import {generateRoute} from "./mock/route.js";
 import {render, RenderPosition} from "./utils/dom-utils.js";
-import {TASK_COUNT} from "./const.js";
+import {TRIP_COUNT} from "./const.js";
 
-const routes = new Array(TASK_COUNT).fill().map(generateRoute);
+const routes = new Array(TRIP_COUNT).fill().map(generateRoute);
 
 const pageHeaderElement = document.querySelector(`.page-header`);
 const tripMainInfoElement = pageHeaderElement.querySelector(`.trip-main`);
@@ -23,6 +23,6 @@ const pageMainContainer = pageMainElement.querySelector(
 );
 
 
-new TripPresenter(pageMainContainer).init(routes);
+new TripPresenter(pageMainContainer).init(routes, TRIP_COUNT);
 
 
