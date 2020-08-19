@@ -1,4 +1,4 @@
-import {createElement} from "../../utils/dom-utils.js";
+import AbstractView from "../abstract.js";
 
 export const createTabsTemplate = () => {
   return `<div class="trip-controls-wrapper">
@@ -10,24 +10,10 @@ export const createTabsTemplate = () => {
   </div>`;
 };
 
-export default class PageTabs {
-  constructor() {
-    this._element = null;
-  }
+export default class PageTabs extends AbstractView {
 
   getTemplate() {
     return createTabsTemplate();
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }

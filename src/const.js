@@ -59,3 +59,6 @@ export const BLANK_TASK = {
   hasOffers: false,
   hasInfo: false,
 };
+
+
+export const TRIP_COUNT = 8;

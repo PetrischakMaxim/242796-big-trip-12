@@ -1,5 +1,5 @@
+import AbstractView from "../abstract.js";
 import {getDateAndTimeFormat, getTimeFormat, getTimeOfTrip} from "../../utils/utils.js";
-import {createElement} from "../../utils/dom-utils.js";
 import {createOffersTemplate} from "./event-selected-offers.js";
 
 export const createEventItemTemplate = (route) => {
@@ -52,26 +52,30 @@ export const createEventItemTemplate = (route) => {
 };
 
 
-export default class EventItem {
+export default class EventItem extends AbstractView {
+
   constructor(route) {
-    this._element = null;
+    super();
     this._route = route;
+
+    this._onClilk = this._onClilk.bind(this);
+
   }
 
   getTemplate() {
     return createEventItemTemplate(this._route);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _onClilk() {
+    this._clickHandler();
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandler(callback) {
+    this._clickHandler = callback;
+    this.getElement()
+      .querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, this._onClilk);
   }
+
 }
 

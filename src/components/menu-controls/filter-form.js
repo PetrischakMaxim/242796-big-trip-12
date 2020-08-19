@@ -1,4 +1,4 @@
-import {createElement} from "../../utils/dom-utils.js";
+import AbstractView from "../abstract.js";
 
 export const createFilterFormTemplate = () => {
   return `<div class="trip-filters-wrapper">
@@ -21,24 +21,10 @@ export const createFilterFormTemplate = () => {
   </div>`;
 };
 
-export default class Filter {
-  constructor() {
-    this._element = null;
-  }
+export default class Filter extends AbstractView {
 
   getTemplate() {
     return createFilterFormTemplate();
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }
