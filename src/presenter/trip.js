@@ -53,10 +53,7 @@ export default class Trip {
     }
     this._sortTripEvents(sortType);
     this._clearTripList();
-    this._routes.forEach((route)=> {
-      this._renderEvent(this._eventsInDayList[0], route);
-    });
-
+    this._renderWaypoints(this._routes);
   }
 
   _renderSort() {
@@ -103,28 +100,27 @@ export default class Trip {
   }
 
   _renderWaypoints(routes) {
-    this._renderDayList();
-    let routeIndex = 0;
-    const {start: startDate} = routes[0].tripDates;
-    let currentDay = startDate.getDate();
-    const lastDay = routes[this._routesLength - 1].tripDates.start.getDate();
-    let currentDate = startDate;
-    const days = lastDay - currentDay + 1;
-
-    Array(days).fill().forEach((_, tripDay) => {
-      this._renderDays(currentDate, tripDay);
-      for (let i = routeIndex; i < this._tripCount; i++) {
-        const {start} = this._routes[i].tripDates;
-        if (start.getDate() === currentDay) {
-          this._renderEvent(this._getTripDayList(this._dayListContainer), this._routes[i]);
-        } else {
-          currentDay = start.getDate();
-          currentDate = start;
-          routeIndex = i;
-          break;
-        }
-      }
+    this._prepareEventsList(routes).forEach((events, counter) => {
+      this._renderDays(events[0].tripDates.start, counter);
+      this._dayCount = counter + 1;
+      events.map((event) => {
+        this._renderEvent(this._getTripDayList(this._dayListContainer), event);
+      });
     });
+  }
+
+  _prepareEventsList(routes) {
+    const eventsByDays = new Map();
+    for (let event of routes) {
+      const date = event.tripDates.start.getDate();
+      const day = eventsByDays.get(date);
+      if (day) {
+        day.push(event);
+      } else {
+        eventsByDays.set(date, Array.of(event));
+      }
+    }
+    return [...eventsByDays.values()];
   }
 
   _renderDays(date, counter) {
@@ -132,10 +128,7 @@ export default class Trip {
   }
 
   _clearTripList() {
-    this._eventsInDayList.forEach((elem) =>{
-      elem.innerHTML = ``;
-    });
-    this._renderedTripCount = this._tripCount;
+    this._dayListContainer.getElement().innerHTML = ``;
   }
 
   _renderTrip() {
@@ -148,6 +141,7 @@ export default class Trip {
 
   _renderTripBoard() {
     this._renderSort();
+    this._renderDayList();
     this._renderTrip();
   }
 }
