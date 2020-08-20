@@ -62,3 +62,9 @@ export const BLANK_TASK = {
 
 
 export const TRIP_COUNT = 8;
+
+export const SortType = {
+  DEFAULT: `event`,
+  TIME: `time`,
+  PRICE: `price`
+};

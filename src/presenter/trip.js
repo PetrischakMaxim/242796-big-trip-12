@@ -6,6 +6,8 @@ import EventFormView from "../components/event/event-form.js";
 import NoWaypointView from "../components/event/no-event-waypoint.js";
 
 import {render, replace} from "../utils/dom-utils.js";
+import {sortPrice, sortDate} from "../utils/utils.js";
+import {SortType} from "../const.js";
 
 export default class Trip {
 
@@ -17,19 +19,48 @@ export default class Trip {
     this._dayListComponent = new EventDayListView();
     this._eventDayComponent = new EventDayView();
     this._noWaypointComponent = new NoWaypointView();
+    this._currentSortType = SortType.DEFAULT;
     this._tripEventList = null;
+
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
   init(routes, count) {
     this._routes = [...routes];
+    this._sourceRoutes = [...routes];
     this._routesLength = this._routes.length;
     this._tripCount = count;
 
     this._renderTripBoard();
   }
 
+  _sortTasks(sortType) {
+    switch (sortType) {
+      case SortType.TIME:
+        this._routes.sort(sortDate);
+        break;
+      case SortType.PRICE:
+        this._routes.sort(sortPrice);
+        break;
+      default:
+        this._routes = [...this._sourceRoutes];
+    }
+
+    this._currentSortType = sortType;
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+    this._sortTasks(sortType);
+    this._clearTripList();
+    this._showSortedTripList();
+  }
+
   _renderSort() {
     render(this._containerInner, this._sortComponent);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderDayList() {
@@ -95,6 +126,15 @@ export default class Trip {
       }
 
     });
+  }
+
+  _clearTripList() {
+    this._dayListComponent.getElement().innerHTML = ``;
+    this._renderedTaskCount = this._tripCount;
+  }
+
+  _showSortedTripList() {
+    this._renderWaypoints();
   }
 
   _renderTrip() {
