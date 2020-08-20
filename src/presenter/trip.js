@@ -16,11 +16,9 @@ export default class Trip {
     this._containerInner = this._container.querySelector(`.trip-events`);
 
     this._sortComponent = new SortView();
-    this._dayListComponent = new EventDayListView();
-    this._eventDayComponent = new EventDayView();
-    this._noWaypointComponent = new NoWaypointView();
+    this._dayListContainer = new EventDayListView();
+    this._emptyWaypointComponent = new NoWaypointView();
     this._currentSortType = SortType.DEFAULT;
-    this._tripEventList = null;
 
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
@@ -55,7 +53,7 @@ export default class Trip {
     }
     this._sortTasks(sortType);
     this._clearTripList();
-    this._showSortedTripList();
+    this._renderWaypoints();
   }
 
   _renderSort() {
@@ -64,14 +62,14 @@ export default class Trip {
   }
 
   _renderDayList() {
-    render(this._container, this._dayListComponent);
+    render(this._container, this._dayListContainer);
   }
 
   _renderNoWaypoints() {
-    render(this._containerInner, this._noWaypointComponent);
+    render(this._containerInner, this._emptyWaypointComponent);
   }
 
-  _renderEvent(eventListElement, route) {
+  _renderEvent(routeListElement, route) {
     const eventComponent = new EventItemView(route);
     const eventFormComponent = new EventFormView(route);
 
@@ -93,7 +91,7 @@ export default class Trip {
       document.addEventListener(`keydown`, onEscKeyDown);
     });
 
-    render(eventListElement, eventComponent);
+    render(routeListElement, eventComponent);
   }
 
   _getTripDayList(dayList) {
@@ -102,6 +100,7 @@ export default class Trip {
   }
 
   _renderWaypoints() {
+    this._renderDayList();
     let routeIndex = 0;
     const {start: startDate} = this._routes[0].tripDates;
     let currentDay = startDate.getDate();
@@ -109,14 +108,13 @@ export default class Trip {
     let currentDate = startDate;
     const days = lastDay - currentDay + 1;
 
-    Array(days).fill().forEach((_, index) => {
-      render(this._dayListComponent, new EventDayView(currentDate, index + 1));
-      this._tripEventList = this._getTripDayList(this._dayListComponent);
-
+    Array(days).fill().forEach((_, tripDay) => {
+      render(this._dayListContainer, new EventDayView(currentDate, tripDay + 1));
+      const tripEventList = this._getTripDayList(this._dayListContainer);
       for (let i = routeIndex; i < this._tripCount; i++) {
         const {start} = this._routes[i].tripDates;
         if (start.getDate() === currentDay) {
-          this._renderEvent(this._tripEventList, this._routes[i]);
+          this._renderEvent(tripEventList, this._routes[i]);
         } else {
           currentDay = start.getDate();
           currentDate = start;
@@ -124,17 +122,12 @@ export default class Trip {
           break;
         }
       }
-
     });
   }
 
   _clearTripList() {
-    this._dayListComponent.getElement().innerHTML = ``;
+    this._dayListContainer.getElement().innerHTML = ``;
     this._renderedTaskCount = this._tripCount;
-  }
-
-  _showSortedTripList() {
-    this._renderWaypoints();
   }
 
   _renderTrip() {
@@ -147,7 +140,6 @@ export default class Trip {
 
   _renderTripBoard() {
     this._renderSort();
-    this._renderDayList();
     this._renderTrip();
   }
 }
