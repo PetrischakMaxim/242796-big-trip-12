@@ -1,15 +1,16 @@
 import EventItemView from "../components/event/event-item.js";
 import EventFormView from "../components/event/event-form.js";
 
-import {render, replace} from "../utils/dom-utils.js";
+import {render, replace, remove} from "../utils/dom-utils.js";
 
 export default class Waypoint {
 
   constructor(container) {
     this._container = container;
 
+
     this._eventComponent = null;
-    this._eventFormComponent = null;
+    this._eventEditComponent = null;
 
     this._clickHandler = this._clickHandler.bind(this);
     this._submitHandler = this._submitHandler.bind(this);
@@ -20,22 +21,44 @@ export default class Waypoint {
   init(waypoint) {
     this._waypoint = waypoint;
 
+    const prevEventComponent = this._eventComponent;
+    const prevEventEditComponent = this._eventEditComponent;
+
     this._eventComponent = new EventItemView(waypoint);
-    this._eventFormComponent = new EventFormView(waypoint);
+    this._eventEditComponent = new EventFormView(waypoint);
 
     this._eventComponent.setClickHandler(this._clickHandler);
-    this._eventFormComponent.setFormSubmitHandler(this._submitHandler);
+    this._eventEditComponent.setFormSubmitHandler(this._submitHandler);
 
-    render(this._container, this._eventComponent);
+    if (prevEventComponent === null || prevEventEditComponent === null) {
+      render(this._container, this._eventComponent);
+      return;
+    }
+
+    if (this._container.getElement().contains(prevEventComponent.getElement())) {
+      replace(this._eventComponent, prevEventComponent);
+    }
+
+    if (this._container.getElement().contains(prevEventEditComponent.getElement())) {
+      replace(this._eventEditComponent, prevEventEditComponent);
+    }
+
+    remove(prevEventComponent);
+    remove(prevEventEditComponent);
+  }
+
+  destroy() {
+    remove(this._eventComponent);
+    remove(this._eventEditComponent);
   }
 
   _replaceEventToEditForm() {
-    replace(this._eventComponent, this._eventFormComponent);
+    replace(this._eventComponent, this._eventEditComponent);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
   _replaceEditFormToEvent() {
-    replace(this._eventFormComponent, this._eventComponent);
+    replace(this._eventEditComponent, this._eventComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
