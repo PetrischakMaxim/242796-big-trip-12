@@ -12,7 +12,7 @@ export default class Waypoint {
     this._eventEditComponent = null;
 
     this._clickHandler = this._clickHandler.bind(this);
-    this._submitHandler = this._submitHandler.bind(this);
+    this._formCloseHandler = this._formCloseHandler.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
@@ -26,7 +26,8 @@ export default class Waypoint {
     this._eventEditComponent = new EventFormView(waypoint);
 
     this._eventComponent.setClickHandler(this._clickHandler);
-    this._eventEditComponent.setFormSubmitHandler(this._submitHandler);
+    this._eventEditComponent.setFormSubmitHandler(this._formCloseHandler);
+    this._eventEditComponent.setCloseButtonHandler(this._formCloseHandler);
 
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
@@ -66,7 +67,7 @@ export default class Waypoint {
     this._replaceEventToEditForm();
   }
 
-  _submitHandler() {
+  _formCloseHandler() {
     this._replaceEditFormToEvent();
   }
 

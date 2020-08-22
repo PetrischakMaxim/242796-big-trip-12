@@ -89,9 +89,10 @@ export default class EventForm extends AbstractView {
   constructor(task) {
     super();
     this._task = task || BLANK_TASK;
-    this._submitHandler = null;
+    this._formCloseHandler = null;
 
     this._onSubmit = this._onSubmit.bind(this);
+    this._onClick = this._onClick.bind(this);
   }
 
   getTemplate() {
@@ -99,15 +100,26 @@ export default class EventForm extends AbstractView {
   }
 
   setFormSubmitHandler(callback) {
-    this._submitHandler = callback;
+    this._formCloseHandler = callback;
     this.getElement()
       .querySelector(`.event`)
       .addEventListener(`submit`, this._onSubmit);
   }
 
+  setCloseButtonHandler(callback) {
+    this._formCloseHandler = callback;
+    this.getElement()
+      .querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, this._onClick);
+  }
+
   _onSubmit(evt) {
     evt.preventDefault();
-    this._submitHandler();
+    this._formCloseHandler();
+  }
+
+  _onClick() {
+    this._formCloseHandler();
   }
 
 }
