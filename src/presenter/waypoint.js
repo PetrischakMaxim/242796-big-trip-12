@@ -28,4 +28,30 @@ export default class Waypoint {
 
     render(this._container, this._eventComponent);
   }
+
+  _replaceEventToEditForm() {
+    replace(this._eventComponent, this._eventFormComponent);
+    document.addEventListener(`keydown`, this._escKeyDownHandler);
+  }
+
+  _replaceEditFormToEvent() {
+    replace(this._eventFormComponent, this._eventComponent);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
+  }
+
+  _clickHandler() {
+    this._replaceEventToEditForm();
+  }
+
+  _submitHandler() {
+    this._replaceEditFormToEvent();
+  }
+
+  _escKeyDownHandler(evt) {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      this._replaceEditFormToEvent();
+    }
+  }
+
 }
