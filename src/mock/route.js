@@ -74,6 +74,7 @@ export const generateRoute = () => {
     cost: getRandomInteger(30, 200),
     hasInfo: Boolean(getRandomInteger(0, 1)),
     hasOffers: Boolean(getRandomInteger(0, 1)),
+    isFavorite: Boolean(getRandomInteger(0, 1)),
     info: generateDescription(),
     offers: generateOffers(OFFER_LIST, getRandomInteger(0, 3)),
   };
