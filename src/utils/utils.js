@@ -22,3 +22,8 @@ export const getTimeOfTrip = (d1, d2) => {
   diff /= (60 * 60);
   return Math.abs(Math.round(diff)) + `H`;
 };
+
+
+export const sortPrice = (min, max) => (max.cost - min.cost);
+
+export const sortDate = (d1, d2) => (d2.tripDates.start.getTime() - d1.tripDates.start.getTime());
