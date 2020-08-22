@@ -1,6 +1,7 @@
 import SortView from "../components/sort-form/sort-form.js";
-import EventDayListView from "../components/event/event-day-list.js";
+import EventDaysContainerView from "../components/event/event-day-list.js";
 import EventDayView from "../components/event/event-day.js";
+import EventsListInDayView from "../components/event/event-list.js";
 import NoWaypointView from "../components/event/no-event-waypoint.js";
 import WaypointPresenter from "./waypoint.js";
 
@@ -17,10 +18,11 @@ export default class Trip {
     this._daysCount = null;
 
     this._sortComponent = new SortView();
-    this._dayListContainer = new EventDayListView();
+    this._eventDaysContainer = new EventDaysContainerView();
     this._emptyWaypointComponent = new NoWaypointView();
     this._currentSortType = SortType.DEFAULT;
     this._waypointPresenter = null;
+    this._eventsListInDay = null;
 
     this._handleSortChange = this._handleSortChange.bind(this);
   }
@@ -31,6 +33,7 @@ export default class Trip {
     this._routesLength = this._routes.length;
     this._tripCount = count;
     this._waypointPresenter = {};
+    this._eventsListInDay = [];
 
     this._renderTripBoard();
   }
@@ -56,8 +59,13 @@ export default class Trip {
     }
     this._sortTripEvents(sortType);
     this._clearTripList();
-    // this._renderWaypoints(this._routes);
-    this._renderEvents(this._routes);
+
+    this._prepareEventsList(this._routes)
+      .forEach((events, i) => {
+        events.forEach((event) => {
+          this._renderEvent(this._eventsListInDay[i], event);
+        });
+      });
   }
 
   _renderSort() {
@@ -65,8 +73,8 @@ export default class Trip {
     this._sortComponent.setSortChangeHandler(this._handleSortChange);
   }
 
-  _renderDayList() {
-    render(this._container, this._dayListContainer);
+  _renderDayListContainer() {
+    render(this._container, this._eventDaysContainer);
   }
 
   _renderNoWaypoints() {
@@ -77,24 +85,6 @@ export default class Trip {
     const waypointPresenter = new WaypointPresenter(container);
     waypointPresenter.init(event);
     this._waypointPresenter[event.id] = waypointPresenter;
-  }
-
-  _getCurrentTripList(dayList) {
-    this._eventsInDayList = dayList.getElement().querySelectorAll(`.trip-events__list`);
-    return this._eventsInDayList[this._eventsInDayList.length - 1];
-  }
-
-  _renderWaypoints(routes) {
-    this._prepareEventsList(routes).forEach((events, counter) => {
-      this._renderDays(events[0].tripDates.start, counter);
-      // this._renderEvents(events);
-    });
-  }
-
-  _renderEvents(events) {
-    events.map((event) => {
-      this._renderEvent(this._getCurrentTripList(this._dayListContainer), event);
-    });
   }
 
   _prepareEventsList(routes) {
@@ -111,21 +101,27 @@ export default class Trip {
     return [...eventsByDays.values()];
   }
 
-  _renderDays(date, counter) {
-    render(this._dayListContainer, new EventDayView(date, counter + 1));
+  _renderEventDay(events, date, counter) {
+    const dayInList = new EventDayView(date, counter + 1);
+    const eventsList = new EventsListInDayView().getElement();
+    render(this._eventDaysContainer, dayInList);
+    render(dayInList.getElement(), eventsList);
     this._daysCount = counter + 1;
+    events.forEach((event) => this._renderEvent(eventsList, event));
+    this._eventsListInDay.push(eventsList);
   }
 
-  _clearTripList() {
-    Object
-      .values(this._waypointPresenter)
-      .forEach((presenter) => presenter.destroy());
-    this._waypointPresenter = {};
-    this._tripCount = TRIP_COUNT;
+  _renderWaypoints(routes) {
+    this._prepareEventsList(routes)
+    .forEach((events, counter) => {
+      this._renderEventDay(events, events[0].tripDates.start, counter);
+    });
   }
 
   _renderTrip() {
-    if (this._routes.every((route) => !route.hasWaypoint || this._routesLength === 0)) {
+    if (this._routes.every((route) =>
+      !route.hasWaypoint ||
+      this._routesLength === 0)) {
       this._renderNoWaypoints();
     } else {
       this._renderWaypoints(this._routes);
@@ -134,7 +130,15 @@ export default class Trip {
 
   _renderTripBoard() {
     this._renderSort();
-    this._renderDayList();
+    this._renderDayListContainer();
     this._renderTrip();
+  }
+
+  _clearTripList() {
+    Object
+      .values(this._waypointPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._waypointPresenter = {};
+    this._tripCount = TRIP_COUNT;
   }
 }

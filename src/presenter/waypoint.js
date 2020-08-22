@@ -8,7 +8,6 @@ export default class Waypoint {
   constructor(container) {
     this._container = container;
 
-
     this._eventComponent = null;
     this._eventEditComponent = null;
 
@@ -19,7 +18,6 @@ export default class Waypoint {
 
   init(waypoint) {
     this._waypoint = waypoint;
-
 
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
