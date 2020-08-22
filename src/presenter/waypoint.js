@@ -15,11 +15,11 @@ export default class Waypoint {
     this._clickHandler = this._clickHandler.bind(this);
     this._submitHandler = this._submitHandler.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
-
   }
 
   init(waypoint) {
     this._waypoint = waypoint;
+
 
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
@@ -30,18 +30,20 @@ export default class Waypoint {
     this._eventComponent.setClickHandler(this._clickHandler);
     this._eventEditComponent.setFormSubmitHandler(this._submitHandler);
 
+
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._container, this._eventComponent);
       return;
     }
 
-    if (this._container.getElement().contains(prevEventComponent.getElement())) {
+    if (this._container.contains(prevEventComponent.getElement())) {
       replace(this._eventComponent, prevEventComponent);
     }
 
-    if (this._container.getElement().contains(prevEventEditComponent.getElement())) {
+    if (this._container.contains(prevEventEditComponent.getElement())) {
       replace(this._eventEditComponent, prevEventEditComponent);
     }
+
 
     remove(prevEventComponent);
     remove(prevEventEditComponent);
@@ -53,12 +55,12 @@ export default class Waypoint {
   }
 
   _replaceEventToEditForm() {
-    replace(this._eventComponent, this._eventEditComponent);
+    replace(this._eventEditComponent, this._eventComponent);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
   _replaceEditFormToEvent() {
-    replace(this._eventEditComponent, this._eventComponent);
+    replace(this._eventComponent, this._eventEditComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 

@@ -1,33 +1,36 @@
 import SortView from "../components/sort-form/sort-form.js";
 import EventDayListView from "../components/event/event-day-list.js";
 import EventDayView from "../components/event/event-day.js";
-import EventItemView from "../components/event/event-item.js";
-import EventFormView from "../components/event/event-form.js";
 import NoWaypointView from "../components/event/no-event-waypoint.js";
+import WaypointPresenter from "./waypoint.js";
 
-import {render, replace} from "../utils/dom-utils.js";
+import {render} from "../utils/dom-utils.js";
 import {sortPrice, sortDate} from "../utils/utils.js";
-import {SortType} from "../const.js";
+import {SortType, TRIP_COUNT} from "../const.js";
 
 export default class Trip {
 
   constructor(container) {
     this._container = container;
     this._containerInner = this._container.querySelector(`.trip-events`);
+    this._tripCount = null;
+    this._daysCount = null;
 
     this._sortComponent = new SortView();
     this._dayListContainer = new EventDayListView();
     this._emptyWaypointComponent = new NoWaypointView();
     this._currentSortType = SortType.DEFAULT;
+    this._waypointPresenter = null;
 
     this._handleSortChange = this._handleSortChange.bind(this);
   }
 
-  init(routes, count) {
+  init(routes, count = TRIP_COUNT) {
     this._routes = [...routes];
     this._sourceRoutes = [...routes];
     this._routesLength = this._routes.length;
     this._tripCount = count;
+    this._waypointPresenter = {};
 
     this._renderTripBoard();
   }
@@ -53,7 +56,8 @@ export default class Trip {
     }
     this._sortTripEvents(sortType);
     this._clearTripList();
-    this._renderWaypoints(this._routes);
+    // this._renderWaypoints(this._routes);
+    this._renderEvents(this._routes);
   }
 
   _renderSort() {
@@ -69,32 +73,13 @@ export default class Trip {
     render(this._containerInner, this._emptyWaypointComponent);
   }
 
-  _renderEvent(routeListElement, route) {
-    const eventComponent = new EventItemView(route);
-    const eventFormComponent = new EventFormView(route);
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        replace(eventComponent, eventFormComponent);
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    eventComponent.setClickHandler(() => {
-      replace(eventFormComponent, eventComponent);
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    eventFormComponent.setFormSubmitHandler(() => {
-      replace(eventComponent, eventFormComponent);
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    render(routeListElement, eventComponent);
+  _renderEvent(container, event) {
+    const waypointPresenter = new WaypointPresenter(container);
+    waypointPresenter.init(event);
+    this._waypointPresenter[event.id] = waypointPresenter;
   }
 
-  _getTripDayList(dayList) {
+  _getCurrentTripList(dayList) {
     this._eventsInDayList = dayList.getElement().querySelectorAll(`.trip-events__list`);
     return this._eventsInDayList[this._eventsInDayList.length - 1];
   }
@@ -102,10 +87,13 @@ export default class Trip {
   _renderWaypoints(routes) {
     this._prepareEventsList(routes).forEach((events, counter) => {
       this._renderDays(events[0].tripDates.start, counter);
-      this._dayCount = counter + 1;
-      events.map((event) => {
-        this._renderEvent(this._getTripDayList(this._dayListContainer), event);
-      });
+      // this._renderEvents(events);
+    });
+  }
+
+  _renderEvents(events) {
+    events.map((event) => {
+      this._renderEvent(this._getCurrentTripList(this._dayListContainer), event);
     });
   }
 
@@ -125,10 +113,15 @@ export default class Trip {
 
   _renderDays(date, counter) {
     render(this._dayListContainer, new EventDayView(date, counter + 1));
+    this._daysCount = counter + 1;
   }
 
   _clearTripList() {
-    this._dayListContainer.getElement().innerHTML = ``;
+    Object
+      .values(this._waypointPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._waypointPresenter = {};
+    this._tripCount = TRIP_COUNT;
   }
 
   _renderTrip() {
