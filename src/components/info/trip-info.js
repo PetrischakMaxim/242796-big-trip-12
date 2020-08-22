@@ -13,7 +13,6 @@ export default class TripInfo extends AbstractView {
   constructor(routes) {
     super();
     this._routes = routes;
-    this._element = null;
   }
 
   getTemplate() {

@@ -35,12 +35,19 @@ export default class Sort extends AbstractView {
   constructor() {
     super();
 
-    this._callback = {};
+    this._callback = null;
     this._sortChangeHandler = this._sortChangeHandler.bind(this);
   }
 
   getTemplate() {
     return createSortFormTemplate();
+  }
+
+  setSortChangeHandler(callback) {
+    this._callback = {
+      sortChange: callback
+    };
+    this.getElement().addEventListener(`click`, this._sortChangeHandler);
   }
 
   _sortChangeHandler(evt) {
@@ -51,10 +58,4 @@ export default class Sort extends AbstractView {
     evt.preventDefault();
     this._callback.sortChange(evt.target.dataset.sortType);
   }
-
-  setSortChangeHandler(callback) {
-    this._callback.sortChange = callback;
-    this.getElement().addEventListener(`click`, this._sortChangeHandler);
-  }
-
 }

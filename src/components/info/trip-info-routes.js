@@ -7,6 +7,7 @@ export const createRoutesInfo = (routes) => {
   let endRoute;
   let startDate;
   let endDate;
+
   if (routes.length === 0) {
     routes = BLANK_TASK;
     startRoute = routes.destination;
