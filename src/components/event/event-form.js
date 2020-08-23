@@ -1,5 +1,5 @@
 import AbstractView from "../abstract.js";
-import {CITY_LIST, BLANK_TASK} from "../../const.js";
+import {CITY_LIST, BLANK_ROUTE} from "../../const.js";
 import {getTimeFormat, formatDateToPlaceholder} from "../../utils/utils.js";
 import {createTripOffersTemplate} from "./event-offers.js";
 import {createTripDetailsTemplate} from "./event-details.js";
@@ -86,17 +86,20 @@ const createEventFormTemplate = (route) => {
 
 
 export default class EventForm extends AbstractView {
-  constructor(task) {
+
+  constructor(waypoint) {
     super();
-    this._task = task || BLANK_TASK;
+    this._waypoint = waypoint || BLANK_ROUTE;
     this._formCloseHandler = null;
+    this._favoriteClickHandler = null;
 
     this._onSubmit = this._onSubmit.bind(this);
     this._onClick = this._onClick.bind(this);
+    this._onFavoriteClick = this._onFavoriteClick.bind(this);
   }
 
   getTemplate() {
-    return createEventFormTemplate(this._task);
+    return createEventFormTemplate(this._waypoint);
   }
 
   setFormSubmitHandler(callback) {
@@ -113,13 +116,25 @@ export default class EventForm extends AbstractView {
       .addEventListener(`click`, this._onClick);
   }
 
+  setfavoriteClickHandler(callback) {
+    this._favoriteClickHandler = callback;
+    this.getElement()
+      .querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`click`, this._onFavoriteClick);
+  }
+
   _onSubmit(evt) {
     evt.preventDefault();
-    this._formCloseHandler();
+    this._formCloseHandler(this._waypoint);
   }
 
   _onClick() {
     this._formCloseHandler();
+  }
+
+  _onFavoriteClick(evt) {
+    evt.preventDefault();
+    this._favoriteClickHandler();
   }
 
 }

@@ -3,9 +3,9 @@ import EventDaysContainerView from "../components/event/event-day-list.js";
 import EventDayView from "../components/event/event-day.js";
 import EventsListInDayView from "../components/event/event-list.js";
 import NoWaypointView from "../components/event/no-event-waypoint.js";
-import WaypointPresenter from "./waypoint.js";
+import RoutePresenter from "./route.js";
 
-import {render} from "../utils/dom-utils.js";
+import {render, updateItem} from "../utils/dom-utils.js";
 import {sortPrice, sortDate} from "../utils/utils.js";
 import {SortType, TRIP_COUNT} from "../const.js";
 
@@ -21,9 +21,10 @@ export default class Trip {
     this._eventDaysContainer = new EventDaysContainerView();
     this._emptyWaypointComponent = new NoWaypointView();
     this._currentSortType = SortType.DEFAULT;
-    this._waypointPresenter = null;
+    this._routePresenter = null;
     this._eventsListInDay = null;
 
+    this._handleStatusChange = this._handleStatusChange.bind(this);
     this._handleSortChange = this._handleSortChange.bind(this);
   }
 
@@ -32,10 +33,16 @@ export default class Trip {
     this._sourceRoutes = [...routes];
     this._routesLength = this._routes.length;
     this._tripCount = count;
-    this._waypointPresenter = {};
+    this._routePresenter = {};
     this._eventsListInDay = [];
 
-    this._renderTripBoard();
+    this._renderBoard();
+  }
+
+  _handleStatusChange(updatedRoute) {
+    this._routes = updateItem(this._routes, updatedRoute);
+    this._sourceRoutes = updateItem(this._sourceRoutes, updatedRoute);
+    this._routePresenter[updatedRoute.id].init(updatedRoute);
   }
 
   _sortTripEvents(sortType) {
@@ -82,9 +89,9 @@ export default class Trip {
   }
 
   _renderEvent(container, event) {
-    const waypointPresenter = new WaypointPresenter(container);
-    waypointPresenter.init(event);
-    this._waypointPresenter[event.id] = waypointPresenter;
+    const routePresenter = new RoutePresenter(container, this._handleStatusChange);
+    routePresenter.init(event);
+    this._routePresenter[event.id] = routePresenter;
   }
 
   _prepareEventsList(routes) {
@@ -118,7 +125,7 @@ export default class Trip {
     });
   }
 
-  _renderTrip() {
+  _renderTripList() {
     if (this._routes.every((route) =>
       !route.hasWaypoint ||
       this._routesLength === 0)) {
@@ -128,17 +135,17 @@ export default class Trip {
     }
   }
 
-  _renderTripBoard() {
+  _renderBoard() {
     this._renderSort();
     this._renderDayListContainer();
-    this._renderTrip();
+    this._renderTripList();
   }
 
   _clearTripList() {
     Object
-      .values(this._waypointPresenter)
+      .values(this._routePresenter)
       .forEach((presenter) => presenter.destroy());
-    this._waypointPresenter = {};
+    this._routePresenter = {};
     this._tripCount = TRIP_COUNT;
   }
 }

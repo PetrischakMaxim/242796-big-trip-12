@@ -3,10 +3,11 @@ import EventFormView from "../components/event/event-form.js";
 
 import {render, replace, remove} from "../utils/dom-utils.js";
 
-export default class Waypoint {
+export default class Route {
 
-  constructor(container) {
+  constructor(container, changeStatus) {
     this._container = container;
+    this._changeStatus = changeStatus;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
@@ -14,20 +15,22 @@ export default class Waypoint {
     this._clickHandler = this._clickHandler.bind(this);
     this._formCloseHandler = this._formCloseHandler.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }
 
-  init(waypoint) {
-    this._waypoint = waypoint;
+  init(route) {
+    this._route = route;
 
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
 
-    this._eventComponent = new EventItemView(waypoint);
-    this._eventEditComponent = new EventFormView(waypoint);
+    this._eventComponent = new EventItemView(route);
+    this._eventEditComponent = new EventFormView(route);
 
     this._eventComponent.setClickHandler(this._clickHandler);
     this._eventEditComponent.setFormSubmitHandler(this._formCloseHandler);
     this._eventEditComponent.setCloseButtonHandler(this._formCloseHandler);
+    this._eventEditComponent.setfavoriteClickHandler(this._favoriteClickHandler);
 
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
@@ -42,7 +45,6 @@ export default class Waypoint {
     if (this._container.contains(prevEventEditComponent.getElement())) {
       replace(this._eventEditComponent, prevEventEditComponent);
     }
-
 
     remove(prevEventComponent);
     remove(prevEventEditComponent);
@@ -67,15 +69,20 @@ export default class Waypoint {
     this._replaceEventToEditForm();
   }
 
-  _formCloseHandler() {
-    this._replaceEditFormToEvent();
-  }
-
   _escKeyDownHandler(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
       this._replaceEditFormToEvent();
     }
+  }
+
+  _favoriteClickHandler() {
+    this._changeStatus(Object.assign({}, this._route, {isFavorite: !this._route.isFavorite}));
+  }
+
+  _formCloseHandler(route) {
+    this._changeStatus(route);
+    this._replaceEditFormToEvent();
   }
 
 }
