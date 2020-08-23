@@ -1,4 +1,4 @@
-import AbstractView from "../abstract.js";
+import SmartView from "../smart.js";
 import {CITY_LIST, BLANK_ROUTE} from "../../const.js";
 import {getTimeFormat, formatDateToPlaceholder} from "../../utils/utils.js";
 import {createTripOffersTemplate} from "./event-offers.js";
@@ -85,7 +85,7 @@ const createEventFormTemplate = (route) => {
 };
 
 
-export default class EventForm extends AbstractView {
+export default class EventForm extends SmartView {
 
   constructor(waypoint) {
     super();
