@@ -90,13 +90,21 @@ export default class EventForm extends SmartView {
   constructor(route) {
     super();
     this._route = route || BLANK_ROUTE;
-    this._formCloseHandler = null;
-    this._favoriteClickHandler = null;
-    this._buttonCloseHandler = null;
 
-    this._onSubmit = this._onSubmit.bind(this);
-    this._onCloseClick = this._onCloseClick.bind(this);
-    this._onFavoriteClick = this._onFavoriteClick.bind(this);
+    this._onSubmit = null;
+    this._onFavoriteClick = null;
+    this._onCloseClick = null;
+
+    this._onSubmitHandler = this._onSubmitHandler.bind(this);
+    this._onCloseClickHandler = this._onCloseClickHandler.bind(this);
+    this._onFavoriteClickHandler = this._onFavoriteClickHandler.bind(this);
+    this._routeTypeToggleHandler = this._routeTypeToggleHandler.bind(this);
+
+    this._setInnerHandlers();
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
   }
 
   getTemplate() {
@@ -104,38 +112,53 @@ export default class EventForm extends SmartView {
   }
 
   setFormSubmitHandler(callback) {
-    this._formCloseHandler = callback;
+    this._onSubmit = callback;
     this.getElement()
       .querySelector(`.event`)
-      .addEventListener(`submit`, this._onSubmit);
+      .addEventListener(`submit`, this._onSubmitHandler);
   }
 
   setCloseButtonHandler(callback) {
-    this._buttonCloseHandler = callback;
+    this._onCloseClick = callback;
     this.getElement()
       .querySelector(`.event__rollup-btn`)
-      .addEventListener(`click`, this._onCloseClick);
+      .addEventListener(`click`, this._onCloseClickHandler);
   }
 
   setfavoriteClickHandler(callback) {
-    this._favoriteClickHandler = callback;
+    this._onFavoriteClick = callback;
     this.getElement()
       .querySelector(`.event__favorite-checkbox`)
-      .addEventListener(`click`, this._onFavoriteClick);
+      .addEventListener(`click`, this._onFavoriteClickHandler);
   }
 
-  _onSubmit(evt) {
+  _onSubmitHandler(evt) {
     evt.preventDefault();
-    this._formCloseHandler(this._route);
+    this._onSubmit(this._route);
   }
 
-  _onCloseClick() {
-    this._formCloseHandler(this._route);
+  _onCloseClickHandler() {
+    this._onSubmit(this._route);
   }
 
-  _onFavoriteClick(evt) {
+  _onFavoriteClickHandler(evt) {
     evt.preventDefault();
-    this._favoriteClickHandler();
+    this._onFavoriteClick();
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelectorAll(`.event__type-input`)
+      .forEach((input) => {
+        input.addEventListener(`click`, this._routeTypeToggleHandler, {once: true});
+      });
+  }
+
+  _routeTypeToggleHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      waypoint: evt.target.value
+    });
   }
 
 }
