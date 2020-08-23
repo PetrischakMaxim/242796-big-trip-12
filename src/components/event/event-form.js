@@ -87,19 +87,20 @@ const createEventFormTemplate = (route) => {
 
 export default class EventForm extends SmartView {
 
-  constructor(waypoint) {
+  constructor(route) {
     super();
-    this._waypoint = waypoint || BLANK_ROUTE;
+    this._route = route || BLANK_ROUTE;
     this._formCloseHandler = null;
     this._favoriteClickHandler = null;
+    this._buttonCloseHandler = null;
 
     this._onSubmit = this._onSubmit.bind(this);
-    this._onClick = this._onClick.bind(this);
+    this._onCloseClick = this._onCloseClick.bind(this);
     this._onFavoriteClick = this._onFavoriteClick.bind(this);
   }
 
   getTemplate() {
-    return createEventFormTemplate(this._waypoint);
+    return createEventFormTemplate(this._route);
   }
 
   setFormSubmitHandler(callback) {
@@ -110,10 +111,10 @@ export default class EventForm extends SmartView {
   }
 
   setCloseButtonHandler(callback) {
-    this._formCloseHandler = callback;
+    this._buttonCloseHandler = callback;
     this.getElement()
       .querySelector(`.event__rollup-btn`)
-      .addEventListener(`click`, this._onClick);
+      .addEventListener(`click`, this._onCloseClick);
   }
 
   setfavoriteClickHandler(callback) {
@@ -125,11 +126,11 @@ export default class EventForm extends SmartView {
 
   _onSubmit(evt) {
     evt.preventDefault();
-    this._formCloseHandler(this._waypoint);
+    this._formCloseHandler(this._route);
   }
 
-  _onClick() {
-    this._formCloseHandler();
+  _onCloseClick() {
+    this._formCloseHandler(this._route);
   }
 
   _onFavoriteClick(evt) {
