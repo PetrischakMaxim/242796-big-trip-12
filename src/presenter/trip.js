@@ -1,35 +1,55 @@
 import SortView from "../components/sort-form/sort-form.js";
-import EventDayListView from "../components/event/event-day-list.js";
+import EventDaysContainerView from "../components/event/event-day-list.js";
 import EventDayView from "../components/event/event-day.js";
-import EventItemView from "../components/event/event-item.js";
-import EventFormView from "../components/event/event-form.js";
+import EventsListInDayView from "../components/event/event-list.js";
 import NoWaypointView from "../components/event/no-event-waypoint.js";
+import RoutePresenter from "./route.js";
 
-import {render, replace} from "../utils/dom-utils.js";
+import {render, updateItem} from "../utils/dom-utils.js";
 import {sortPrice, sortDate} from "../utils/utils.js";
-import {SortType} from "../const.js";
+import {SortType, TRIP_COUNT} from "../const.js";
 
 export default class Trip {
 
   constructor(container) {
     this._container = container;
     this._containerInner = this._container.querySelector(`.trip-events`);
+    this._tripCount = null;
+    this._daysCount = null;
 
     this._sortComponent = new SortView();
-    this._dayListContainer = new EventDayListView();
+    this._eventDaysContainer = new EventDaysContainerView();
     this._emptyWaypointComponent = new NoWaypointView();
     this._currentSortType = SortType.DEFAULT;
+    this._routePresenter = null;
+    this._eventsListInDay = null;
 
+    this._handleStatusChange = this._handleStatusChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortChange = this._handleSortChange.bind(this);
   }
 
-  init(routes, count) {
+  init(routes, count = TRIP_COUNT) {
     this._routes = [...routes];
     this._sourceRoutes = [...routes];
     this._routesLength = this._routes.length;
     this._tripCount = count;
+    this._routePresenter = {};
+    this._eventsListInDay = [];
 
-    this._renderTripBoard();
+    this._renderBoard();
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._routePresenter)
+      .forEach((presenter) => presenter.resetView());
+  }
+
+  _handleStatusChange(updatedRoute) {
+    this._routes = updateItem(this._routes, updatedRoute);
+    this._sourceRoutes = updateItem(this._sourceRoutes, updatedRoute);
+    this._routePresenter[updatedRoute.id].init(updatedRoute);
   }
 
   _sortTripEvents(sortType) {
@@ -53,7 +73,13 @@ export default class Trip {
     }
     this._sortTripEvents(sortType);
     this._clearTripList();
-    this._renderWaypoints(this._routes);
+
+    this._prepareEventsList(this._routes)
+      .forEach((events, i) => {
+        events.forEach((event) => {
+          this._renderEvent(this._eventsListInDay[i], event);
+        });
+      });
   }
 
   _renderSort() {
@@ -61,52 +87,22 @@ export default class Trip {
     this._sortComponent.setSortChangeHandler(this._handleSortChange);
   }
 
-  _renderDayList() {
-    render(this._container, this._dayListContainer);
+  _renderDayListContainer() {
+    render(this._container, this._eventDaysContainer);
   }
 
   _renderNoWaypoints() {
     render(this._containerInner, this._emptyWaypointComponent);
   }
 
-  _renderEvent(routeListElement, route) {
-    const eventComponent = new EventItemView(route);
-    const eventFormComponent = new EventFormView(route);
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        replace(eventComponent, eventFormComponent);
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    eventComponent.setClickHandler(() => {
-      replace(eventFormComponent, eventComponent);
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    eventFormComponent.setFormSubmitHandler(() => {
-      replace(eventComponent, eventFormComponent);
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    render(routeListElement, eventComponent);
-  }
-
-  _getTripDayList(dayList) {
-    this._eventsInDayList = dayList.getElement().querySelectorAll(`.trip-events__list`);
-    return this._eventsInDayList[this._eventsInDayList.length - 1];
-  }
-
-  _renderWaypoints(routes) {
-    this._prepareEventsList(routes).forEach((events, counter) => {
-      this._renderDays(events[0].tripDates.start, counter);
-      this._dayCount = counter + 1;
-      events.map((event) => {
-        this._renderEvent(this._getTripDayList(this._dayListContainer), event);
-      });
-    });
+  _renderEvent(container, event) {
+    const routePresenter = new RoutePresenter(
+        container,
+        this._handleStatusChange,
+        this._handleModeChange
+    );
+    routePresenter.init(event);
+    this._routePresenter[event.id] = routePresenter;
   }
 
   _prepareEventsList(routes) {
@@ -123,25 +119,44 @@ export default class Trip {
     return [...eventsByDays.values()];
   }
 
-  _renderDays(date, counter) {
-    render(this._dayListContainer, new EventDayView(date, counter + 1));
+  _renderEventDay(events, date, counter) {
+    const dayInList = new EventDayView(date, counter + 1);
+    const eventsList = new EventsListInDayView().getElement();
+    render(this._eventDaysContainer, dayInList);
+    render(dayInList.getElement(), eventsList);
+    this._daysCount = counter + 1;
+    events.forEach((event) => this._renderEvent(eventsList, event));
+    this._eventsListInDay.push(eventsList);
   }
 
-  _clearTripList() {
-    this._dayListContainer.getElement().innerHTML = ``;
+  _renderWaypoints(routes) {
+    this._prepareEventsList(routes)
+    .forEach((events, counter) => {
+      this._renderEventDay(events, events[0].tripDates.start, counter);
+    });
   }
 
-  _renderTrip() {
-    if (this._routes.every((route) => !route.hasWaypoint || this._routesLength === 0)) {
+  _renderTripList() {
+    if (this._routes.every((route) =>
+      !route.hasWaypoint ||
+      this._routesLength === 0)) {
       this._renderNoWaypoints();
     } else {
       this._renderWaypoints(this._routes);
     }
   }
 
-  _renderTripBoard() {
+  _renderBoard() {
     this._renderSort();
-    this._renderDayList();
-    this._renderTrip();
+    this._renderDayListContainer();
+    this._renderTripList();
+  }
+
+  _clearTripList() {
+    Object
+      .values(this._routePresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._routePresenter = {};
+    this._tripCount = TRIP_COUNT;
   }
 }

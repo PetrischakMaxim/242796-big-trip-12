@@ -40,6 +40,7 @@ export const renderTemplate = (container, template, place) => {
 };
 
 export const replace = (newChild, oldChild) => {
+
   if (oldChild instanceof Abstract) {
     oldChild = oldChild.getElement();
   }
@@ -53,7 +54,6 @@ export const replace = (newChild, oldChild) => {
   if (parent === null || oldChild === null || newChild === null) {
     throw new Error(`Can't replace unexisting elements`);
   }
-
   parent.replaceChild(newChild, oldChild);
 };
 
@@ -64,4 +64,18 @@ export const remove = (component) => {
 
   component.getElement().remove();
   component.removeElement();
+};
+
+export const updateItem = (items, update) => {
+  const index = items.findIndex((item) => item.id === update.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1)
+  ];
 };

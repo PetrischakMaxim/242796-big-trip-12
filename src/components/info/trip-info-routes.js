@@ -1,5 +1,5 @@
 import {getFormatedDate, getRandomIndex} from '../../utils/utils.js';
-import {BLANK_TASK} from '../../const.js';
+import {BLANK_ROUTE} from '../../const.js';
 
 export const createRoutesInfo = (routes) => {
   let startRoute;
@@ -7,8 +7,9 @@ export const createRoutesInfo = (routes) => {
   let endRoute;
   let startDate;
   let endDate;
+
   if (routes.length === 0) {
-    routes = BLANK_TASK;
+    routes = BLANK_ROUTE;
     startRoute = routes.destination;
     middleRoute = ``;
     endRoute = ``;

@@ -1,7 +1,5 @@
 import AbstractView from "../abstract.js";
 import {getDateTimeFormat, getFormatedDate} from "../../utils/utils.js";
-import {createEventList} from "./event-list.js";
-
 
 const createEventDayTemplate = (date, count) => {
   const dateTime = getDateTimeFormat(date);
@@ -15,7 +13,6 @@ const createEventDayTemplate = (date, count) => {
         ${formatedDate}
       </time>
     </div>
-    ${createEventList()}
   </li>`;
 };
 
