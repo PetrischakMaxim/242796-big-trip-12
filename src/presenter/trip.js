@@ -25,6 +25,7 @@ export default class Trip {
     this._eventsListInDay = null;
 
     this._handleStatusChange = this._handleStatusChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortChange = this._handleSortChange.bind(this);
   }
 
@@ -37,6 +38,12 @@ export default class Trip {
     this._eventsListInDay = [];
 
     this._renderBoard();
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._routePresenter)
+      .forEach((presenter) => presenter.resetView());
   }
 
   _handleStatusChange(updatedRoute) {
@@ -89,7 +96,11 @@ export default class Trip {
   }
 
   _renderEvent(container, event) {
-    const routePresenter = new RoutePresenter(container, this._handleStatusChange);
+    const routePresenter = new RoutePresenter(
+        container,
+        this._handleStatusChange,
+        this._handleModeChange
+    );
     routePresenter.init(event);
     this._routePresenter[event.id] = routePresenter;
   }

@@ -3,14 +3,21 @@ import EventFormView from "../components/event/event-form.js";
 
 import {render, replace, remove} from "../utils/dom-utils.js";
 
+const Mode = {
+  DEFAULT: `DEFAULT`,
+  EDITING: `EDITING`
+};
+
 export default class Route {
 
-  constructor(container, changeStatus) {
+  constructor(container, changeStatus, changeMode) {
     this._container = container;
     this._changeStatus = changeStatus;
+    this._changeMode = changeMode;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
+    this._mode = Mode.DEFAULT;
 
     this._clickHandler = this._clickHandler.bind(this);
     this._formCloseHandler = this._formCloseHandler.bind(this);
@@ -38,16 +45,22 @@ export default class Route {
       return;
     }
 
-    if (this._container.contains(prevEventComponent.getElement())) {
+    if (this._mode === Mode.DEFAULT) {
       replace(this._eventComponent, prevEventComponent);
     }
 
-    if (this._container.contains(prevEventEditComponent.getElement())) {
+    if (this._mode === Mode.EDITING) {
       replace(this._eventEditComponent, prevEventEditComponent);
     }
 
     remove(prevEventComponent);
     remove(prevEventEditComponent);
+  }
+
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceEditFormToEvent();
+    }
   }
 
   destroy() {
@@ -58,11 +71,14 @@ export default class Route {
   _replaceEventToEditForm() {
     replace(this._eventEditComponent, this._eventComponent);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
+    this._changeMode();
+    this._mode = Mode.EDITING;
   }
 
   _replaceEditFormToEvent() {
     replace(this._eventComponent, this._eventEditComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
+    this._mode = Mode.DEFAULT;
   }
 
   _clickHandler() {
