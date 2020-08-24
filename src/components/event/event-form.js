@@ -8,7 +8,7 @@ import {createTripWaypointTemplate} from "./event-waypoint.js";
 import {createEventTimeGroupTemplate} from "./event-time.js";
 import {createEventPriceTemplate} from "./event-price.js";
 
-const createEventFormTemplate = (route) => {
+const createEventFormTemplate = (data) => {
   const {
     waypoint,
     waypointTypes,
@@ -21,21 +21,11 @@ const createEventFormTemplate = (route) => {
     hasOffers,
     hasInfo,
     isFavorite,
-  } = route;
+  } = data;
 
   const [transferType, activityType] = Object.keys(waypointTypes);
   const startDate = `${formatDateToPlaceholder(start)} ${getTimeFormat(start)}`;
   const endDate = `${formatDateToPlaceholder(end)} ${getTimeFormat(end)}`;
-
-  const createTripEventsTemplate = () => {
-    return (hasOffers || hasInfo) ?
-      `<section class="event__details">
-        ${createTripOffersTemplate(offers)}
-        ${createTripDetailsTemplate(info)}
-      </section>`
-      :
-      ``;
-  };
 
   const createEventTypeListTemplate = () => {
     return `
@@ -79,7 +69,11 @@ const createEventFormTemplate = (route) => {
         </svg></label>
         <button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>
     </header>
-    ${createTripEventsTemplate()}
+    ${(hasOffers || hasInfo) ?
+    `<section class="event__details">
+        ${(hasOffers) ? createTripOffersTemplate(offers) : ``}
+        ${(hasInfo) ? createTripDetailsTemplate(info) : ``}
+     </section>` : ``}
   </form>
   </li>`;
 };
@@ -87,9 +81,10 @@ const createEventFormTemplate = (route) => {
 
 export default class EventForm extends SmartView {
 
-  constructor(route) {
+  constructor(route = BLANK_ROUTE) {
     super();
-    this._route = route || BLANK_ROUTE;
+    this._data = EventForm.parseRouteToData(route);
+
 
     this._onSubmit = null;
     this._onFavoriteClick = null;
@@ -105,10 +100,14 @@ export default class EventForm extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    // добавить и внешние обработчики
+    this.setFormSubmitHandler(this._onSubmit);
+    this.setCloseButtonHandler(this._onCloseClick);
+    this.setFavoriteClickHandler(this._onFavoriteClick);
   }
 
   getTemplate() {
-    return createEventFormTemplate(this._route);
+    return createEventFormTemplate(this._data);
   }
 
   setFormSubmitHandler(callback) {
@@ -125,7 +124,7 @@ export default class EventForm extends SmartView {
       .addEventListener(`click`, this._onCloseClickHandler);
   }
 
-  setfavoriteClickHandler(callback) {
+  setFavoriteClickHandler(callback) {
     this._onFavoriteClick = callback;
     this.getElement()
       .querySelector(`.event__favorite-checkbox`)
@@ -134,11 +133,11 @@ export default class EventForm extends SmartView {
 
   _onSubmitHandler(evt) {
     evt.preventDefault();
-    this._onSubmit(this._route);
+    this._onSubmit(EventForm.parseDataToTask(this._data));
   }
 
   _onCloseClickHandler() {
-    this._onSubmit(this._route);
+    this._onSubmit(EventForm.parseDataToTask(this._data));
   }
 
   _onFavoriteClickHandler(evt) {
@@ -150,16 +149,31 @@ export default class EventForm extends SmartView {
     this.getElement()
       .querySelectorAll(`.event__type-input`)
       .forEach((input) => {
-        input.addEventListener(`click`, this._routeTypeToggleHandler, {once: true});
+        input.addEventListener(`change`, (evt) => {
+          evt.preventDefault();
+          this._routeTypeToggleHandler(evt);
+        });
       });
   }
 
   _routeTypeToggleHandler(evt) {
-    evt.preventDefault();
+    const updatedWaypoint = evt.target.value[0].toUpperCase() + evt.target.value.slice(1);
     this.updateData({
-      waypoint: evt.target.value
+      waypoint: updatedWaypoint,
     });
   }
+
+  static parseRouteToData(route) {
+    return Object.assign({}, route, {
+      waypoint: route.waypoint,
+    });
+  }
+
+  static parseDataToTask(data) {
+    data = Object.assign({}, data);
+    return data;
+  }
+
 
 }
 

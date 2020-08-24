@@ -30,7 +30,7 @@ export default class Route {
     this._eventComponent.setClickHandler(this._clickHandler);
     this._eventEditComponent.setFormSubmitHandler(this._formCloseHandler);
     this._eventEditComponent.setCloseButtonHandler(this._formCloseHandler);
-    this._eventEditComponent.setfavoriteClickHandler(this._favoriteClickHandler);
+    this._eventEditComponent.setFavoriteClickHandler(this._favoriteClickHandler);
 
 
     if (prevEventComponent === null || prevEventEditComponent === null) {

@@ -60,6 +60,8 @@ const generateTripDates = () => {
 export const generateRoute = () => {
 
   const wayPoint = getRandomIndex(WAYPOINT_LIST);
+  const offers = generateOffers(OFFER_LIST, getRandomInteger(0, 3));
+  const hasOffers = (offers.length !== 0) ? true : false;
 
   return {
     id: generateId(),
@@ -72,10 +74,10 @@ export const generateRoute = () => {
     tripDates: generateTripDates(),
     destination: getRandomIndex(CITY_LIST),
     cost: getRandomInteger(30, 200),
-    hasInfo: Boolean(getRandomInteger(0, 1)),
-    hasOffers: Boolean(getRandomInteger(0, 1)),
-    isFavorite: Boolean(getRandomInteger(0, 1)),
     info: generateDescription(),
-    offers: generateOffers(OFFER_LIST, getRandomInteger(0, 3)),
+    offers,
+    hasInfo: Boolean(getRandomInteger(0, 1)),
+    hasOffers,
+    isFavorite: Boolean(getRandomInteger(0, 1)),
   };
 };
