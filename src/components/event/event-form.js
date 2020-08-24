@@ -93,14 +93,14 @@ export default class EventForm extends SmartView {
     this._onSubmitHandler = this._onSubmitHandler.bind(this);
     this._onCloseClickHandler = this._onCloseClickHandler.bind(this);
     this._onFavoriteClickHandler = this._onFavoriteClickHandler.bind(this);
-    this._routeTypeToggleHandler = this._routeTypeToggleHandler.bind(this);
+    this._typeToggleHandler = this._typeToggleHandler.bind(this);
+    this._destinationToggleHandler = this._destinationToggleHandler.bind(this);
 
     this._setInnerHandlers();
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
-    // добавить и внешние обработчики
     this.setFormSubmitHandler(this._onSubmit);
     this.setCloseButtonHandler(this._onCloseClick);
     this.setFavoriteClickHandler(this._onFavoriteClick);
@@ -149,14 +149,32 @@ export default class EventForm extends SmartView {
     this.getElement()
       .querySelectorAll(`.event__type-input`)
       .forEach((input) => {
-        input.addEventListener(`change`, (evt) => {
-          evt.preventDefault();
-          this._routeTypeToggleHandler(evt);
-        });
+        input.addEventListener(`change`, this._typeToggleHandler);
       });
+
+    this.getElement()
+        .querySelector(`.event__input--destination`)
+        .addEventListener(`change`, this._destinationToggleHandler);
+
   }
 
-  _routeTypeToggleHandler(evt) {
+  _destinationToggleHandler(evt) {
+    evt.preventDefault();
+    const {value, list} = evt.target;
+    const isDestination = [...list.options].some((opt) => opt.value === value);
+
+    if (isDestination) {
+      this.updateData({
+        destination: evt.target.value
+      });
+    } else {
+      return;
+    }
+
+  }
+
+  _typeToggleHandler(evt) {
+    evt.preventDefault();
     const updatedWaypoint = evt.target.value[0].toUpperCase() + evt.target.value.slice(1);
     this.updateData({
       waypoint: updatedWaypoint,
