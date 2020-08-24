@@ -1,6 +1,6 @@
 import SmartView from "../smart.js";
-import {CITY_LIST, BLANK_ROUTE} from "../../const.js";
-import {getTimeFormat, formatDateToPlaceholder} from "../../utils/utils.js";
+import {CITY_LIST, BLANK_ROUTE, TRIP_IMAGE_URL, TRIP_SENTENCE} from "../../const.js";
+import {getTimeFormat, formatDateToPlaceholder, getRandomInteger, generateSentence, generateImage} from "../../utils/utils.js";
 import {createTripOffersTemplate} from "./event-offers.js";
 import {createTripDetailsTemplate} from "./event-details.js";
 import {createTripCityListTemplate} from "./event-city-list.js";
@@ -137,7 +137,7 @@ export default class EventForm extends SmartView {
   }
 
   _onCloseClickHandler() {
-    this._onSubmit(EventForm.parseDataToTask(this._data));
+    this._onCloseClick(EventForm.parseDataToTask(this._data));
   }
 
   _onFavoriteClickHandler(evt) {
@@ -165,12 +165,16 @@ export default class EventForm extends SmartView {
 
     if (isDestination) {
       this.updateData({
-        destination: evt.target.value
+        destination: evt.target.value,
+        hasInfo: Boolean(getRandomInteger(0, 1)),
+        info: {
+          description: generateSentence(TRIP_SENTENCE),
+          images: generateImage(TRIP_IMAGE_URL)
+        }
       });
     } else {
       return;
     }
-
   }
 
   _typeToggleHandler(evt) {
@@ -184,6 +188,9 @@ export default class EventForm extends SmartView {
   static parseRouteToData(route) {
     return Object.assign({}, route, {
       waypoint: route.waypoint,
+      destination: route.destination,
+      info: route.info,
+      hasInfo: route.hasInfo,
     });
   }
 

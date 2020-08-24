@@ -28,3 +28,21 @@ export const getTimeOfTrip = (d1, d2) => {
 export const sortPrice = (min, max) => (max.cost - min.cost);
 
 export const sortDate = (d1, d2) => (d2.tripDates.start.getTime() - d1.tripDates.start.getTime());
+
+export const generateSentence = (sentence, maxLength = 5) => {
+  const sentenceQuantity = getRandomInteger(1, maxLength);
+  return sentence.repeat(sentenceQuantity);
+};
+
+export const generateImage = (url, maxLength = 5) => {
+  const imagesQuantity = getRandomInteger(1, maxLength);
+  const imagesList = new Array(imagesQuantity)
+    .fill()
+    .map(()=> {
+      const imageParam = getRandomInteger(1, 10);
+      return `${url}${imageParam}`;
+    });
+
+  return [...new Set(imagesList)];
+};
+

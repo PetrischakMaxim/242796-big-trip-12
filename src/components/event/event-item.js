@@ -60,7 +60,6 @@ export default class EventItem extends AbstractView {
     this._clickHandler = null;
 
     this._onClilk = this._onClilk.bind(this);
-
   }
 
   getTemplate() {

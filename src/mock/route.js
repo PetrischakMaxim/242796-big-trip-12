@@ -8,7 +8,7 @@ import {
   transfer
 } from "../const.js";
 
-import {getRandomInteger, getRandomIndex, generateId} from "../utils/utils.js";
+import {getRandomInteger, getRandomIndex, generateId, generateSentence, generateImage} from "../utils/utils.js";
 
 const generateOffers = (offers, count) => {
   return new Array(count)
@@ -19,26 +19,9 @@ const generateOffers = (offers, count) => {
   }));
 };
 
-const generateSentence = (maxLength = 5) => {
-  const sentenceQuantity = getRandomInteger(1, maxLength);
-  return TRIP_SENTENCE.repeat(sentenceQuantity);
-};
-
-const generateImage = (maxLength = 5) => {
-  const imagesQuantity = getRandomInteger(1, maxLength);
-  const imagesList = new Array(imagesQuantity)
-    .fill()
-    .map(()=> {
-      const imageParam = getRandomInteger(1, 10);
-      return `${TRIP_IMAGE_URL}${imageParam}`;
-    });
-
-  return [...new Set(imagesList)];
-};
-
 const generateDescription = () => ({
-  description: generateSentence(),
-  images: generateImage()
+  description: generateSentence(TRIP_SENTENCE),
+  images: generateImage(TRIP_IMAGE_URL)
 });
 
 const maxDaysGap = 5;
