@@ -3,7 +3,7 @@ import DayListView from "../components/day/day-list.js";
 import DayView from "../components/day/day.js";
 import PointsListView from "../components/point/points-list.js";
 import NoPointView from "../components/point/no-point.js";
-import RoutePresenter from "./route.js";
+import PointPresenter from "./point.js";
 
 import {render, updateItem} from "../utils/dom-utils.js";
 import {sortPrice, sortDate} from "../utils/utils.js";
@@ -21,7 +21,7 @@ export default class Trip {
     this._dayListComponent = new DayListView();
     this._noPointComponent = new NoPointView();
     this._currentSortType = SortType.DEFAULT;
-    this._routePresenter = null;
+    this._pointPresenter = null;
     this._pointListInDay = null;
 
     this._handleStatusChange = this._handleStatusChange.bind(this);
@@ -34,7 +34,7 @@ export default class Trip {
     this._sourcePoints = [...points];
     this._pointsLength = this._points.length;
     this._tripCount = count;
-    this._routePresenter = {};
+    this._pointPresenter = {};
     this._pointListInDay = [];
 
     this._renderBoard();
@@ -42,14 +42,14 @@ export default class Trip {
 
   _handleModeChange() {
     Object
-      .values(this._routePresenter)
+      .values(this._pointPresenter)
       .forEach((presenter) => presenter.resetView());
   }
 
   _handleStatusChange(updatedPoint) {
     this._points = updateItem(this._points, updatedPoint);
     this._sourcePoints = updateItem(this._sourcePoints, updatedPoint);
-    this._routePresenter[updatedPoint.id].init(updatedPoint);
+    this._pointPresenter[updatedPoint.id].init(updatedPoint);
   }
 
   _sortPoints(sortType) {
@@ -96,13 +96,13 @@ export default class Trip {
   }
 
   _renderPoint(container, event) {
-    const routePresenter = new RoutePresenter(
+    const pointPresenter = new PointPresenter(
         container,
         this._handleStatusChange,
         this._handleModeChange
     );
-    routePresenter.init(event);
-    this._routePresenter[event.id] = routePresenter;
+    pointPresenter.init(event);
+    this._pointPresenter[event.id] = pointPresenter;
   }
 
   _preparePointsList(points) {
@@ -131,8 +131,8 @@ export default class Trip {
 
   _renderPoints(points) {
     this._preparePointsList(points)
-    .forEach((points, counter) => {
-      this._renderPointsInDay(points, points[0].tripDates.start, counter);
+    .forEach((eventPoints, counter) => {
+      this._renderPointsInDay(eventPoints, eventPoints[0].tripDates.start, counter);
     });
   }
 
@@ -154,9 +154,9 @@ export default class Trip {
 
   _clearTrip() {
     Object
-      .values(this._routePresenter)
+      .values(this._pointPresenter)
       .forEach((presenter) => presenter.destroy());
-    this._routePresenter = {};
+    this._pointPresenter = {};
     this._tripCount = POINT_COUNT;
   }
 }
