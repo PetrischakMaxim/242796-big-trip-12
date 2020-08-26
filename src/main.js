@@ -1,6 +1,6 @@
 import TripInfoView from "./components/info/trip-info.js";
-import FilterView from "./components/menu-controls/filter-form.js";
-import TabsView from "./components/menu-controls/tabs.js";
+import FilterView from "./components/filter/filter.js";
+import TabsView from "./components/tabs/tabs.js";
 import TripPresenter from "./presenter/trip.js";
 
 import {generateRoute} from "./mock/route.js";

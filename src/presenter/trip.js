@@ -1,4 +1,4 @@
-import SortView from "../components/sort-form/sort-form.js";
+import SortView from "../components/sort/sort.js";
 import EventDaysContainerView from "../components/event/event-day-list.js";
 import EventDayView from "../components/event/event-day.js";
 import EventsListInDayView from "../components/event/event-list.js";
