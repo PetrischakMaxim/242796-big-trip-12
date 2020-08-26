@@ -18,24 +18,24 @@ export default class Trip {
     this._daysCount = null;
 
     this._sortComponent = new SortView();
-    this._eventDaysContainer = new DayListView();
-    this._emptyWaypointComponent = new NoPointView();
+    this._dayListComponent = new DayListView();
+    this._noPointComponent = new NoPointView();
     this._currentSortType = SortType.DEFAULT;
     this._routePresenter = null;
-    this._eventsListInDay = null;
+    this._pointListInDay = null;
 
     this._handleStatusChange = this._handleStatusChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortChange = this._handleSortChange.bind(this);
   }
 
-  init(routes, count = POINT_COUNT) {
-    this._routes = [...routes];
-    this._sourceRoutes = [...routes];
-    this._routesLength = this._routes.length;
+  init(points, count = POINT_COUNT) {
+    this._points = [...points];
+    this._sourcePoints = [...points];
+    this._pointsLength = this._points.length;
     this._tripCount = count;
     this._routePresenter = {};
-    this._eventsListInDay = [];
+    this._pointListInDay = [];
 
     this._renderBoard();
   }
@@ -46,22 +46,22 @@ export default class Trip {
       .forEach((presenter) => presenter.resetView());
   }
 
-  _handleStatusChange(updatedRoute) {
-    this._routes = updateItem(this._routes, updatedRoute);
-    this._sourceRoutes = updateItem(this._sourceRoutes, updatedRoute);
-    this._routePresenter[updatedRoute.id].init(updatedRoute);
+  _handleStatusChange(updatedPoint) {
+    this._points = updateItem(this._points, updatedPoint);
+    this._sourcePoints = updateItem(this._sourcePoints, updatedPoint);
+    this._routePresenter[updatedPoint.id].init(updatedPoint);
   }
 
-  _sortTripEvents(sortType) {
+  _sortPoints(sortType) {
     switch (sortType) {
       case SortType.TIME:
-        this._routes.sort(sortDate);
+        this._points.sort(sortDate);
         break;
       case SortType.PRICE:
-        this._routes.sort(sortPrice);
+        this._points.sort(sortPrice);
         break;
       default:
-        this._routes = [...this._sourceRoutes];
+        this._points = [...this._sourcePoints];
     }
 
     this._currentSortType = sortType;
@@ -71,13 +71,13 @@ export default class Trip {
     if (this._currentSortType === sortType) {
       return;
     }
-    this._sortTripEvents(sortType);
-    this._clearTripList();
+    this._sortPoints(sortType);
+    this._clearTrip();
 
-    this._prepareEventsList(this._routes)
-      .forEach((events, i) => {
-        events.forEach((event) => {
-          this._renderEvent(this._eventsListInDay[i], event);
+    this._preparePointsList(this._points)
+      .forEach((points, i) => {
+        points.forEach((event) => {
+          this._renderPoint(this._pointListInDay[i], event);
         });
       });
   }
@@ -88,14 +88,14 @@ export default class Trip {
   }
 
   _renderDayListContainer() {
-    render(this._container, this._eventDaysContainer);
+    render(this._container, this._dayListComponent);
   }
 
-  _renderNoWaypoints() {
-    render(this._containerInner, this._emptyWaypointComponent);
+  _renderNoPoints() {
+    render(this._containerInner, this._noPointComponent);
   }
 
-  _renderEvent(container, event) {
+  _renderPoint(container, event) {
     const routePresenter = new RoutePresenter(
         container,
         this._handleStatusChange,
@@ -105,54 +105,54 @@ export default class Trip {
     this._routePresenter[event.id] = routePresenter;
   }
 
-  _prepareEventsList(routes) {
-    const eventsByDays = new Map();
-    for (let event of routes) {
+  _preparePointsList(points) {
+    const pointsByDays = new Map();
+    for (let event of points) {
       const date = event.tripDates.start.getDate();
-      const day = eventsByDays.get(date);
+      const day = pointsByDays.get(date);
       if (day) {
         day.push(event);
       } else {
-        eventsByDays.set(date, Array.of(event));
+        pointsByDays.set(date, Array.of(event));
       }
     }
-    return [...eventsByDays.values()];
+    return [...pointsByDays.values()];
   }
 
-  _renderEventDay(events, date, counter) {
+  _renderPointsInDay(points, date, counter) {
     const dayInList = new DayView(date, counter + 1);
-    const eventsList = new PointsListView().getElement();
-    render(this._eventDaysContainer, dayInList);
-    render(dayInList.getElement(), eventsList);
+    const pointsList = new PointsListView().getElement();
+    render(this._dayListComponent, dayInList);
+    render(dayInList.getElement(), pointsList);
     this._daysCount = counter + 1;
-    events.forEach((event) => this._renderEvent(eventsList, event));
-    this._eventsListInDay.push(eventsList);
+    points.forEach((event) => this._renderPoint(pointsList, event));
+    this._pointListInDay.push(pointsList);
   }
 
-  _renderWaypoints(routes) {
-    this._prepareEventsList(routes)
-    .forEach((events, counter) => {
-      this._renderEventDay(events, events[0].tripDates.start, counter);
+  _renderPoints(points) {
+    this._preparePointsList(points)
+    .forEach((points, counter) => {
+      this._renderPointsInDay(points, points[0].tripDates.start, counter);
     });
   }
 
-  _renderTripList() {
-    if (this._routes.every((route) =>
+  _renderTrip() {
+    if (this._points.every((route) =>
       !route.hasWaypoint ||
-      this._routesLength === 0)) {
-      this._renderNoWaypoints();
+      this._pointsLength === 0)) {
+      this._renderNoPoints();
     } else {
-      this._renderWaypoints(this._routes);
+      this._renderPoints(this._points);
     }
   }
 
   _renderBoard() {
     this._renderSort();
     this._renderDayListContainer();
-    this._renderTripList();
+    this._renderTrip();
   }
 
-  _clearTripList() {
+  _clearTrip() {
     Object
       .values(this._routePresenter)
       .forEach((presenter) => presenter.destroy());
