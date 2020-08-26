@@ -1,5 +1,5 @@
 import SmartView from "../smart.js";
-import {CITY_LIST, BLANK_ROUTE, TRIP_IMAGE_URL, TRIP_SENTENCE} from "../../const.js";
+import {CITY_LIST, BLANK_POINT, TRIP_IMAGE_URL, TRIP_SENTENCE} from "../../const.js";
 import {getTimeFormat, formatDateToPlaceholder, getRandomInteger, generateSentence, generateImage} from "../../utils/utils.js";
 import {createTripOffersTemplate} from "./event-offers.js";
 import {createTripDetailsTemplate} from "./event-details.js";
@@ -81,7 +81,7 @@ const createEventFormTemplate = (data) => {
 
 export default class EventForm extends SmartView {
 
-  constructor(route = BLANK_ROUTE) {
+  constructor(route = BLANK_POINT) {
     super();
     this._data = EventForm.parseRouteToData(route);
 
