@@ -1,4 +1,4 @@
-export const createEventPriceTemplate = (cost) => {
+export const createPriceTemplate = (cost) => {
   return `
   <div class="event__field-group  event__field-group--price">
     <label class="event__label" for="event-price-1">

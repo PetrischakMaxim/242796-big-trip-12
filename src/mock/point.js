@@ -40,7 +40,7 @@ const generateTripDates = () => {
   return eventData;
 };
 
-export const generateRoute = () => {
+export const generatePoint = () => {
 
   const wayPoint = getRandomIndex(WAYPOINT_LIST);
   const offers = generateOffers(OFFER_LIST, getRandomInteger(0, 3));

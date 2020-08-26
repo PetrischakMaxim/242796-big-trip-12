@@ -1,14 +1,16 @@
 import SmartView from "../smart.js";
+
+import {createOffersTemplate} from "./point-offers.js";
+import {createDetailsTemplate} from "./point-details.js";
+import {createCityListTemplate} from "./point-city-list.js";
+import {createPointTemplate} from "./point.js";
+import {createTimeGroupTemplate} from "./point-time-group.js";
+import {createPriceTemplate} from "./point-price.js";
+
 import {CITY_LIST, BLANK_POINT, TRIP_IMAGE_URL, TRIP_SENTENCE} from "../../const.js";
 import {getTimeFormat, formatDateToPlaceholder, getRandomInteger, generateSentence, generateImage} from "../../utils/utils.js";
-import {createTripOffersTemplate} from "./event-offers.js";
-import {createTripDetailsTemplate} from "./event-details.js";
-import {createTripCityListTemplate} from "./event-city-list.js";
-import {createTripWaypointTemplate} from "./event-waypoint.js";
-import {createEventTimeGroupTemplate} from "./event-time.js";
-import {createEventPriceTemplate} from "./event-price.js";
 
-const createEventFormTemplate = (data) => {
+const createPointFormTemplate = (data) => {
   const {
     waypoint,
     waypointTypes,
@@ -30,8 +32,8 @@ const createEventFormTemplate = (data) => {
   const createEventTypeListTemplate = () => {
     return `
     <div class="event__type-list">
-        ${createTripWaypointTemplate(transferType, transfer, waypoint)}
-        ${createTripWaypointTemplate(activityType, activity, waypoint)}
+        ${createPointTemplate(transferType, transfer, waypoint)}
+        ${createPointTemplate(activityType, activity, waypoint)}
     </div>`;
   };
 
@@ -55,10 +57,10 @@ const createEventFormTemplate = (data) => {
         <input class="event__input  event__input--destination"
           id="event-destination-1" type="text" name="event-destination"
           value="${destination}" list="destination-list-1">
-        ${createTripCityListTemplate(CITY_LIST)}
+        ${createCityListTemplate(CITY_LIST)}
       </div>
-      ${createEventTimeGroupTemplate(startDate, endDate)}
-      ${createEventPriceTemplate(cost)}
+      ${createTimeGroupTemplate(startDate, endDate)}
+      ${createPriceTemplate(cost)}
       <button class="event__save-btn btn btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Delete</button>
       <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden"
@@ -71,20 +73,19 @@ const createEventFormTemplate = (data) => {
     </header>
     ${(hasOffers || hasInfo) ?
     `<section class="event__details">
-        ${(hasOffers) ? createTripOffersTemplate(offers) : ``}
-        ${(hasInfo) ? createTripDetailsTemplate(info) : ``}
+        ${(hasOffers) ? createOffersTemplate(offers) : ``}
+        ${(hasInfo) ? createDetailsTemplate(info) : ``}
      </section>` : ``}
   </form>
   </li>`;
 };
 
 
-export default class EventForm extends SmartView {
+export default class PointForm extends SmartView {
 
-  constructor(route = BLANK_POINT) {
+  constructor(point = BLANK_POINT) {
     super();
-    this._data = EventForm.parseRouteToData(route);
-
+    this._data = PointForm.parsePointToData(point);
 
     this._onSubmit = null;
     this._onFavoriteClick = null;
@@ -107,7 +108,7 @@ export default class EventForm extends SmartView {
   }
 
   getTemplate() {
-    return createEventFormTemplate(this._data);
+    return createPointFormTemplate(this._data);
   }
 
   setFormSubmitHandler(callback) {
@@ -133,11 +134,11 @@ export default class EventForm extends SmartView {
 
   _onSubmitHandler(evt) {
     evt.preventDefault();
-    this._onSubmit(EventForm.parseDataToTask(this._data));
+    this._onSubmit(PointForm.parseDataToPoint(this._data));
   }
 
   _onCloseClickHandler() {
-    this._onCloseClick(EventForm.parseDataToTask(this._data));
+    this._onCloseClick(PointForm.parseDataToPoint(this._data));
   }
 
   _onFavoriteClickHandler(evt) {
@@ -185,20 +186,18 @@ export default class EventForm extends SmartView {
     });
   }
 
-  static parseRouteToData(route) {
-    return Object.assign({}, route, {
-      waypoint: route.waypoint,
-      destination: route.destination,
-      info: route.info,
-      hasInfo: route.hasInfo,
+  static parsePointToData(point) {
+    return Object.assign({}, point, {
+      waypoint: point.waypoint,
+      destination: point.destination,
+      info: point.info,
+      hasInfo: point.hasInfo,
     });
   }
 
-  static parseDataToTask(data) {
-    data = Object.assign({}, data);
-    return data;
+  static parseDataToPoint(data) {
+    return Object.assign({}, data);
   }
-
 
 }
 

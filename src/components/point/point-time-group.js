@@ -1,4 +1,4 @@
-export const createEventTimeGroupTemplate = (startDate, endDate) => {
+export const createTimeGroupTemplate = (startDate, endDate) => {
   return `
   <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time-1">

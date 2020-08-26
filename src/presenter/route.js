@@ -1,5 +1,5 @@
-import EventItemView from "../components/event/event-item.js";
-import EventFormView from "../components/event/event-form.js";
+import EventItemView from "../components/point/point-item.js";
+import PointFormView from "../components/point/point-form.js";
 
 import {render, replace, remove} from "../utils/dom-utils.js";
 
@@ -32,7 +32,7 @@ export default class Route {
     const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventItemView(route);
-    this._eventEditComponent = new EventFormView(route);
+    this._eventEditComponent = new PointFormView(route);
 
     this._eventComponent.setClickHandler(this._clickHandler);
     this._eventEditComponent.setFormSubmitHandler(this._formCloseHandler);

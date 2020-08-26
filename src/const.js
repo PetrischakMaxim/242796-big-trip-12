@@ -1,3 +1,7 @@
+export const TRIP_IMAGE_URL = `http://picsum.photos/248/152?r=`;
+
+export const TRIP_SENTENCE = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`;
+
 export const CITY_LIST = [
   `Westminster`,
   `Florida`,
@@ -31,17 +35,12 @@ const WAYPOINT = {
 export const {types: {transfer, activity}} = WAYPOINT;
 export const WAYPOINT_LIST = [...transfer, ...activity];
 
-
 export const OFFER_LIST = [
   `Add luggage`,
   `Switch to comfort class`,
   `Add meal`,
   `Choose seats`
 ];
-
-export const TRIP_IMAGE_URL = `http://picsum.photos/248/152?r=`;
-
-export const TRIP_SENTENCE = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`;
 
 export const BLANK_POINT = {
   waypoint: `Taxi`,
@@ -59,8 +58,7 @@ export const BLANK_POINT = {
   hasInfo: false,
 };
 
-
-export const TRIP_COUNT = 8;
+export const POINT_COUNT = 8;
 
 export const SortType = {
   DEFAULT: `event`,

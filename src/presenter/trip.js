@@ -1,13 +1,13 @@
 import SortView from "../components/sort/sort.js";
-import EventDaysContainerView from "../components/event/event-day-list.js";
-import EventDayView from "../components/event/event-day.js";
-import EventsListInDayView from "../components/event/event-list.js";
-import NoWaypointView from "../components/event/no-event-waypoint.js";
+import DayListView from "../components/day/day-list.js";
+import DayView from "../components/day/day.js";
+import PointsListView from "../components/point/points-list.js";
+import NoPointView from "../components/point/no-point.js";
 import RoutePresenter from "./route.js";
 
 import {render, updateItem} from "../utils/dom-utils.js";
 import {sortPrice, sortDate} from "../utils/utils.js";
-import {SortType, TRIP_COUNT} from "../const.js";
+import {SortType, POINT_COUNT} from "../const.js";
 
 export default class Trip {
 
@@ -18,8 +18,8 @@ export default class Trip {
     this._daysCount = null;
 
     this._sortComponent = new SortView();
-    this._eventDaysContainer = new EventDaysContainerView();
-    this._emptyWaypointComponent = new NoWaypointView();
+    this._eventDaysContainer = new DayListView();
+    this._emptyWaypointComponent = new NoPointView();
     this._currentSortType = SortType.DEFAULT;
     this._routePresenter = null;
     this._eventsListInDay = null;
@@ -29,7 +29,7 @@ export default class Trip {
     this._handleSortChange = this._handleSortChange.bind(this);
   }
 
-  init(routes, count = TRIP_COUNT) {
+  init(routes, count = POINT_COUNT) {
     this._routes = [...routes];
     this._sourceRoutes = [...routes];
     this._routesLength = this._routes.length;
@@ -120,8 +120,8 @@ export default class Trip {
   }
 
   _renderEventDay(events, date, counter) {
-    const dayInList = new EventDayView(date, counter + 1);
-    const eventsList = new EventsListInDayView().getElement();
+    const dayInList = new DayView(date, counter + 1);
+    const eventsList = new PointsListView().getElement();
     render(this._eventDaysContainer, dayInList);
     render(dayInList.getElement(), eventsList);
     this._daysCount = counter + 1;
@@ -157,6 +157,6 @@ export default class Trip {
       .values(this._routePresenter)
       .forEach((presenter) => presenter.destroy());
     this._routePresenter = {};
-    this._tripCount = TRIP_COUNT;
+    this._tripCount = POINT_COUNT;
   }
 }

@@ -3,26 +3,25 @@ import FilterView from "./components/filter/filter.js";
 import TabsView from "./components/tabs/tabs.js";
 import TripPresenter from "./presenter/trip.js";
 
-import {generateRoute} from "./mock/route.js";
+import {generatePoint} from "./mock/point.js";
 import {render, RenderPosition} from "./utils/dom-utils.js";
-import {TRIP_COUNT} from "./const.js";
+import {POINT_COUNT} from "./const.js";
 
-const routes = new Array(TRIP_COUNT).fill().map(generateRoute);
+const points = new Array(POINT_COUNT).fill().map(generatePoint);
 
-const pageHeaderElement = document.querySelector(`.page-header`);
-const tripMainInfoElement = pageHeaderElement.querySelector(`.trip-main`);
-const controlsWrapper = tripMainInfoElement.querySelector(`.trip-controls`);
+const headerElement = document.querySelector(`.page-header`);
+const mainInfoElement = headerElement.querySelector(`.trip-main`);
+const infoContainerElement = mainInfoElement.querySelector(`.trip-controls`);
 
-render(tripMainInfoElement, new TripInfoView(routes), RenderPosition.AFTERBEGIN);
-render(controlsWrapper, new TabsView(), RenderPosition.AFTERBEGIN);
-render(controlsWrapper, new FilterView());
+render(mainInfoElement, new TripInfoView(points), RenderPosition.AFTERBEGIN);
+render(infoContainerElement, new TabsView(), RenderPosition.AFTERBEGIN);
+render(infoContainerElement, new FilterView());
 
-const pageMainElement = document.querySelector(`.page-main`);
-const pageMainContainer = pageMainElement.querySelector(
+const mainElement = document.querySelector(`.page-main`);
+const mainContainerElement = mainElement.querySelector(
     `.page-body__container`
 );
 
-
-new TripPresenter(pageMainContainer).init(routes, TRIP_COUNT);
+new TripPresenter(mainContainerElement).init(points, POINT_COUNT);
 
 

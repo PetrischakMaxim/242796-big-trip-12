@@ -1,7 +1,7 @@
 import AbstractView from "../abstract.js";
 import {getDateTimeFormat, getFormatedDate} from "../../utils/utils.js";
 
-const createEventDayTemplate = (date, count) => {
+const createDayTemplate = (date, count) => {
   const dateTime = getDateTimeFormat(date);
   const formatedDate = getFormatedDate(date).toLowerCase();
   return `<li class="trip-days__item day">
@@ -16,7 +16,7 @@ const createEventDayTemplate = (date, count) => {
   </li>`;
 };
 
-export default class EventDay extends AbstractView {
+export default class Day extends AbstractView {
   constructor(date, count) {
     super();
     this._date = date;
@@ -24,6 +24,6 @@ export default class EventDay extends AbstractView {
   }
 
   getTemplate() {
-    return createEventDayTemplate(this._date, this._count);
+    return createDayTemplate(this._date, this._count);
   }
 }
