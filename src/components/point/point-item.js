@@ -1,6 +1,11 @@
 import AbstractView from "../abstract.js";
 
-import {getDateAndTimeFormat, getTimeFormat, getTimeOfTrip} from "../../utils/utils.js";
+import {
+  getDateAndTimeFormat,
+  getTimeFormat,
+  getTimeOfTrip
+} from "../../utils/utils.js";
+
 import {createOffersTemplate} from "./point-selected-offers.js";
 
 export const createPointItemTemplate = (point) => {

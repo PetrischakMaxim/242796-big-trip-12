@@ -7,8 +7,20 @@ import {createPointTemplate} from "./point.js";
 import {createTimeGroupTemplate} from "./point-time-group.js";
 import {createPriceTemplate} from "./point-price.js";
 
-import {CITY_LIST, BLANK_POINT, TRIP_IMAGE_URL, TRIP_SENTENCE} from "../../const.js";
-import {getTimeFormat, formatDateToPlaceholder, getRandomInteger, generateSentence, generateImage} from "../../utils/utils.js";
+import {
+  CITY_LIST,
+  BLANK_POINT,
+  TRIP_IMAGE_URL,
+  TRIP_SENTENCE
+} from "../../const.js";
+
+import {
+  getTimeFormat,
+  formatDateToPlaceholder,
+  getRandomInteger,
+  generateSentence,
+  generateImage
+} from "../../utils/utils.js";
 
 const createPointFormTemplate = (data) => {
   const {
@@ -164,18 +176,18 @@ export default class PointForm extends SmartView {
     const {value, list} = evt.target;
     const isDestination = [...list.options].some((opt) => opt.value === value);
 
-    if (isDestination) {
-      this.updateData({
-        destination: evt.target.value,
-        hasInfo: Boolean(getRandomInteger(0, 1)),
-        info: {
-          description: generateSentence(TRIP_SENTENCE),
-          images: generateImage(TRIP_IMAGE_URL)
-        }
-      });
-    } else {
+    if (!isDestination) {
       return;
     }
+
+    this.updateData({
+      destination: evt.target.value,
+      hasInfo: Boolean(getRandomInteger(0, 1)),
+      info: {
+        description: generateSentence(TRIP_SENTENCE),
+        images: generateImage(TRIP_IMAGE_URL)
+      }
+    });
   }
 
   _typeToggleHandler(evt) {

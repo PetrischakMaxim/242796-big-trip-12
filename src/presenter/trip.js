@@ -5,8 +5,8 @@ import PointsListView from "../components/point/points-list.js";
 import NoPointView from "../components/point/no-point.js";
 import PointPresenter from "./point.js";
 
-import {render, updateItem} from "../utils/dom-utils.js";
-import {sortPrice, sortDate} from "../utils/utils.js";
+import {render} from "../utils/dom-utils.js";
+import {sortPrice, sortDate, updateItem} from "../utils/utils.js";
 import {SortType, POINT_COUNT} from "../const.js";
 
 export default class Trip {
@@ -14,7 +14,7 @@ export default class Trip {
   constructor(container) {
     this._container = container;
     this._containerInner = this._container.querySelector(`.trip-events`);
-    this._tripCount = null;
+    this._pointCount = null;
     this._daysCount = null;
 
     this._sortComponent = new SortView();
@@ -33,7 +33,7 @@ export default class Trip {
     this._points = [...points];
     this._sourcePoints = [...points];
     this._pointsLength = this._points.length;
-    this._tripCount = count;
+    this._pointCount = count;
     this._pointPresenter = {};
     this._pointListInDay = [];
 
@@ -87,7 +87,7 @@ export default class Trip {
     this._sortComponent.setSortChangeHandler(this._handleSortChange);
   }
 
-  _renderDayListContainer() {
+  _renderDaysContainer() {
     render(this._container, this._dayListComponent);
   }
 
@@ -148,7 +148,7 @@ export default class Trip {
 
   _renderBoard() {
     this._renderSort();
-    this._renderDayListContainer();
+    this._renderDaysContainer();
     this._renderTrip();
   }
 
@@ -157,6 +157,6 @@ export default class Trip {
       .values(this._pointPresenter)
       .forEach((presenter) => presenter.destroy());
     this._pointPresenter = {};
-    this._tripCount = POINT_COUNT;
+    this._pointCount = POINT_COUNT;
   }
 }

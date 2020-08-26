@@ -10,7 +10,7 @@ export const createTabsTemplate = () => {
   </div>`;
 };
 
-export default class PageTabs extends AbstractView {
+export default class Tabs extends AbstractView {
 
   getTemplate() {
     return createTabsTemplate();
