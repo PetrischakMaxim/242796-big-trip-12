@@ -1,20 +1,18 @@
 import AbstractView from "../abstract/abstract.js";
 import {getDateTimeFormat, getFormatedDate} from "../../utils/date-utils.js";
 
-const createDayTemplate = (date, count) => {
-  const dateTime = getDateTimeFormat(date);
-  const formatedDate = getFormatedDate(date).toLowerCase();
-  return `<li class="trip-days__item day">
+const createDayTemplate = (date, count) => (
+  `<li class="trip-days__item day">
     <div class="day__info">
       <span class="day__counter">
         ${count}
       </span>
-      <time class="day__date" datetime="${dateTime}">
-        ${formatedDate}
+      <time class="day__date" datetime="${getDateTimeFormat(date)}">
+        ${getFormatedDate(date).toLowerCase()}
       </time>
     </div>
-  </li>`;
-};
+  </li>`
+);
 
 export default class Day extends AbstractView {
   constructor(date, count) {

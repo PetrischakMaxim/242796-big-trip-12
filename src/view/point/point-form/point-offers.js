@@ -1,4 +1,4 @@
-import {getRandomInteger} from "../../utils/utils.js";
+import {getRandomInteger} from "../../../utils/utils.js";
 
 const generateOffersTemplate = (offers) => {
   return offers.map((offer)=> {

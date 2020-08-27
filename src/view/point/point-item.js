@@ -6,8 +6,6 @@ import {
   getTimeOfTrip
 } from "../../utils/date-utils.js";
 
-import {createOffersTemplate} from "./point-selected-offers.js";
-
 export const createPointItemTemplate = (point) => {
 
   const {
@@ -49,7 +47,15 @@ export const createPointItemTemplate = (point) => {
       <p class="event__price">
         €&nbsp;<span class="event__price-value">${cost}</span>
       </p>
-      ${createOffersTemplate(offers)}
+      <h4 class="visually-hidden">Offers:</h4>
+      <ul class="event__selected-offers">
+      ${offers.map((offer) => (
+    `<li class="event__offer">
+          <span class="event__offer-title">${offer.name}</span>
+          +
+          €&nbsp;<span class="event__offer-price">${offer.cost}</span>
+        </li>`)).join(``)}
+      </ul>
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>

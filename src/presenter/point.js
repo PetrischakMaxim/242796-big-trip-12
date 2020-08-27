@@ -1,5 +1,5 @@
 import PointView from "../view/point/point-item.js";
-import PointFormView from "../view/point/point-form.js";
+import PointFormView from "../view/point/point-form/point-form.js";
 
 import {render, replace, remove, checkEscKeyButton} from "../utils/dom-utils.js";
 

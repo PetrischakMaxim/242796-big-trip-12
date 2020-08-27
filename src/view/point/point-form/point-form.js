@@ -1,4 +1,4 @@
-import SmartView from "../smart/smart.js";
+import SmartView from "../../smart/smart.js";
 
 import {createOffersTemplate} from "./point-offers.js";
 import {createDetailsTemplate} from "./point-details.js";
@@ -12,18 +12,18 @@ import {
   BLANK_POINT,
   TRIP_IMAGE_URL,
   TRIP_SENTENCE
-} from "../../const.js";
+} from "../../../const.js";
 
 import {
   getRandomInteger,
   generateSentence,
   generateImage
-} from "../../utils/utils.js";
+} from "../../../utils/utils.js";
 
 import {
   getTimeFormat,
   formatDateToPlaceholder,
-} from "../../utils/date-utils.js";
+} from "../../../utils/date-utils.js";
 
 const createPointFormTemplate = (data) => {
   const {
