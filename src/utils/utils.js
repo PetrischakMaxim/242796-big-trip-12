@@ -43,3 +43,8 @@ export const updateItem = (items, update) => {
     ...items.slice(index + 1)
   ];
 };
+
+export const checkEscKeyButton = (evt) => {
+  return (evt.key === `Escape` || evt.key === `Esc`) ? true : false;
+};
+

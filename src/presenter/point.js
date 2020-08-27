@@ -1,7 +1,8 @@
 import PointView from "../view/point/point-item.js";
 import PointFormView from "../view/point/point-form/point-form.js";
 
-import {render, replace, remove, checkEscKeyButton} from "../utils/dom-utils.js";
+import {render, replace, remove} from "../utils/dom-utils.js";
+import {checkEscKeyButton} from "../utils/utils.js";
 
 const Mode = {
   DEFAULT: `DEFAULT`,

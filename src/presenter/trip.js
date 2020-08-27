@@ -7,14 +7,13 @@ import PointPresenter from "./point.js";
 
 import {render} from "../utils/dom-utils.js";
 import {sortPrice, sortDate, updateItem} from "../utils/utils.js";
-import {SortType, POINT_COUNT} from "../const.js";
+import {SortType} from "../const.js";
 
 export default class Trip {
 
   constructor(container) {
     this._container = container;
     this._containerInner = this._container.querySelector(`.trip-events`);
-    this._pointCount = null;
     this._daysCount = null;
 
     this._sortComponent = new SortView();
@@ -29,11 +28,10 @@ export default class Trip {
     this._handleSortChange = this._handleSortChange.bind(this);
   }
 
-  init(points, count = POINT_COUNT) {
+  init(points) {
     this._points = [...points];
     this._sourcePoints = [...points];
     this._pointsLength = this._points.length;
-    this._pointCount = count;
     this._pointPresenter = {};
     this._pointListInDay = [];
 
@@ -137,13 +135,11 @@ export default class Trip {
   }
 
   _renderTrip() {
-    if (this._points.every((route) =>
-      !route.hasWaypoint ||
-      this._pointsLength === 0)) {
+    if (this._points.every(() => this._pointsLength === 0)) {
       this._renderNoPoints();
-    } else {
-      this._renderPoints(this._points);
+      return;
     }
+    this._renderPoints(this._points);
   }
 
   _renderBoard() {
@@ -157,6 +153,5 @@ export default class Trip {
       .values(this._pointPresenter)
       .forEach((presenter) => presenter.destroy());
     this._pointPresenter = {};
-    this._pointCount = POINT_COUNT;
   }
 }

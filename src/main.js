@@ -22,6 +22,6 @@ const mainContainerElement = mainElement.querySelector(
     `.page-body__container`
 );
 
-new TripPresenter(mainContainerElement).init(points, POINT_COUNT);
+new TripPresenter(mainContainerElement).init(points);
 
 

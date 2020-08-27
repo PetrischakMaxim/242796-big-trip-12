@@ -65,7 +65,3 @@ export const remove = (component) => {
   component.getElement().remove();
   component.removeElement();
 };
-
-export const checkEscKeyButton = (evt) => {
-  return (evt.key === `Escape` || evt.key === `Esc`) ? true : false;
-};
