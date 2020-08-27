@@ -1,5 +1,5 @@
 import AbstractView from "../abstract/abstract.js";
-import {getDateTimeFormat, getFormatedDate} from "../../utils/utils.js";
+import {getDateTimeFormat, getFormatedDate} from "../../utils/date-utils.js";
 
 const createDayTemplate = (date, count) => {
   const dateTime = getDateTimeFormat(date);

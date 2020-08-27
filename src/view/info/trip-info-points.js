@@ -1,4 +1,5 @@
-import {getFormatedDate, getRandomIndex} from '../../utils/utils.js';
+import {getRandomIndex} from '../../utils/utils.js';
+import {getFormatedDate} from '../../utils/date-utils.js';
 import {BLANK_POINT} from '../../const.js';
 
 export const createPointInfoTemplate = (points) => {

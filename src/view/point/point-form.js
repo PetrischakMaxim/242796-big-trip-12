@@ -15,12 +15,15 @@ import {
 } from "../../const.js";
 
 import {
-  getTimeFormat,
-  formatDateToPlaceholder,
   getRandomInteger,
   generateSentence,
   generateImage
 } from "../../utils/utils.js";
+
+import {
+  getTimeFormat,
+  formatDateToPlaceholder,
+} from "../../utils/date-utils.js";
 
 const createPointFormTemplate = (data) => {
   const {

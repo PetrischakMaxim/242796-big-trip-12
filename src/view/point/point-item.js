@@ -4,7 +4,7 @@ import {
   getDateAndTimeFormat,
   getTimeFormat,
   getTimeOfTrip
-} from "../../utils/utils.js";
+} from "../../utils/date-utils.js";
 
 import {createOffersTemplate} from "./point-selected-offers.js";
 
