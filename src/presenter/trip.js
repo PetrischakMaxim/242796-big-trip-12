@@ -1,8 +1,8 @@
-import SortView from "../components/sort/sort.js";
-import DayListView from "../components/day/day-list.js";
-import DayView from "../components/day/day.js";
-import PointsListView from "../components/point/points-list.js";
-import NoPointView from "../components/point/no-point.js";
+import SortView from "../view/sort/sort.js";
+import DayListView from "../view/day/day-list.js";
+import DayView from "../view/day/day.js";
+import PointsListView from "../view/point/points-list.js";
+import NoPointView from "../view/point/no-point.js";
 import PointPresenter from "./point.js";
 
 import {render} from "../utils/dom-utils.js";

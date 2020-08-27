@@ -1,4 +1,4 @@
-import SmartView from "../smart.js";
+import SmartView from "../smart/smart.js";
 
 import {createOffersTemplate} from "./point-offers.js";
 import {createDetailsTemplate} from "./point-details.js";

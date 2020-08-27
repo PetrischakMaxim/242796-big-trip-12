@@ -1,4 +1,4 @@
-import AbstractView from "../abstract.js";
+import AbstractView from "../abstract/abstract.js";
 
 import {createPointInfoTemplate} from "./trip-info-points.js";
 import {createTotalCostInfoTemplate} from "./trip-total-cost.js";

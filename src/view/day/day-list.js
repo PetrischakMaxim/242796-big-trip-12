@@ -1,4 +1,4 @@
-import AbstractView from "../abstract.js";
+import AbstractView from "../abstract/abstract.js";
 
 export default class DayList extends AbstractView {
 

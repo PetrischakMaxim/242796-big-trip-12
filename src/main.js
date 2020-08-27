@@ -1,6 +1,6 @@
-import TripInfoView from "./components/info/trip-info.js";
-import FilterView from "./components/filter/filter.js";
-import TabsView from "./components/tabs/tabs.js";
+import TripInfoView from "./view/info/trip-info.js";
+import FilterView from "./view/filter/filter.js";
+import TabsView from "./view/tabs/tabs.js";
 import TripPresenter from "./presenter/trip.js";
 
 import {generatePoint} from "./mock/point.js";

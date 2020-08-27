@@ -1,4 +1,4 @@
-import AbstractView from "../abstract.js";
+import AbstractView from "../abstract/abstract.js";
 
 export const createTabsTemplate = () => {
   return `<div class="trip-controls-wrapper">

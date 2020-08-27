@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import Abstract from '../abstract/abstract.js';
 
 export default class Smart extends Abstract {
 
