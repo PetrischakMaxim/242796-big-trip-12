@@ -7,6 +7,9 @@ import {createPointTemplate} from "./point.js";
 import {createTimeGroupTemplate} from "./point-time-group.js";
 import {createPriceTemplate} from "./point-price.js";
 
+import flatpickr from "flatpickr";
+import "../../../../node_modules/flatpickr/dist/flatpickr.min.css";
+
 import {
   CITY_LIST,
   BLANK_POINT,
@@ -101,22 +104,26 @@ export default class PointForm extends SmartView {
   constructor(point = BLANK_POINT) {
     super();
     this._data = PointForm.parsePointToData(point);
-
-    this._onSubmit = null;
-    this._onFavoriteClick = null;
-    this._onCloseClick = null;
+    this._datepicker = null;
 
     this._onSubmitHandler = this._onSubmitHandler.bind(this);
     this._onCloseClickHandler = this._onCloseClickHandler.bind(this);
     this._onFavoriteClickHandler = this._onFavoriteClickHandler.bind(this);
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
     this._destinationToggleHandler = this._destinationToggleHandler.bind(this);
+    this._dateChangeHandler = this._dateChangeHandler.bind(this);
+
+    this._onSubmit = null;
+    this._onFavoriteClick = null;
+    this._onCloseClick = null;
 
     this._setInnerHandlers();
+    this._setDatepicker();
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepicker();
     this.setFormSubmitHandler(this._onSubmit);
     this.setCloseButtonHandler(this._onCloseClick);
     this.setFavoriteClickHandler(this._onFavoriteClick);
@@ -146,6 +153,7 @@ export default class PointForm extends SmartView {
       .querySelector(`.event__favorite-checkbox`)
       .addEventListener(`click`, this._onFavoriteClickHandler);
   }
+
 
   _onSubmitHandler(evt) {
     evt.preventDefault();
@@ -199,6 +207,34 @@ export default class PointForm extends SmartView {
     this.updateData({
       waypoint: updatedWaypoint,
     });
+  }
+
+  _setDatepicker() {
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
+
+    this._datepicker = flatpickr(
+        this.getElement().querySelectorAll(`.event__input--time`),
+        {
+          enableTime: true,
+          dateFormat: `Y-m-d H:i`,
+          defaultDate: this._data.tripDates.start,
+          onChange: this._dateChangeHandler
+        }
+    );
+
+  }
+
+  _dateChangeHandler(date) {
+    console.log(date.join(``));
+    this.updateData({
+      tripDates: {
+        start: date
+      }
+    });
+
   }
 
   static parsePointToData(point) {
