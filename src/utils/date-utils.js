@@ -1,15 +1,25 @@
-export const getDateTimeFormat = (date) => date.toJSON().split(`T`)[0];
+import moment from "moment";
 
-export const formatDateToPlaceholder = (date) => `${getDateTimeFormat(date).split(`-`).reverse().join(`/`).slice(0, -2)}`;
-
-export const getDateAndTimeFormat = (date) => date.toJSON().split(`.`)[0];
-
-export const getTimeFormat = (date) => getDateAndTimeFormat(date).split(`T`)[1].slice(0, -3);
-
-export const getFormatedDate = (date) => date.toLocaleString(`en-US`, {month: `short`, day: `numeric`});
+export const getDateTimeFormat = (date) => moment(date).format(`YYYY-MM-DDTH:mm:ss`);
+export const getDateFormat = (date) => moment(date).format(`YYYY-MM-DD`);
+export const getTimeFormat = (date) => moment(date).format(`HH:mm`);
+export const formatDateToPlaceholder = (date) => `${getDateFormat(date)} ${getTimeFormat(date)}`;
+export const getFormatedDate = (date) => moment(date).format(`D MMM`);
 
 export const getTimeOfTrip = (d1, d2) => {
-  let diff = (d2.getTime() - d1.getTime()) / 1000;
-  diff /= (60 * 60);
-  return Math.abs(Math.round(diff)) + `H`;
+  const {days, hours, minutes} = getTripDuaration(d1, d2)._data;
+  return (
+    `${isDate(days, `D`)}
+     ${isDate(hours, `H`)}
+     ${isDate(minutes, `M`)}`
+  );
 };
+
+const isDate = (date, dateName) => {
+  if (!date) {
+    return ``;
+  }
+  return `${date}${dateName}`;
+};
+
+const getTripDuaration = (d1, d2) =>moment.duration(moment(d2).diff(d1));

@@ -1,5 +1,5 @@
 import AbstractView from "../abstract/abstract.js";
-import {getDateTimeFormat, getFormatedDate} from "../../utils/date-utils.js";
+import {getDateFormat, getFormatedDate} from "../../utils/date-utils.js";
 
 const createDayTemplate = (date, count) => (
   `<li class="trip-days__item day">
@@ -7,8 +7,8 @@ const createDayTemplate = (date, count) => (
       <span class="day__counter">
         ${count}
       </span>
-      <time class="day__date" datetime="${getDateTimeFormat(date)}">
-        ${getFormatedDate(date).toLowerCase()}
+      <time class="day__date" datetime="${getDateFormat(date)}">
+        ${getFormatedDate(date)}
       </time>
     </div>
   </li>`

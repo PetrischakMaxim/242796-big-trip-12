@@ -1,7 +1,7 @@
 import AbstractView from "../abstract/abstract.js";
 
 import {
-  getDateAndTimeFormat,
+  getDateTimeFormat,
   getTimeFormat,
   getTimeOfTrip
 } from "../../utils/date-utils.js";
@@ -31,12 +31,12 @@ export const createPointItemTemplate = (point) => {
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time"
-            datetime="${getDateAndTimeFormat(start)}">
+            datetime="${getDateTimeFormat(start)}">
             ${getTimeFormat(start)}
           </time>
           —
           <time class="event__end-time"
-            datetime="${getDateAndTimeFormat(end)}">
+            datetime="${getDateTimeFormat(end)}">
             ${getTimeFormat(end)}
           </time>
         </p>

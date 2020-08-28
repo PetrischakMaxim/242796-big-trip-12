@@ -1,4 +1,5 @@
 import {generateId} from "../../../utils/utils.js";
+import {formatDateToPlaceholder} from "../../../utils/date-utils.js";
 
 export const createTimeGroupTemplate = (startDate, endDate) => {
   const id = generateId();
@@ -9,14 +10,14 @@ export const createTimeGroupTemplate = (startDate, endDate) => {
       </label>
       <input class="event__input event__input--time" date-time="start"
         id="event-start-time-${id}" type="text" name="event-start-time"
-        value="${startDate}">
+        value="${formatDateToPlaceholder(startDate)}">
       —
       <label class="visually-hidden" for="event-end-time-${id}">
         To
       </label>
       <input class="event__input  event__input--time" date-time="end"
         id="event-end-time-${id}" type="text" name="event-end-time"
-        value="${endDate}">
+        value="${formatDateToPlaceholder(endDate)}">
     </div>
   `;
 };

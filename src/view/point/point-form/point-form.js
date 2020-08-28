@@ -23,11 +23,6 @@ import {
   generateImage
 } from "../../../utils/utils.js";
 
-import {
-  getTimeFormat,
-  formatDateToPlaceholder,
-} from "../../../utils/date-utils.js";
-
 const createPointFormTemplate = (data) => {
   const {
     waypoint,
@@ -44,8 +39,6 @@ const createPointFormTemplate = (data) => {
   } = data;
 
   const [transferType, activityType] = Object.keys(waypointTypes);
-  const startDate = `${formatDateToPlaceholder(start)} ${getTimeFormat(start)}`;
-  const endDate = `${formatDateToPlaceholder(end)} ${getTimeFormat(end)}`;
 
   const createEventTypeListTemplate = () => {
     return `
@@ -77,7 +70,7 @@ const createPointFormTemplate = (data) => {
           value="${destination}" list="destination-list-1">
         ${createCityListTemplate(CITY_LIST)}
       </div>
-      ${createTimeGroupTemplate(startDate, endDate)}
+      ${createTimeGroupTemplate(start, end)}
       ${createPriceTemplate(cost)}
       <button class="event__save-btn btn btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Delete</button>
@@ -228,7 +221,7 @@ export default class PointForm extends SmartView {
   }
 
   _dateChangeHandler(date) {
-    console.log(date.join(``));
+
     this.updateData({
       tripDates: {
         start: date
