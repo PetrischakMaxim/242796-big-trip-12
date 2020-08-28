@@ -1,14 +1,29 @@
-import SmartView from "../smart.js";
-import {CITY_LIST, BLANK_ROUTE, TRIP_IMAGE_URL, TRIP_SENTENCE} from "../../const.js";
-import {getTimeFormat, formatDateToPlaceholder, getRandomInteger, generateSentence, generateImage} from "../../utils/utils.js";
-import {createTripOffersTemplate} from "./event-offers.js";
-import {createTripDetailsTemplate} from "./event-details.js";
-import {createTripCityListTemplate} from "./event-city-list.js";
-import {createTripWaypointTemplate} from "./event-waypoint.js";
-import {createEventTimeGroupTemplate} from "./event-time.js";
-import {createEventPriceTemplate} from "./event-price.js";
+import SmartView from "../../smart/smart.js";
 
-const createEventFormTemplate = (data) => {
+import {createOffersTemplate} from "./point-offers.js";
+import {createDetailsTemplate} from "./point-details.js";
+import {createCityListTemplate} from "./point-city-list.js";
+import {createPointTemplate} from "./point.js";
+import {createTimeGroupTemplate} from "./point-time-group.js";
+import {createPriceTemplate} from "./point-price.js";
+
+import flatpickr from "flatpickr";
+import "../../../../node_modules/flatpickr/dist/flatpickr.min.css";
+
+import {
+  CITY_LIST,
+  BLANK_POINT,
+  TRIP_IMAGE_URL,
+  TRIP_SENTENCE
+} from "../../../const.js";
+
+import {
+  getRandomInteger,
+  generateSentence,
+  generateImage
+} from "../../../utils/utils.js";
+
+const createPointFormTemplate = (data) => {
   const {
     waypoint,
     waypointTypes,
@@ -24,14 +39,12 @@ const createEventFormTemplate = (data) => {
   } = data;
 
   const [transferType, activityType] = Object.keys(waypointTypes);
-  const startDate = `${formatDateToPlaceholder(start)} ${getTimeFormat(start)}`;
-  const endDate = `${formatDateToPlaceholder(end)} ${getTimeFormat(end)}`;
 
   const createEventTypeListTemplate = () => {
     return `
     <div class="event__type-list">
-        ${createTripWaypointTemplate(transferType, transfer, waypoint)}
-        ${createTripWaypointTemplate(activityType, activity, waypoint)}
+        ${createPointTemplate(transferType, transfer, waypoint)}
+        ${createPointTemplate(activityType, activity, waypoint)}
     </div>`;
   };
 
@@ -55,10 +68,10 @@ const createEventFormTemplate = (data) => {
         <input class="event__input  event__input--destination"
           id="event-destination-1" type="text" name="event-destination"
           value="${destination}" list="destination-list-1">
-        ${createTripCityListTemplate(CITY_LIST)}
+        ${createCityListTemplate(CITY_LIST)}
       </div>
-      ${createEventTimeGroupTemplate(startDate, endDate)}
-      ${createEventPriceTemplate(cost)}
+      ${createTimeGroupTemplate(start, end)}
+      ${createPriceTemplate(cost)}
       <button class="event__save-btn btn btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Delete</button>
       <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden"
@@ -71,43 +84,46 @@ const createEventFormTemplate = (data) => {
     </header>
     ${(hasOffers || hasInfo) ?
     `<section class="event__details">
-        ${(hasOffers) ? createTripOffersTemplate(offers) : ``}
-        ${(hasInfo) ? createTripDetailsTemplate(info) : ``}
+        ${(hasOffers) ? createOffersTemplate(offers) : ``}
+        ${(hasInfo) ? createDetailsTemplate(info) : ``}
      </section>` : ``}
   </form>
   </li>`;
 };
 
 
-export default class EventForm extends SmartView {
+export default class PointForm extends SmartView {
 
-  constructor(route = BLANK_ROUTE) {
+  constructor(point = BLANK_POINT) {
     super();
-    this._data = EventForm.parseRouteToData(route);
-
-
-    this._onSubmit = null;
-    this._onFavoriteClick = null;
-    this._onCloseClick = null;
+    this._data = PointForm.parsePointToData(point);
+    this._datepicker = null;
 
     this._onSubmitHandler = this._onSubmitHandler.bind(this);
     this._onCloseClickHandler = this._onCloseClickHandler.bind(this);
     this._onFavoriteClickHandler = this._onFavoriteClickHandler.bind(this);
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
     this._destinationToggleHandler = this._destinationToggleHandler.bind(this);
+    this._dateChangeHandler = this._dateChangeHandler.bind(this);
+
+    this._onSubmit = null;
+    this._onFavoriteClick = null;
+    this._onCloseClick = null;
 
     this._setInnerHandlers();
+    this._setDatepicker();
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepicker();
     this.setFormSubmitHandler(this._onSubmit);
     this.setCloseButtonHandler(this._onCloseClick);
     this.setFavoriteClickHandler(this._onFavoriteClick);
   }
 
   getTemplate() {
-    return createEventFormTemplate(this._data);
+    return createPointFormTemplate(this._data);
   }
 
   setFormSubmitHandler(callback) {
@@ -131,13 +147,14 @@ export default class EventForm extends SmartView {
       .addEventListener(`click`, this._onFavoriteClickHandler);
   }
 
+
   _onSubmitHandler(evt) {
     evt.preventDefault();
-    this._onSubmit(EventForm.parseDataToTask(this._data));
+    this._onSubmit(PointForm.parseDataToPoint(this._data));
   }
 
   _onCloseClickHandler() {
-    this._onCloseClick(EventForm.parseDataToTask(this._data));
+    this._onCloseClick(PointForm.parseDataToPoint(this._data));
   }
 
   _onFavoriteClickHandler(evt) {
@@ -163,18 +180,18 @@ export default class EventForm extends SmartView {
     const {value, list} = evt.target;
     const isDestination = [...list.options].some((opt) => opt.value === value);
 
-    if (isDestination) {
-      this.updateData({
-        destination: evt.target.value,
-        hasInfo: Boolean(getRandomInteger(0, 1)),
-        info: {
-          description: generateSentence(TRIP_SENTENCE),
-          images: generateImage(TRIP_IMAGE_URL)
-        }
-      });
-    } else {
+    if (!isDestination) {
       return;
     }
+
+    this.updateData({
+      destination: evt.target.value,
+      hasInfo: Boolean(getRandomInteger(0, 1)),
+      info: {
+        description: generateSentence(TRIP_SENTENCE),
+        images: generateImage(TRIP_IMAGE_URL)
+      }
+    });
   }
 
   _typeToggleHandler(evt) {
@@ -185,20 +202,49 @@ export default class EventForm extends SmartView {
     });
   }
 
-  static parseRouteToData(route) {
-    return Object.assign({}, route, {
-      waypoint: route.waypoint,
-      destination: route.destination,
-      info: route.info,
-      hasInfo: route.hasInfo,
+  _setDatepicker() {
+    this._removeDatePicker();
+
+    this._datepicker = flatpickr(
+        this.getElement().querySelector(`.event__input--time`),
+        {
+          "enableTime": true,
+          "time_24hr": true,
+          "dateFormat": `Y-m-d H:i`,
+          "defaultDate": this._data.tripDates.start,
+          "onChange": this._dateChangeHandler
+        }
+    );
+  }
+
+
+  _removeDatePicker() {
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
+  }
+
+  _dateChangeHandler([date]) {
+    this.updateData({
+      tripDates: {
+        start: date
+      }
     });
   }
 
-  static parseDataToTask(data) {
-    data = Object.assign({}, data);
-    return data;
+  static parsePointToData(point) {
+    return Object.assign({}, point, {
+      waypoint: point.waypoint,
+      destination: point.destination,
+      info: point.info,
+      hasInfo: point.hasInfo,
+    });
   }
 
+  static parseDataToPoint(data) {
+    return Object.assign({}, data);
+  }
 
 }
 

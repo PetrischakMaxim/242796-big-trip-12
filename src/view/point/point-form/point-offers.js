@@ -1,4 +1,4 @@
-import {getRandomInteger} from "../../utils/utils.js";
+import {getRandomInteger} from "../../../utils/utils.js";
 
 const generateOffersTemplate = (offers) => {
   return offers.map((offer)=> {
@@ -20,7 +20,7 @@ const generateOffersTemplate = (offers) => {
   }).join(``);
 };
 
-export const createTripOffersTemplate = (offers) => {
+export const createOffersTemplate = (offers) => {
   return `<section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
       <div class="event__available-offers">

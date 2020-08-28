@@ -1,8 +1,12 @@
-import AbstractView from "../abstract.js";
-import {getDateAndTimeFormat, getTimeFormat, getTimeOfTrip} from "../../utils/utils.js";
-import {createOffersTemplate} from "./event-selected-offers.js";
+import AbstractView from "../abstract/abstract.js";
 
-export const createEventItemTemplate = (route) => {
+import {
+  getDateTimeFormat,
+  getTimeFormat,
+  getTimeOfTrip
+} from "../../utils/date-utils.js";
+
+export const createPointItemTemplate = (point) => {
 
   const {
     waypoint,
@@ -11,7 +15,7 @@ export const createEventItemTemplate = (route) => {
     destination,
     cost,
     tripDates: {start, end},
-  } = route;
+  } = point;
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -27,12 +31,12 @@ export const createEventItemTemplate = (route) => {
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time"
-            datetime="${getDateAndTimeFormat(start)}">
+            datetime="${getDateTimeFormat(start)}">
             ${getTimeFormat(start)}
           </time>
           —
           <time class="event__end-time"
-            datetime="${getDateAndTimeFormat(end)}">
+            datetime="${getDateTimeFormat(end)}">
             ${getTimeFormat(end)}
           </time>
         </p>
@@ -43,7 +47,15 @@ export const createEventItemTemplate = (route) => {
       <p class="event__price">
         €&nbsp;<span class="event__price-value">${cost}</span>
       </p>
-      ${createOffersTemplate(offers)}
+      <h4 class="visually-hidden">Offers:</h4>
+      <ul class="event__selected-offers">
+      ${offers.map((offer) => (
+    `<li class="event__offer">
+          <span class="event__offer-title">${offer.name}</span>
+          +
+          €&nbsp;<span class="event__offer-price">${offer.cost}</span>
+        </li>`)).join(``)}
+      </ul>
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>
@@ -52,28 +64,28 @@ export const createEventItemTemplate = (route) => {
 };
 
 
-export default class EventItem extends AbstractView {
+export default class PointItem extends AbstractView {
 
-  constructor(route) {
+  constructor(point) {
     super();
-    this._route = route;
+    this._point = point;
     this._clickHandler = null;
 
-    this._onClilk = this._onClilk.bind(this);
+    this._onClick = this._onClick.bind(this);
   }
 
   getTemplate() {
-    return createEventItemTemplate(this._route);
+    return createPointItemTemplate(this._point);
   }
 
   setClickHandler(callback) {
     this._clickHandler = callback;
     this.getElement()
       .querySelector(`.event__rollup-btn`)
-      .addEventListener(`click`, this._onClilk);
+      .addEventListener(`click`, this._onClick);
   }
 
-  _onClilk() {
+  _onClick() {
     this._clickHandler();
   }
 
