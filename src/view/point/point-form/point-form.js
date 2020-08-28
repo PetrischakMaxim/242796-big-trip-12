@@ -203,31 +203,34 @@ export default class PointForm extends SmartView {
   }
 
   _setDatepicker() {
+    this._removeDatePicker();
+
+    this._datepicker = flatpickr(
+        this.getElement().querySelector(`.event__input--time`),
+        {
+          "enableTime": true,
+          "time_24hr": true,
+          "dateFormat": `Y-m-d H:i`,
+          "defaultDate": this._data.tripDates.start,
+          "onChange": this._dateChangeHandler
+        }
+    );
+  }
+
+
+  _removeDatePicker() {
     if (this._datepicker) {
       this._datepicker.destroy();
       this._datepicker = null;
     }
-
-    this._datepicker = flatpickr(
-        this.getElement().querySelectorAll(`.event__input--time`),
-        {
-          enableTime: true,
-          dateFormat: `Y-m-d H:i`,
-          defaultDate: this._data.tripDates.start,
-          onChange: this._dateChangeHandler
-        }
-    );
-
   }
 
-  _dateChangeHandler(date) {
-
+  _dateChangeHandler([date]) {
     this.updateData({
       tripDates: {
         start: date
       }
     });
-
   }
 
   static parsePointToData(point) {
