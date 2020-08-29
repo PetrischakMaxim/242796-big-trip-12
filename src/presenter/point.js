@@ -2,7 +2,7 @@ import PointView from "../view/point/point-item.js";
 import PointFormView from "../view/point/point-form/point-form.js";
 
 import {render, replace, remove} from "../utils/dom-utils.js";
-import {checkEscKeyButton} from "../utils/utils.js";
+import {isEscKeyPressed} from "../utils/utils.js";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -88,7 +88,7 @@ export default class Point {
 
   _escKeyDownHandler(evt) {
 
-    if (checkEscKeyButton(evt)) {
+    if (isEscKeyPressed(evt)) {
       evt.preventDefault();
       this._replaceFormToPoint();
     }

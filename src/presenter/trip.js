@@ -14,7 +14,6 @@ export default class Trip {
   constructor(container) {
     this._container = container;
     this._containerInner = this._container.querySelector(`.trip-events`);
-    this._daysCount = null;
 
     this._sortComponent = new SortView();
     this._dayListComponent = new DayListView();
@@ -32,22 +31,31 @@ export default class Trip {
     this._points = [...points];
     this._sourcePoints = [...points];
     this._pointsLength = this._points.length;
-    this._pointPresenter = {};
+    this._pointPresenter = new Map();
     this._pointListInDay = [];
 
     this._renderBoard();
+
   }
 
   _handleModeChange() {
-    Object
-      .values(this._pointPresenter)
+    this._pointPresenter
       .forEach((presenter) => presenter.resetView());
   }
 
   _handleStatusChange(updatedPoint) {
     this._points = updateItem(this._points, updatedPoint);
     this._sourcePoints = updateItem(this._sourcePoints, updatedPoint);
-    this._pointPresenter[updatedPoint.id].init(updatedPoint);
+
+    for (let index of this._pointPresenter.keys()) {
+
+      if (index[0] !== updatedPoint.id) {
+        this._pointPresenter.get(index).init(updatedPoint);
+        break;
+      }
+    }
+
+
   }
 
   _sortPoints(sortType) {
@@ -93,25 +101,25 @@ export default class Trip {
     render(this._containerInner, this._noPointComponent);
   }
 
-  _renderPoint(container, event) {
+  _renderPoint(container, point) {
     const pointPresenter = new PointPresenter(
         container,
         this._handleStatusChange,
         this._handleModeChange
     );
-    pointPresenter.init(event);
-    this._pointPresenter[event.id] = pointPresenter;
+    pointPresenter.init(point);
+    this._pointPresenter.set(point.id, pointPresenter);
   }
 
   _preparePointsList(points) {
     const pointsByDays = new Map();
-    for (let event of points) {
-      const date = event.tripDates.start.getDate();
+    for (let point of points) {
+      const date = point.tripDates.start.getDate();
       const day = pointsByDays.get(date);
       if (day) {
-        day.push(event);
+        day.push(point);
       } else {
-        pointsByDays.set(date, Array.of(event));
+        pointsByDays.set(date, Array.of(point));
       }
     }
     return [...pointsByDays.values()];
@@ -122,8 +130,7 @@ export default class Trip {
     const pointsList = new PointsListView().getElement();
     render(this._dayListComponent, dayInList);
     render(dayInList.getElement(), pointsList);
-    this._daysCount = counter + 1;
-    points.forEach((event) => this._renderPoint(pointsList, event));
+    points.forEach((point) => this._renderPoint(pointsList, point));
     this._pointListInDay.push(pointsList);
   }
 
@@ -149,9 +156,8 @@ export default class Trip {
   }
 
   _clearTrip() {
-    Object
-      .values(this._pointPresenter)
+    this._pointPresenter
       .forEach((presenter) => presenter.destroy());
-    this._pointPresenter = {};
+    this._pointPresenter.clear();
   }
 }

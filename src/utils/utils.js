@@ -44,7 +44,7 @@ export const updateItem = (items, update) => {
   ];
 };
 
-export const checkEscKeyButton = (evt) => {
+export const isEscKeyPressed = (evt) => {
   return (evt.key === `Escape` || evt.key === `Esc`) ? true : false;
 };
 
