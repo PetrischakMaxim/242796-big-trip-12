@@ -10,7 +10,8 @@ import {SortType} from "../const.js";
 
 export default class Trip {
 
-  constructor(container) {
+  constructor(container, pointsModel) {
+    this._pointsModel = pointsModel;
     this._container = container;
     this._containerInner = this._container.querySelector(`.trip-events`);
 
