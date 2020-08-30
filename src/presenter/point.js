@@ -3,6 +3,7 @@ import PointFormView from "../view/point/point-form/point-form.js";
 
 import {render, replace, remove} from "../utils/dom-utils.js";
 import {isEscKeyPressed} from "../utils/utils.js";
+import {UserAction, UpdateType} from "../const.js";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -95,11 +96,19 @@ export default class Point {
   }
 
   _favoriteClickHandler() {
-    this._changeStatus(Object.assign({}, this._point, {isFavorite: !this._point.isFavorite}));
+    this._changeStatus(
+        UserAction.UPDATE_TASK,
+        UpdateType.MINOR,
+        Object.assign({}, this._point, {isFavorite: !this._point.isFavorite})
+    );
   }
 
   _formCloseHandler(point) {
-    this._changeStatus(point);
+    this._changeStatus(
+        UserAction.UPDATE_TASK,
+        UpdateType.MINOR,
+        point
+    );
     this._replaceFormToPoint();
   }
 

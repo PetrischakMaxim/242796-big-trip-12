@@ -21,9 +21,13 @@ export default class Trip {
     this._currentSortType = SortType.DEFAULT;
     this._pointPresenter = new Map();
 
-    this._handleStatusChange = this._handleStatusChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortChange = this._handleSortChange.bind(this);
+
+    this._pointsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -60,17 +64,33 @@ export default class Trip {
       .forEach((presenter) => presenter.resetView());
   }
 
-  _handleStatusChange(updatedPoint) {
-    // Здесь будем вызывать обновление модели
 
+  // Удалить
+  _handleStatusChange(updatedPoint) {
     for (let index of this._pointPresenter.keys()) {
       if (index[0] !== updatedPoint.id) {
         this._pointPresenter.get(index).init(updatedPoint);
         break;
       }
     }
-
   }
+
+  _handleViewAction(actionType, updateType, update) {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  }
+
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
+  }
+
 
   _handleSortChange(sortType) {
     if (this._currentSortType === sortType) {
@@ -99,7 +119,7 @@ export default class Trip {
   _renderPoint(container, point) {
     const pointPresenter = new PointPresenter(
         container,
-        this._handleStatusChange,
+        this._handleViewAction,
         this._handleModeChange
     );
     pointPresenter.init(point);
