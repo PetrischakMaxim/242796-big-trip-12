@@ -11,6 +11,7 @@ const createDayTemplate = (date, count) => (
         ${getFormatedDate(date)}
       </time>
     </div>
+    <ul class="trip-events__list"></ul>
   </li>`
 );
 
@@ -23,5 +24,9 @@ export default class Day extends AbstractView {
 
   getTemplate() {
     return createDayTemplate(this._date, this._count);
+  }
+
+  getList() {
+    return this.getElement().querySelector(`.trip-events__list`);
   }
 }

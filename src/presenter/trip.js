@@ -1,11 +1,10 @@
 import SortView from "../view/sort/sort.js";
 import DayListView from "../view/day/day-list.js";
 import DayView from "../view/day/day.js";
-import PointsListView from "../view/point/points-list.js";
 import NoPointView from "../view/point/no-point.js";
 import PointPresenter from "./point.js";
 
-import {render} from "../utils/dom-utils.js";
+import {render, remove} from "../utils/dom-utils.js";
 import {sortPrice, sortDate, updateItem} from "../utils/utils.js";
 import {SortType} from "../const.js";
 
@@ -15,12 +14,11 @@ export default class Trip {
     this._container = container;
     this._containerInner = this._container.querySelector(`.trip-events`);
 
-    this._sortComponent = new SortView();
-    this._dayListComponent = new DayListView();
-    this._noPointComponent = new NoPointView();
+    this._sortView = new SortView();
+    this._dayListView = new DayListView();
+    this._noPointView = new NoPointView();
     this._currentSortType = SortType.DEFAULT;
     this._pointPresenter = null;
-    this._pointListInDay = null;
 
     this._handleStatusChange = this._handleStatusChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -32,30 +30,9 @@ export default class Trip {
     this._sourcePoints = [...points];
     this._pointsLength = this._points.length;
     this._pointPresenter = new Map();
-    this._pointListInDay = [];
 
-    this._renderBoard();
-
-  }
-
-  _handleModeChange() {
-    this._pointPresenter
-      .forEach((presenter) => presenter.resetView());
-  }
-
-  _handleStatusChange(updatedPoint) {
-    this._points = updateItem(this._points, updatedPoint);
-    this._sourcePoints = updateItem(this._sourcePoints, updatedPoint);
-
-    for (let index of this._pointPresenter.keys()) {
-
-      if (index[0] !== updatedPoint.id) {
-        this._pointPresenter.get(index).init(updatedPoint);
-        break;
-      }
-    }
-
-
+    this._renderSort();
+    this._renderTrip(true);
   }
 
   _sortPoints(sortType) {
@@ -73,6 +50,36 @@ export default class Trip {
     this._currentSortType = sortType;
   }
 
+  _preparePoints() {
+    return [...this._points].sort((point1, point2) => {
+      if (point1.tripDates.start > point2.tripDates.start) {
+        return 1;
+      }
+      if (point1.tripDates.start < point2.tripDates.start) {
+        return -1;
+      }
+      return 0;
+    });
+  }
+
+  _handleModeChange() {
+    this._pointPresenter
+      .forEach((presenter) => presenter.resetView());
+  }
+
+  _handleStatusChange(updatedPoint) {
+    this._points = updateItem(this._points, updatedPoint);
+    this._sourcePoints = updateItem(this._sourcePoints, updatedPoint);
+
+    for (let index of this._pointPresenter.keys()) {
+      if (index[0] !== updatedPoint.id) {
+        this._pointPresenter.get(index).init(updatedPoint);
+        break;
+      }
+    }
+
+  }
+
   _handleSortChange(sortType) {
     if (this._currentSortType === sortType) {
       return;
@@ -80,25 +87,21 @@ export default class Trip {
     this._sortPoints(sortType);
     this._clearTrip();
 
-    this._preparePointsList(this._points)
-      .forEach((points, i) => {
-        points.forEach((event) => {
-          this._renderPoint(this._pointListInDay[i], event);
-        });
-      });
+    // /To do сортировка
+    this._renderTrip(false);
   }
 
   _renderSort() {
-    render(this._containerInner, this._sortComponent);
-    this._sortComponent.setSortChangeHandler(this._handleSortChange);
+    render(this._containerInner, this._sortView);
+    this._sortView.setSortChangeHandler(this._handleSortChange);
   }
 
-  _renderDaysContainer() {
-    render(this._container, this._dayListComponent);
+  _renderContainerForDays() {
+    render(this._container, this._dayListView);
   }
 
   _renderNoPoints() {
-    render(this._containerInner, this._noPointComponent);
+    render(this._containerInner, this._noPointView);
   }
 
   _renderPoint(container, point) {
@@ -111,53 +114,41 @@ export default class Trip {
     this._pointPresenter.set(point.id, pointPresenter);
   }
 
-  _preparePointsList(points) {
-    const pointsByDays = new Map();
-    for (let point of points) {
-      const date = point.tripDates.start.getDate();
-      const day = pointsByDays.get(date);
-      if (day) {
-        day.push(point);
-      } else {
-        pointsByDays.set(date, Array.of(point));
-      }
-    }
-    return [...pointsByDays.values()];
-  }
+  _renderTrip(isFirstRender) {
 
-  _renderPointsInDay(points, date, counter) {
-    const dayInList = new DayView(date, counter + 1);
-    const pointsList = new PointsListView().getElement();
-    render(this._dayListComponent, dayInList);
-    render(dayInList.getElement(), pointsList);
-    points.forEach((point) => this._renderPoint(pointsList, point));
-    this._pointListInDay.push(pointsList);
-  }
-
-  _renderPoints(points) {
-    this._preparePointsList(points)
-    .forEach((eventPoints, counter) => {
-      this._renderPointsInDay(eventPoints, eventPoints[0].tripDates.start, counter);
-    });
-  }
-
-  _renderTrip() {
-    if (this._points.every(() => this._pointsLength === 0)) {
+    if (this._pointsLength === 0) {
       this._renderNoPoints();
       return;
     }
-    this._renderPoints(this._points);
-  }
 
-  _renderBoard() {
-    this._renderSort();
-    this._renderDaysContainer();
-    this._renderTrip();
+    this._renderContainerForDays();
+    const points = (isFirstRender) ? this._preparePoints() : this._points;
+    let dayCounter = 1;
+    let dayDate = null;
+    let dayView = null;
+
+    for (let point of points) {
+      const pointDate = point.tripDates.start;
+      const pointDay = pointDate.getDate();
+
+      if (dayDate === pointDay) {
+        this._renderPoint(dayView.getList(), point);
+      } else {
+        dayView = new DayView(pointDate, dayCounter);
+        render(this._dayListView, dayView.getElement());
+        this._renderPoint(dayView.getList(), point);
+        dayCounter++;
+        dayDate = pointDay;
+      }
+
+    }
+
   }
 
   _clearTrip() {
     this._pointPresenter
       .forEach((presenter) => presenter.destroy());
     this._pointPresenter.clear();
+    remove(this._dayListView);
   }
 }

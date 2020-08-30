@@ -16,8 +16,8 @@ export default class Point {
     this._changeStatus = changeStatus;
     this._changeMode = changeMode;
 
-    this._pointComponent = null;
-    this._pointEditComponent = null;
+    this._pointView = null;
+    this._pointEditView = null;
     this._mode = Mode.DEFAULT;
 
     this._clickHandler = this._clickHandler.bind(this);
@@ -29,33 +29,33 @@ export default class Point {
   init(point) {
     this._point = point;
 
-    const prevPointComponent = this._pointComponent;
-    const prevPointEditComponent = this._pointEditComponent;
+    const prevPointView = this._pointView;
+    const prevPointEditView = this._pointEditView;
 
-    this._pointComponent = new PointView(point);
-    this._pointEditComponent = new PointFormView(point);
+    this._pointView = new PointView(point);
+    this._pointEditView = new PointFormView(point);
 
-    this._pointComponent.setClickHandler(this._clickHandler);
-    this._pointEditComponent.setFormSubmitHandler(this._formCloseHandler);
-    this._pointEditComponent.setCloseButtonHandler(this._formCloseHandler);
-    this._pointEditComponent.setFavoriteClickHandler(this._favoriteClickHandler);
+    this._pointView.setClickHandler(this._clickHandler);
+    this._pointEditView.setFormSubmitHandler(this._formCloseHandler);
+    this._pointEditView.setCloseButtonHandler(this._formCloseHandler);
+    this._pointEditView.setFavoriteClickHandler(this._favoriteClickHandler);
 
 
-    if (prevPointComponent === null || prevPointEditComponent === null) {
-      render(this._container, this._pointComponent);
+    if (prevPointView === null || prevPointEditView === null) {
+      render(this._container, this._pointView);
       return;
     }
 
     if (this._mode === Mode.DEFAULT) {
-      replace(this._pointComponent, prevPointComponent);
+      replace(this._pointView, prevPointView);
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._pointEditComponent, prevPointEditComponent);
+      replace(this._pointEditView, prevPointEditView);
     }
 
-    remove(prevPointComponent);
-    remove(prevPointEditComponent);
+    remove(prevPointView);
+    remove(prevPointEditView);
   }
 
   resetView() {
@@ -65,19 +65,19 @@ export default class Point {
   }
 
   destroy() {
-    remove(this._pointComponent);
-    remove(this._pointEditComponent);
+    remove(this._pointView);
+    remove(this._pointEditView);
   }
 
   _replacePointToForm() {
-    replace(this._pointEditComponent, this._pointComponent);
+    replace(this._pointEditView, this._pointView);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
     this._changeMode();
     this._mode = Mode.EDITING;
   }
 
   _replaceFormToPoint() {
-    replace(this._pointComponent, this._pointEditComponent);
+    replace(this._pointView, this._pointEditView);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
     this._mode = Mode.DEFAULT;
   }
