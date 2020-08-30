@@ -6,7 +6,7 @@ import PointPresenter from "./point.js";
 
 import {render, remove} from "../utils/dom-utils.js";
 import {sortPrice, sortDate} from "../utils/utils.js";
-import {SortType} from "../const.js";
+import {SortType, UpdateType, UserAction} from "../const.js";
 
 export default class Trip {
 
@@ -64,31 +64,35 @@ export default class Trip {
       .forEach((presenter) => presenter.resetView());
   }
 
-
-  // Удалить
-  _handleStatusChange(updatedPoint) {
-    for (let index of this._pointPresenter.keys()) {
-      if (index[0] !== updatedPoint.id) {
-        this._pointPresenter.get(index).init(updatedPoint);
+  _handleViewAction(actionType, updateType, update) {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this._pointsModel.updatePoint(updateType, update);
         break;
-      }
+      case UserAction.ADD_POINT:
+        this._pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this._pointsModel.deletePoint(updateType, update);
+        break;
     }
   }
 
-  _handleViewAction(actionType, updateType, update) {
-    console.log(actionType, updateType, update);
-    // Здесь будем вызывать обновление модели.
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
-  }
-
   _handleModelEvent(updateType, data) {
-    console.log(updateType, data);
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
+    switch (updateType) {
+      case UpdateType.PATCH:
+        for (let index of this._pointPresenter.keys()) {
+          if (index[0] !== data.id) {
+            this._pointPresenter.get(index).init(data);
+            break;
+          }
+        }
+        break;
+      case UpdateType.MINOR:
+        break;
+      case UpdateType.MAJOR:
+        break;
+    }
   }
 
 
