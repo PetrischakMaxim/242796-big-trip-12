@@ -5,7 +5,7 @@ import NoPointView from "../view/point/no-point.js";
 import PointPresenter from "./point.js";
 
 import {render, remove} from "../utils/dom-utils.js";
-import {sortPrice, sortDate, updateItem} from "../utils/utils.js";
+import {sortPrice, sortDate} from "../utils/utils.js";
 import {SortType} from "../const.js";
 
 export default class Trip {
@@ -19,40 +19,32 @@ export default class Trip {
     this._dayListView = new DayListView();
     this._noPointView = new NoPointView();
     this._currentSortType = SortType.DEFAULT;
-    this._pointPresenter = null;
+    this._pointPresenter = new Map();
 
     this._handleStatusChange = this._handleStatusChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortChange = this._handleSortChange.bind(this);
   }
 
-  init(points) {
-    this._points = [...points];
-    this._sourcePoints = [...points];
-    this._pointsLength = this._points.length;
-    this._pointPresenter = new Map();
-
+  init() {
+    this._pointsLength = this._getPoints().length;
     this._renderSort();
     this._renderTrip(true);
   }
 
-  _sortPoints(sortType) {
-    switch (sortType) {
+  _getPoints() {
+    switch (this._currentSortType) {
       case SortType.TIME:
-        this._points.sort(sortDate);
-        break;
+        return this._pointsModel.getPoints().slice().sort(sortDate);
       case SortType.PRICE:
-        this._points.sort(sortPrice);
-        break;
-      default:
-        this._points = [...this._sourcePoints];
+        return this._pointsModel.getPoints().slice().sort(sortPrice);
     }
 
-    this._currentSortType = sortType;
+    return this._pointsModel.getPoints();
   }
 
   _preparePoints() {
-    return [...this._points].sort((point1, point2) => {
+    return [...this._getPoints()].sort((point1, point2) => {
       if (point1.tripDates.start > point2.tripDates.start) {
         return 1;
       }
@@ -69,8 +61,7 @@ export default class Trip {
   }
 
   _handleStatusChange(updatedPoint) {
-    this._points = updateItem(this._points, updatedPoint);
-    this._sourcePoints = updateItem(this._sourcePoints, updatedPoint);
+    // Здесь будем вызывать обновление модели
 
     for (let index of this._pointPresenter.keys()) {
       if (index[0] !== updatedPoint.id) {
@@ -85,7 +76,7 @@ export default class Trip {
     if (this._currentSortType === sortType) {
       return;
     }
-    this._sortPoints(sortType);
+    this._currentSortType = sortType;
     this._clearTrip();
 
     // /To do сортировка
@@ -123,7 +114,7 @@ export default class Trip {
     }
 
     this._renderContainerForDays();
-    const points = (isFirstRender) ? this._preparePoints() : this._points;
+    const points = (isFirstRender) ? this._preparePoints() : this._getPoints();
     let dayCounter = 1;
     let dayDate = null;
     let dayView = null;

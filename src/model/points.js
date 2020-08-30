@@ -6,11 +6,11 @@ export default class Points extends Observer {
     this._points = [];
   }
 
-  setTasks(points) {
+  setPoins(points) {
     this._points = [...points];
   }
 
-  getTasks() {
+  getPoints() {
     return this._points;
   }
 }

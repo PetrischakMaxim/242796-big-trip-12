@@ -11,7 +11,7 @@ import {POINT_COUNT} from "./const.js";
 const points = new Array(POINT_COUNT).fill().map(generatePoint);
 
 const pointsModel = new PointsModel();
-pointsModel.setTasks(points);
+pointsModel.setPoins(points);
 
 const headerElement = document.querySelector(`.page-header`);
 const mainInfoElement = headerElement.querySelector(`.trip-main`);
@@ -26,6 +26,6 @@ const mainContainerElement = mainElement.querySelector(
     `.page-body__container`
 );
 
-new TripPresenter(mainContainerElement, pointsModel).init(points);
+new TripPresenter(mainContainerElement, pointsModel).init();
 
 
