@@ -3,6 +3,7 @@ import FilterView from "./view/filter/filter.js";
 import TabsView from "./view/tabs/tabs.js";
 import TripPresenter from "./presenter/trip.js";
 import PointsModel from "./model/points.js";
+import FilterModel from "./model/filter.js";
 
 import {generatePoint} from "./mock/point.js";
 import {render, RenderPosition} from "./utils/dom-utils.js";
@@ -12,6 +13,8 @@ const points = new Array(POINT_COUNT).fill().map(generatePoint);
 
 const pointsModel = new PointsModel();
 pointsModel.setPoins(points);
+
+const filterModel = new FilterModel();
 
 const headerElement = document.querySelector(`.page-header`);
 const mainInfoElement = headerElement.querySelector(`.trip-main`);
