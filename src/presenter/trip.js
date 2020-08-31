@@ -33,30 +33,20 @@ export default class Trip {
   init() {
     this._pointsLength = this._getPoints().length;
     this._renderSort();
-    this._renderTrip(true);
+    this._renderTrip();
   }
 
   _getPoints() {
     switch (this._currentSortType) {
+
       case SortType.TIME:
         return this._pointsModel.getPoints().slice().sort(sortDate);
       case SortType.PRICE:
         return this._pointsModel.getPoints().slice().sort(sortPrice);
+
     }
 
     return this._pointsModel.getPoints();
-  }
-
-  _preparePoints() {
-    return [...this._getPoints()].sort((point1, point2) => {
-      if (point1.tripDates.start > point2.tripDates.start) {
-        return 1;
-      }
-      if (point1.tripDates.start < point2.tripDates.start) {
-        return -1;
-      }
-      return 0;
-    });
   }
 
   _handleModeChange() {
@@ -104,7 +94,7 @@ export default class Trip {
     this._clearTrip();
 
     // /To do сортировка
-    this._renderTrip(false);
+    this._renderTrip();
   }
 
   _renderSort() {
@@ -130,7 +120,7 @@ export default class Trip {
     this._pointPresenter.set(point.id, pointPresenter);
   }
 
-  _renderTrip(isFirstRender) {
+  _renderTrip() {
 
     if (this._pointsLength === 0) {
       this._renderNoPoints();
@@ -138,7 +128,8 @@ export default class Trip {
     }
 
     this._renderContainerForDays();
-    const points = (isFirstRender) ? this._preparePoints() : this._getPoints();
+    const points = this._getPoints();
+
     let dayCounter = 1;
     let dayDate = null;
     let dayView = null;
@@ -156,7 +147,6 @@ export default class Trip {
         dayCounter++;
         dayDate = pointDay;
       }
-
     }
 
   }

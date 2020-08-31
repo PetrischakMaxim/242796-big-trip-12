@@ -63,7 +63,7 @@ export const POINT_COUNT = 8;
 export const SortType = {
   DEFAULT: `event`,
   TIME: `time`,
-  PRICE: `price`
+  PRICE: `price`,
 };
 
 export const UserAction = {
