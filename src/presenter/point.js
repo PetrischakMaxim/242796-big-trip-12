@@ -25,6 +25,7 @@ export default class Point {
     this._formCloseHandler = this._formCloseHandler.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
   }
 
   init(point) {
@@ -39,6 +40,7 @@ export default class Point {
     this._pointView.setClickHandler(this._clickHandler);
     this._pointEditView.setFormSubmitHandler(this._formCloseHandler);
     this._pointEditView.setCloseButtonHandler(this._formCloseHandler);
+    this._pointEditView.setDeletePointHandler(this._deleteClickHandler);
     this._pointEditView.setFavoriteClickHandler(this._favoriteClickHandler);
 
 
@@ -97,7 +99,7 @@ export default class Point {
 
   _favoriteClickHandler() {
     this._changeStatus(
-        UserAction.UPDATE_TASK,
+        UserAction.UPDATE_POINT,
         UpdateType.MINOR,
         Object.assign({}, this._point, {isFavorite: !this._point.isFavorite})
     );
@@ -105,11 +107,19 @@ export default class Point {
 
   _formCloseHandler(point) {
     this._changeStatus(
-        UserAction.UPDATE_TASK,
+        UserAction.UPDATE_POINT,
         UpdateType.MINOR,
         point
     );
     this._replaceFormToPoint();
+  }
+
+  _deleteClickHandler(point) {
+    this._changeStatus(
+        UserAction.DELETE_POINT,
+        UpdateType.MINOR,
+        point
+    );
   }
 
 }

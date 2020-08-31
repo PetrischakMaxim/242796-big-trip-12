@@ -105,13 +105,24 @@ export default class PointForm extends SmartView {
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
     this._destinationToggleHandler = this._destinationToggleHandler.bind(this);
     this._dateChangeHandler = this._dateChangeHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
 
     this._onSubmit = null;
     this._onFavoriteClick = null;
     this._onCloseClick = null;
+    this._onDeleteClick = null;
 
     this._setInnerHandlers();
     this._setDatepicker();
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
   }
 
   restoreHandlers() {
@@ -120,6 +131,7 @@ export default class PointForm extends SmartView {
     this.setFormSubmitHandler(this._onSubmit);
     this.setCloseButtonHandler(this._onCloseClick);
     this.setFavoriteClickHandler(this._onFavoriteClick);
+    this.setDeletePointHandler(this._onDeleteClick);
   }
 
   getTemplate() {
@@ -145,6 +157,13 @@ export default class PointForm extends SmartView {
     this.getElement()
       .querySelector(`.event__favorite-checkbox`)
       .addEventListener(`click`, this._onFavoriteClickHandler);
+  }
+
+  setDeletePointHandler(callback) {
+    this._onDeleteClick = callback;
+    this.getElement()
+      .querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, this._formDeleteClickHandler);
   }
 
 
@@ -231,6 +250,11 @@ export default class PointForm extends SmartView {
         start: date
       }
     });
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._onDeleteClick(PointForm.parseDataToPoint(this._data));
   }
 
   static parsePointToData(point) {
