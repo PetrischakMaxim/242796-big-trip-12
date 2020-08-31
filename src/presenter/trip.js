@@ -15,7 +15,7 @@ export default class Trip {
     this._container = container;
     this._containerInner = this._container.querySelector(`.trip-events`);
 
-    this._sortView = new SortView();
+    this._sortView = null;
     this._dayListView = new DayListView();
     this._noPointView = new NoPointView();
     this._currentSortType = SortType.DEFAULT;
@@ -31,8 +31,6 @@ export default class Trip {
   }
 
   init() {
-    this._pointsLength = this._getPoints().length;
-    this._renderSort();
     this._renderTrip();
   }
 
@@ -79,8 +77,12 @@ export default class Trip {
         }
         break;
       case UpdateType.MINOR:
+        this._clearTrip();
+        this._renderTrip();
         break;
       case UpdateType.MAJOR:
+        this._clearTrip(true);
+        this._renderTrip();
         break;
     }
   }
@@ -90,6 +92,8 @@ export default class Trip {
     if (this._currentSortType === sortType) {
       return;
     }
+
+
     this._currentSortType = sortType;
     this._clearTrip();
 
@@ -98,8 +102,11 @@ export default class Trip {
   }
 
   _renderSort() {
-    render(this._containerInner, this._sortView);
+
+    this._sortView = new SortView(this._currentSortType);
     this._sortView.setSortChangeHandler(this._handleSortChange);
+
+    render(this._containerInner, this._sortView);
   }
 
   _renderContainerForDays() {
@@ -121,14 +128,16 @@ export default class Trip {
   }
 
   _renderTrip() {
+    const points = this._getPoints();
+    const pointsLength = points.length;
 
-    if (this._pointsLength === 0) {
+    if (pointsLength === 0) {
       this._renderNoPoints();
       return;
     }
 
+    this._renderSort();
     this._renderContainerForDays();
-    const points = this._getPoints();
 
     let dayCounter = 1;
     let dayDate = null;
@@ -151,10 +160,16 @@ export default class Trip {
 
   }
 
-  _clearTrip() {
+  _clearTrip(resetSortType = false) {
+
     this._pointPresenter
       .forEach((presenter) => presenter.destroy());
     this._pointPresenter.clear();
     remove(this._dayListView);
+    remove(this._sortView);
+
+    if (resetSortType) {
+      this._currentSortType = SortType.DEFAULT;
+    }
   }
 }
