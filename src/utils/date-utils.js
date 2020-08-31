@@ -23,3 +23,29 @@ const isDate = (date, dateName) => {
 };
 
 const getTripDuaration = (d1, d2) =>moment.duration(moment(d2).diff(d1));
+
+export const isFuturePoint = (date) => {
+  if (date === null) {
+    return false;
+  }
+
+  const currentDate = getCurrentDate();
+  return moment(currentDate).isAfter(date, `day`);
+};
+
+export const isPastPoint = (date) => {
+  if (date === null) {
+    return false;
+  }
+
+  const currentDate = getCurrentDate();
+  return moment(currentDate).isBefore(date, `day`);
+};
+
+const getCurrentDate = () => {
+  const currentDate = new Date();
+  currentDate.setHours(23, 59, 59, 999);
+
+  return new Date(currentDate);
+};
+

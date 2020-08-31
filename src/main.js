@@ -11,6 +11,14 @@ import {POINT_COUNT} from "./const.js";
 
 const points = new Array(POINT_COUNT).fill().map(generatePoint);
 
+const filters = [
+  {
+    type: `everything`,
+    name: `EVERYTHING`,
+  }
+];
+
+
 const pointsModel = new PointsModel();
 pointsModel.setPoins(points);
 
@@ -22,7 +30,7 @@ const infoContainerElement = mainInfoElement.querySelector(`.trip-controls`);
 
 render(mainInfoElement, new TripInfoView(points), RenderPosition.AFTERBEGIN);
 render(infoContainerElement, new TabsView(), RenderPosition.AFTERBEGIN);
-render(infoContainerElement, new FilterView());
+render(infoContainerElement, new FilterView(filters, `everything`));
 
 const mainElement = document.querySelector(`.page-main`);
 const mainContainerElement = mainElement.querySelector(
