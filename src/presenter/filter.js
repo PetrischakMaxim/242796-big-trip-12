@@ -8,8 +8,8 @@ export default class Filter {
     this._filterContainer = filterContainer;
     this._filterModel = filterModel;
     this._pointsModel = pointsModel;
-    this._currentFilter = null;
 
+    this._currentFilter = null;
     this._filterView = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);

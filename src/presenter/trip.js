@@ -6,20 +6,22 @@ import PointPresenter from "./point.js";
 
 import {render, remove} from "../utils/dom-utils.js";
 import {sortPrice, sortDate} from "../utils/utils.js";
+import {filter} from "../utils/filter-utils.js";
 import {SortType, UpdateType, UserAction} from "../const.js";
 
 export default class Trip {
 
-  constructor(container, pointsModel) {
+  constructor(container, pointsModel, filterModel) {
     this._pointsModel = pointsModel;
+    this._filterModel = filterModel;
     this._container = container;
     this._containerInner = this._container.querySelector(`.trip-events`);
 
-    this._sortView = null;
     this._dayListView = new DayListView();
     this._noPointView = new NoPointView();
-    this._currentSortType = SortType.DEFAULT;
     this._pointPresenter = new Map();
+    this._sortView = null;
+    this._currentSortType = SortType.DEFAULT;
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -28,6 +30,7 @@ export default class Trip {
     this._handleSortChange = this._handleSortChange.bind(this);
 
     this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -35,16 +38,17 @@ export default class Trip {
   }
 
   _getPoints() {
+    const filterType = this._filterModel.getFilter();
+    const points = this._pointsModel.getPoints();
+    const filteredPoints = filter[filterType](points);
     switch (this._currentSortType) {
-
       case SortType.TIME:
-        return this._pointsModel.getPoints().slice().sort(sortDate);
+        return filteredPoints.sort(sortDate);
       case SortType.PRICE:
-        return this._pointsModel.getPoints().slice().sort(sortPrice);
-
+        return filteredPoints.sort(sortPrice);
     }
 
-    return this._pointsModel.getPoints();
+    return filteredPoints;
   }
 
   _handleModeChange() {
@@ -93,7 +97,6 @@ export default class Trip {
       return;
     }
 
-
     this._currentSortType = sortType;
     this._clearTrip();
 
@@ -102,7 +105,6 @@ export default class Trip {
   }
 
   _renderSort() {
-
     this._sortView = new SortView(this._currentSortType);
     this._sortView.setSortChangeHandler(this._handleSortChange);
 
@@ -167,6 +169,7 @@ export default class Trip {
     this._pointPresenter.clear();
     remove(this._dayListView);
     remove(this._sortView);
+    remove(this._noPointView);
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;

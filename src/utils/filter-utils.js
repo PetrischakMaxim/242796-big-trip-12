@@ -1,4 +1,4 @@
-import {FilterType} from "../const";
+import {FilterType} from "../const.js";
 import {isPastPoint, isFuturePoint} from "../utils/date-utils.js";
 
 export const filter = {
@@ -6,3 +6,4 @@ export const filter = {
   [FilterType.FUTURE]: (points) => points.filter((point) => isFuturePoint(point.tripDates.start)),
   [FilterType.PAST]: (points) => points.filter((point) => isPastPoint(point.tripDates.start)),
 };
+

@@ -28,24 +28,13 @@ export const isFuturePoint = (date) => {
   if (date === null) {
     return false;
   }
-
-  const currentDate = getCurrentDate();
-  return moment(currentDate).isAfter(date, `day`);
+  return moment(new Date()).isBefore(date, `day`);
 };
 
 export const isPastPoint = (date) => {
   if (date === null) {
     return false;
   }
-
-  const currentDate = getCurrentDate();
-  return moment(currentDate).isBefore(date, `day`);
-};
-
-const getCurrentDate = () => {
-  const currentDate = new Date();
-  currentDate.setHours(23, 59, 59, 999);
-
-  return new Date(currentDate);
+  return moment(new Date()).isAfter(date, `day`);
 };
 

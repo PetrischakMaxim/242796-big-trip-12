@@ -30,8 +30,8 @@ const mainContainerElement = mainElement.querySelector(
     `.page-body__container`
 );
 
-const tpipPresenter = new TripPresenter(mainContainerElement, pointsModel);
+const tripPresenter = new TripPresenter(mainContainerElement, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(infoContainerElement, filterModel, pointsModel);
 
 filterPresenter.init();
-tpipPresenter.init();
+tripPresenter.init();
