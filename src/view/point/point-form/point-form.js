@@ -5,8 +5,8 @@ import {createDetailsTemplate} from "./point-details.js";
 import {createCityListTemplate} from "./point-city-list.js";
 import {createPointTemplate} from "./point.js";
 import {createTimeGroupTemplate} from "./point-time-group.js";
-import {createPriceTemplate} from "./point-price.js";
 
+import he from "he";
 import flatpickr from "flatpickr";
 import "../../../../node_modules/flatpickr/dist/flatpickr.min.css";
 
@@ -49,7 +49,7 @@ const createPointFormTemplate = (data) => {
   };
 
   return `<li class="trip-events__item">
-  <form class="event  event--edit" action="#" method="post">
+  <form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -67,11 +67,19 @@ const createPointFormTemplate = (data) => {
         </label>
         <input class="event__input  event__input--destination"
           id="event-destination-1" type="text" name="event-destination"
-          value="${destination}" list="destination-list-1">
+          value="${he.encode(destination)}" list="destination-list-1">
         ${createCityListTemplate(CITY_LIST)}
       </div>
       ${createTimeGroupTemplate(start, end)}
-      ${createPriceTemplate(cost)}
+      <div class="event__field-group  event__field-group--price">
+        <label class="event__label" for="event-price-1">
+          <span class="visually-hidden">Price</span>
+          €
+        </label>
+          <input class="event__input  event__input--price"
+          id="event-price-1" type="text" name="event-price"
+          value="${he.encode(String(cost))}">
+      </div>
       <button class="event__save-btn btn btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Delete</button>
       <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden"
