@@ -174,7 +174,6 @@ export default class PointForm extends SmartView {
       .addEventListener(`click`, this._formDeleteClickHandler);
   }
 
-
   _onSubmitHandler(evt) {
     evt.preventDefault();
     this._onSubmit(PointForm.parseDataToPoint(this._data));

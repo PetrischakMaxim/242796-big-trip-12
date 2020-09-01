@@ -58,7 +58,7 @@ export const BLANK_POINT = {
   hasInfo: false,
 };
 
-export const POINT_COUNT = 8;
+export const POINT_COUNT = 20;
 
 export const SortType = {
   DEFAULT: `event`,

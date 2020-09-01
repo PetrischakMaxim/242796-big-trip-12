@@ -12,7 +12,6 @@ import {POINT_COUNT} from "./const.js";
 
 const points = new Array(POINT_COUNT).fill().map(generatePoint);
 
-
 const pointsModel = new PointsModel();
 pointsModel.setPoins(points);
 

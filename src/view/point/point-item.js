@@ -69,9 +69,9 @@ export default class PointItem extends AbstractView {
   constructor(point) {
     super();
     this._point = point;
-    this._clickHandler = null;
+    this._onClick = null;
 
-    this._onClick = this._onClick.bind(this);
+    this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
@@ -79,14 +79,14 @@ export default class PointItem extends AbstractView {
   }
 
   setClickHandler(callback) {
-    this._clickHandler = callback;
+    this._onClick = callback;
     this.getElement()
       .querySelector(`.event__rollup-btn`)
-      .addEventListener(`click`, this._onClick);
+      .addEventListener(`click`, this._clickHandler);
   }
 
-  _onClick() {
-    this._clickHandler();
+  _clickHandler() {
+    this._onClick();
   }
 
 }
