@@ -1,27 +1,114 @@
-import SmartView from "../../smart/smart.js";
-
-import {createOffersTemplate} from "./point-offers.js";
-import {createDetailsTemplate} from "./point-details.js";
-import {createCityListTemplate} from "./point-city-list.js";
-import {createPointTemplate} from "./point.js";
-import {createTimeGroupTemplate} from "./point-time-group.js";
-
+import SmartView from "../smart/smart.js";
 import he from "he";
 import flatpickr from "flatpickr";
-import "../../../../node_modules/flatpickr/dist/flatpickr.min.css";
+import "../../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 import {
   CITY_LIST,
   BLANK_POINT,
   TRIP_IMAGE_URL,
   TRIP_SENTENCE
-} from "../../../const.js";
+} from "../../const.js";
 
 import {
   getRandomInteger,
   generateSentence,
-  generateImage
-} from "../../../utils/utils.js";
+  generateImage,
+} from "../../utils/utils.js";
+
+import {formatDateToPlaceholder} from "../../utils/date-utils.js";
+
+const createTimeGroupTemplate = (startDate, endDate) => (`
+  <div class="event__field-group  event__field-group--time">
+      <label class="visually-hidden" for="event-start-time}">
+        From
+      </label>
+      <input class="event__input event__input--time"
+        id="event-start-time" type="text" name="event-start-time"
+        value="${formatDateToPlaceholder(startDate)}"> —
+      <label class="visually-hidden" for="event-end-time">
+        To
+      </label>
+      <input class="event__input  event__input--time"
+        id="event-end-time" type="text" name="event-end-time"
+        value="${formatDateToPlaceholder(endDate)}">
+   </div>
+  `
+);
+
+const pointTemlate = (point, currentPoint) => (
+  `<div class="event__type-item">
+    <input id="event-type-${point.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type"
+    value="${point.toLowerCase()}"
+    ${(point === currentPoint) ? `checked` : ``}>
+    <label class="event__type-label event__type-label--${point.toLowerCase()}"
+    for="event-type-${point.toLowerCase()}-1">${point}</label>
+  </div>`
+);
+
+const createPointTemplate = (type, points, currentPoint) => (
+  `<fieldset class="event__type-group">
+      <legend class="visually-hidden">${type}</legend>
+      ${Array.isArray(points) ? points.map((point) => pointTemlate(point, currentPoint)).join(``) : ``}
+  </fieldset>`
+);
+
+const generateOffersTemplate = (offers) => {
+  return offers.map((offer)=> {
+    const {name, cost} = offer;
+    const offerType = name.split(` `).pop();
+    return `<div class="event__offer-selector">
+    <input class="event__offer-checkbox visually-hidden"
+    id="event-offer-${offerType}-1"
+    type="checkbox"
+    name="event-offer-${offerType}"
+    ${getRandomInteger(0, 1) ? `checked` : ``} >
+    <label class="event__offer-label"
+    for="event-offer-${offerType}-1">
+      <span class="event__offer-title">${name}</span>
+      +
+      €&nbsp;<span class="event__offer-price">${cost}</span>
+    </label>
+  </div>`;
+  }).join(``);
+};
+
+const createOffersTemplate = (offers) => (
+  `<section class="event__section  event__section--offers">
+    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+    <div class="event__available-offers">${generateOffersTemplate(offers)}</div>
+  </section>`
+);
+
+
+const createPhotoTape = (images) => (
+  `<div class="event__photos-tape">
+    ${images.map((url)=> `<img class="event__photo" src="${url}" alt="Event photo"/>`).join(``)}
+  </div>`
+);
+
+const createDetailsTemplate = (info) => {
+  const {description, images} = info;
+  return `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">
+        Destination
+      </h3>
+      <p class="event__destination-description">
+        ${description}
+      </p>
+      <div class="event__photos-container">
+        ${createPhotoTape(images)}
+      </div>
+    </section>`;
+};
+
+export const createCityListTemplate = (cities) => (
+  `<datalist id="destination-list-1">
+    ${cities.map((city) => `<option value="${city}"></option>`).join(``)}
+  </datalist>
+  `
+);
+
 
 const createPointFormTemplate = (data) => {
   const {
@@ -99,7 +186,6 @@ const createPointFormTemplate = (data) => {
   </li>`;
 };
 
-
 export default class PointForm extends SmartView {
 
   constructor(point = BLANK_POINT) {
@@ -121,21 +207,15 @@ export default class PointForm extends SmartView {
     this._onDeleteClick = null;
 
     this._setInnerHandlers();
-    this._setDatepicker();
   }
 
   removeElement() {
     super.removeElement();
-
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
-    }
+    this._removeDatePicker();
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
-    this._setDatepicker();
     this.setFormSubmitHandler(this._onSubmit);
     this.setCloseButtonHandler(this._onCloseClick);
     this.setFavoriteClickHandler(this._onFavoriteClick);
@@ -189,15 +269,41 @@ export default class PointForm extends SmartView {
   }
 
   _setInnerHandlers() {
-    this.getElement()
+    const element = this.getElement();
+    element
       .querySelectorAll(`.event__type-input`)
       .forEach((input) => {
         input.addEventListener(`change`, this._typeToggleHandler);
       });
 
-    this.getElement()
+    element
         .querySelector(`.event__input--destination`)
         .addEventListener(`change`, this._destinationToggleHandler);
+
+    const startTimeElement = element.querySelector(`[name="event-start-time"]`);
+    const endTimeElement = element.querySelector(`[name="event-end-time"]`);
+
+
+    startTimeElement.addEventListener(`focus`, (evt) => {
+      evt.preventDefault();
+      this._setDatepicker(startTimeElement, `start`);
+    });
+
+    startTimeElement.addEventListener(`change`, (evt) => {
+      evt.preventDefault();
+      this._dateChangeHandler(`start`, this._datepickerStart.selectedDates[0]);
+    });
+
+    endTimeElement.addEventListener(`focus`, (evt)=> {
+      evt.preventDefault();
+      this._setDatepicker(endTimeElement, `end`);
+    });
+
+    endTimeElement.addEventListener(`change`, (evt)=> {
+      evt.preventDefault();
+      this._dateChangeHandler(`end`, this._datepickerEnd.selectedDates[0]);
+    });
+
 
   }
 
@@ -228,35 +334,44 @@ export default class PointForm extends SmartView {
     });
   }
 
-  _setDatepicker() {
-    this._removeDatePicker();
-
-    this._datepicker = flatpickr(
-        this.getElement().querySelector(`.event__input--time`),
-        {
-          "enableTime": true,
-          "time_24hr": true,
-          "dateFormat": `Y-m-d H:i`,
-          "defaultDate": this._data.tripDates.start,
-          "onChange": this._dateChangeHandler
-        }
-    );
-  }
+  _setDatepicker(element, time) {
+    const datepickerInstance = flatpickr(element, {
+      "time_24hr": true,
+      "enableTime": true,
+      "defaultDate": `today`,
+      "minDate": this._data.tripDates.start,
+    });
 
 
-  _removeDatePicker() {
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
+    if (time === `start`) {
+      this._datepickerStart = datepickerInstance;
+      this._datepickerStart.open();
+    }
+
+    if (time === `end`) {
+      this._datepickerEnd = datepickerInstance;
+      this._datepickerEnd.open();
     }
   }
 
-  _dateChangeHandler([date]) {
+  _dateChangeHandler(name, value) {
     this.updateData({
       tripDates: {
-        start: date
+        [name]: value
       }
     });
+
+    console.log(this._data.tripDates);
+
+  }
+
+  _removeDatePicker() {
+    if (this._datepicker) {
+      this._datepicker.forEach((datepicker) => {
+        datepicker.destroy();
+        datepicker = null;
+      });
+    }
   }
 
   _formDeleteClickHandler(evt) {
@@ -278,4 +393,3 @@ export default class PointForm extends SmartView {
   }
 
 }
-

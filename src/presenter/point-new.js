@@ -1,6 +1,6 @@
-import PointFormView from "../view/point/point-form/point-form.js";
+import PointFormView from "../view/point/point-form.js";
 import {generateId} from "../utils/utils.js";
-import {remove, render} from "../utils/dom-utils.js";
+import {remove, render, RenderPosition} from "../utils/dom-utils.js";
 import {UserAction, UpdateType} from "../const.js";
 
 export default class PointNew {
@@ -25,7 +25,7 @@ export default class PointNew {
     this._pointEditView.setFormSubmitHandler(this._onSubmitHandler);
     this._pointEditView.setDeletePointHandler(this._deleteClickHandler);
 
-    render(this._container, this._pointEditView);
+    render(this._container.getElement(), this._pointEditView, RenderPosition.AFTERBEGIN);
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }

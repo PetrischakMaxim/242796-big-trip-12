@@ -11,8 +11,6 @@ export const getRandomIndex = (array) => array[getRandomInteger(0, array.length 
 
 export const sortPrice = (min, max) => (max.cost - min.cost);
 
-export const sortDate = (d1, d2) => (d2.tripDates.start.getTime() - d1.tripDates.start.getTime());
-
 export const generateSentence = (sentence, maxLength = 5) => {
   const sentenceQuantity = getRandomInteger(1, maxLength);
   return sentence.repeat(sentenceQuantity);

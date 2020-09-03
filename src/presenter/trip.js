@@ -6,7 +6,8 @@ import PointPresenter from "./point.js";
 import PointNewPresenter from "./point-new.js";
 
 import {render, remove} from "../utils/dom-utils.js";
-import {sortPrice, sortDate} from "../utils/utils.js";
+import {sortPrice} from "../utils/utils.js";
+import {sortDate} from "../utils/date-utils.js";
 import {filter} from "../utils/filter-utils.js";
 import {SortType, UpdateType, UserAction, FilterType} from "../const.js";
 
@@ -33,7 +34,7 @@ export default class Trip {
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
 
-    this._pointNewPresenter = new PointNewPresenter(this._dayListView.getElement(), this._handleViewAction);
+    this._pointNewPresenter = new PointNewPresenter(this._dayListView, this._handleViewAction);
   }
 
   init() {
@@ -111,7 +112,6 @@ export default class Trip {
     this._currentSortType = sortType;
     this._clearTrip();
 
-    // /To do сортировка
     this._renderTrip();
   }
 

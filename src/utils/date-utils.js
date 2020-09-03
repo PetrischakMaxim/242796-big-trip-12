@@ -22,7 +22,7 @@ const isDate = (date, dateName) => {
   return `${date}${dateName}`;
 };
 
-const getTripDuaration = (d1, d2) =>moment.duration(moment(d2).diff(d1));
+const getTripDuaration = (d1, d2) => moment.duration(moment(d2).diff(d1));
 
 export const isFuturePoint = (date) => {
   if (date === null) {
@@ -36,5 +36,11 @@ export const isPastPoint = (date) => {
     return false;
   }
   return moment(new Date()).isAfter(date, `day`);
+};
+
+export const sortDate = (d1, d2) => {
+  const t1 = getTripDuaration(d1.tripDates.start, d1.tripDates.end)._milliseconds;
+  const t2 = getTripDuaration(d2.tripDates.start, d2.tripDates.end)._milliseconds;
+  return t2 - t1;
 };
 
