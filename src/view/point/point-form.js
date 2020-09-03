@@ -215,11 +215,12 @@ export default class PointForm extends SmartView {
   }
 
   restoreHandlers() {
-    this._setInnerHandlers();
     this.setFormSubmitHandler(this._onSubmit);
     this.setCloseButtonHandler(this._onCloseClick);
     this.setFavoriteClickHandler(this._onFavoriteClick);
     this.setDeletePointHandler(this._onDeleteClick);
+
+    this._setInnerHandlers();
   }
 
   getTemplate() {
@@ -280,9 +281,9 @@ export default class PointForm extends SmartView {
         .querySelector(`.event__input--destination`)
         .addEventListener(`change`, this._destinationToggleHandler);
 
+
     const startTimeElement = element.querySelector(`[name="event-start-time"]`);
     const endTimeElement = element.querySelector(`[name="event-end-time"]`);
-
 
     startTimeElement.addEventListener(`focus`, (evt) => {
       evt.preventDefault();
@@ -338,10 +339,9 @@ export default class PointForm extends SmartView {
     const datepickerInstance = flatpickr(element, {
       "time_24hr": true,
       "enableTime": true,
-      "defaultDate": `today`,
+      "defaultDate": this._data.tripDates[time],
       "minDate": this._data.tripDates.start,
     });
-
 
     if (time === `start`) {
       this._datepickerStart = datepickerInstance;
@@ -360,9 +360,6 @@ export default class PointForm extends SmartView {
         [name]: value
       }
     });
-
-    console.log(this._data.tripDates);
-
   }
 
   _removeDatePicker() {
@@ -385,6 +382,10 @@ export default class PointForm extends SmartView {
       destination: point.destination,
       info: point.info,
       hasInfo: point.hasInfo,
+      tripDates: {
+        start: point.tripDates.start,
+        end: point.tripDates.end,
+      }
     });
   }
 

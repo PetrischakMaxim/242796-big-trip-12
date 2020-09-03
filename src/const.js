@@ -1,3 +1,5 @@
+import {generateId} from "./utils/utils.js";
+
 export const TRIP_IMAGE_URL = `http://picsum.photos/248/152?r=`;
 
 export const TRIP_SENTENCE = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`;
@@ -43,6 +45,7 @@ export const OFFER_LIST = [
 ];
 
 export const BLANK_POINT = {
+  id: generateId(),
   waypoint: `Taxi`,
   waypointTypes: {
     transfer: `Taxi`,
@@ -54,11 +57,14 @@ export const BLANK_POINT = {
     start: new Date(),
     end: new Date(),
   },
-  hasOffers: false,
   hasInfo: false,
+  hasOffers: false,
+  isFavorite: false,
+  info: null,
+  offers: null,
 };
 
-export const POINT_COUNT = 20;
+export const POINT_COUNT = 2;
 
 export const SortType = {
   DEFAULT: `event`,

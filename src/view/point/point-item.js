@@ -17,6 +17,23 @@ export const createPointItemTemplate = (point) => {
     tripDates: {start, end},
   } = point;
 
+  const createOffersList = () => {
+    if (!offers || offers.length === 0) {
+      return ``;
+    }
+    return (
+      `<h4 class="visually-hidden">Offers:</h4>
+       <ul class="event__selected-offers">
+        ${offers.map((offer) => (
+        `<li class="event__offer">
+          <span class="event__offer-title">${offer.name}</span>
+          +
+          €&nbsp;<span class="event__offer-price">${offer.cost}</span>
+        </li>`)).join(``)}
+      </ul>`
+    );
+  };
+
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -48,15 +65,7 @@ export const createPointItemTemplate = (point) => {
       <p class="event__price">
         €&nbsp;<span class="event__price-value">${cost}</span>
       </p>
-      <h4 class="visually-hidden">Offers:</h4>
-      <ul class="event__selected-offers">
-      ${offers.map((offer) => (
-    `<li class="event__offer">
-          <span class="event__offer-title">${offer.name}</span>
-          +
-          €&nbsp;<span class="event__offer-price">${offer.cost}</span>
-        </li>`)).join(``)}
-      </ul>
+      ${createOffersList()}
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>
@@ -70,9 +79,9 @@ export default class PointItem extends AbstractView {
   constructor(point) {
     super();
     this._point = point;
-    this._onClick = null;
 
     this._clickHandler = this._clickHandler.bind(this);
+    this._onClick = null;
   }
 
   getTemplate() {
