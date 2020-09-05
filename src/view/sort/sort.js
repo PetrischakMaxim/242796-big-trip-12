@@ -29,7 +29,7 @@ const createSortFormTemplate = (currentSortType) => (
         </svg>
       </label>
     </div>
-    <span class="trip-sort__item  trip-sort__item--offers">Offers</span>
+    <span class="trip-sort__item trip-sort__item--offers">Offers</span>
   </form>`
 );
 
@@ -38,9 +38,9 @@ export default class Sort extends AbstractView {
   constructor(currentSortType) {
     super();
 
-    this._sortChange = null;
     this._currentSortType = currentSortType;
     this._sortChangeHandler = this._sortChangeHandler.bind(this);
+    this._sortChange = null;
   }
 
   getTemplate() {

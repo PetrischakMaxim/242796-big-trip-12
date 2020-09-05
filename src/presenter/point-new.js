@@ -25,7 +25,7 @@ export default class PointNew {
     this._pointEditView.setFormSubmitHandler(this._onSubmitHandler);
     this._pointEditView.setDeletePointHandler(this._deleteClickHandler);
 
-    render(this._container.getElement(), this._pointEditView, RenderPosition.AFTERBEGIN);
+    render(this._container, this._pointEditView, RenderPosition.AFTERBEGIN);
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }

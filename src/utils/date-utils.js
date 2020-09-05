@@ -39,8 +39,8 @@ export const isPastPoint = (date) => {
 };
 
 export const sortDate = (d1, d2) => {
-  const t1 = getTripDuaration(d1.tripDates.start, d1.tripDates.end)._milliseconds;
-  const t2 = getTripDuaration(d2.tripDates.start, d2.tripDates.end)._milliseconds;
+  const t1 = getTripDuaration(d1.start, d1.end)._milliseconds;
+  const t2 = getTripDuaration(d2.start, d2.end)._milliseconds;
   return t2 - t1;
 };
 

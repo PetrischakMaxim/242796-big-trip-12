@@ -34,7 +34,7 @@ export default class Trip {
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
 
-    this._pointNewPresenter = new PointNewPresenter(this._dayListView, this._handleViewAction);
+    this._pointNewPresenter = new PointNewPresenter(this._containerInner, this._handleViewAction);
   }
 
   init() {
@@ -157,7 +157,7 @@ export default class Trip {
     let dayView = null;
 
     for (let point of points) {
-      const pointDate = point.tripDates.start;
+      const pointDate = point.start;
       const pointDay = pointDate.getDate();
 
       if (dayDate === pointDay) {

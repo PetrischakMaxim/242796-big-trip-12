@@ -51,12 +51,10 @@ export const BLANK_POINT = {
     transfer: `Taxi`,
     activity: `Check-in`
   },
-  cost: `199`,
+  price: `199`,
   destination: `Westminster`,
-  tripDates: {
-    start: new Date(),
-    end: new Date(),
-  },
+  start: new Date(),
+  end: new Date(),
   hasInfo: false,
   hasOffers: false,
   isFavorite: false,
@@ -64,7 +62,7 @@ export const BLANK_POINT = {
   offers: null,
 };
 
-export const POINT_COUNT = 2;
+export const POINT_COUNT = 5;
 
 export const SortType = {
   DEFAULT: `event`,

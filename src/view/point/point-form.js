@@ -10,76 +10,8 @@ import {
   TRIP_SENTENCE
 } from "../../const.js";
 
-import {
-  getRandomInteger,
-  generateSentence,
-  generateImage,
-} from "../../utils/utils.js";
-
+import {getRandomInteger, generateSentence, generateImage} from "../../utils/utils.js";
 import {formatDateToPlaceholder} from "../../utils/date-utils.js";
-
-const createTimeGroupTemplate = (startDate, endDate) => (`
-  <div class="event__field-group  event__field-group--time">
-      <label class="visually-hidden" for="event-start-time}">
-        From
-      </label>
-      <input class="event__input event__input--time"
-        id="event-start-time" type="text" name="event-start-time"
-        value="${formatDateToPlaceholder(startDate)}"> —
-      <label class="visually-hidden" for="event-end-time">
-        To
-      </label>
-      <input class="event__input  event__input--time"
-        id="event-end-time" type="text" name="event-end-time"
-        value="${formatDateToPlaceholder(endDate)}">
-   </div>
-  `
-);
-
-const pointTemlate = (point, currentPoint) => (
-  `<div class="event__type-item">
-    <input id="event-type-${point.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type"
-    value="${point.toLowerCase()}"
-    ${(point === currentPoint) ? `checked` : ``}>
-    <label class="event__type-label event__type-label--${point.toLowerCase()}"
-    for="event-type-${point.toLowerCase()}-1">${point}</label>
-  </div>`
-);
-
-const createPointTemplate = (type, points, currentPoint) => (
-  `<fieldset class="event__type-group">
-      <legend class="visually-hidden">${type}</legend>
-      ${Array.isArray(points) ? points.map((point) => pointTemlate(point, currentPoint)).join(``) : ``}
-  </fieldset>`
-);
-
-const generateOffersTemplate = (offers) => {
-  return offers.map((offer)=> {
-    const {name, cost} = offer;
-    const offerType = name.split(` `).pop();
-    return `<div class="event__offer-selector">
-    <input class="event__offer-checkbox visually-hidden"
-    id="event-offer-${offerType}-1"
-    type="checkbox"
-    name="event-offer-${offerType}"
-    ${getRandomInteger(0, 1) ? `checked` : ``} >
-    <label class="event__offer-label"
-    for="event-offer-${offerType}-1">
-      <span class="event__offer-title">${name}</span>
-      +
-      €&nbsp;<span class="event__offer-price">${cost}</span>
-    </label>
-  </div>`;
-  }).join(``);
-};
-
-const createOffersTemplate = (offers) => (
-  `<section class="event__section  event__section--offers">
-    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-    <div class="event__available-offers">${generateOffersTemplate(offers)}</div>
-  </section>`
-);
-
 
 const createPhotoTape = (images) => (
   `<div class="event__photos-tape">
@@ -87,37 +19,28 @@ const createPhotoTape = (images) => (
   </div>`
 );
 
-const createDetailsTemplate = (info) => {
-  const {description, images} = info;
-  return `<section class="event__section  event__section--destination">
-      <h3 class="event__section-title  event__section-title--destination">
-        Destination
-      </h3>
-      <p class="event__destination-description">
-        ${description}
-      </p>
-      <div class="event__photos-container">
-        ${createPhotoTape(images)}
-      </div>
-    </section>`;
-};
-
-export const createCityListTemplate = (cities) => (
-  `<datalist id="destination-list-1">
-    ${cities.map((city) => `<option value="${city}"></option>`).join(``)}
-  </datalist>
-  `
+const createDetailsTemplate = (info) => (
+  `<section class="event__section  event__section--destination">
+    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+    <p class="event__destination-description">
+      ${info.description}
+    </p>
+    <div class="event__photos-container">
+      ${createPhotoTape(info.images)}
+    </div>
+  </section>`
 );
-
 
 const createPointFormTemplate = (data) => {
   const {
+    id,
     waypoint,
     waypointTypes,
     waypointTypes: {transfer, activity},
-    cost,
+    price,
     destination,
-    tripDates: {start, end},
+    start,
+    end,
     offers,
     info,
     hasOffers,
@@ -127,63 +50,143 @@ const createPointFormTemplate = (data) => {
 
   const [transferType, activityType] = Object.keys(waypointTypes);
 
-  const createEventTypeListTemplate = () => {
-    return `
-    <div class="event__type-list">
-        ${createPointTemplate(transferType, transfer, waypoint)}
-        ${createPointTemplate(activityType, activity, waypoint)}
-    </div>`;
+  const createPoints = (type, points, currentPoint) => {
+
+    const createPoint = (point) => (
+      `<div class="event__type-item">
+        <input id="event-type-${point.toLowerCase()}-${id}"
+          class="event__type-input visually-hidden" type="radio" name="event-type"
+          value="${point.toLowerCase()}"
+          ${(point === currentPoint) ? `checked` : ``}>
+        <label class="event__type-label event__type-label--${point.toLowerCase()}"
+          for="event-type-${point.toLowerCase()}-${id}">${point}</label>
+      </div>`
+    );
+
+    return (
+      `<fieldset class="event__type-group">
+        <legend class="visually-hidden">${type}</legend>
+        ${Array.isArray(points) ? points.map((point) => createPoint(point)).join(``) : ``}
+      </fieldset>`
+    );
   };
 
-  return `<li class="trip-events__item">
-  <form class="event event--edit" action="#" method="post">
-    <header class="event__header">
-      <div class="event__type-wrapper">
-        <label class="event__type  event__type-btn" for="event-type-toggle-1">
-          <span class="visually-hidden">Choose event type</span>
-          <img class="event__type-icon" width="17" height="17"
-            src="img/icons/${waypoint.toLowerCase()}.png"
-            alt="${waypoint} icon">
-        </label>
-        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
-        ${createEventTypeListTemplate()}
-      </div>
-      <div class="event__field-group  event__field-group--destination">
-        <label class="event__label  event__type-output" for="event-destination-1">
-          ${waypoint}${transfer.includes(waypoint) ? ` to` : ` in`}
-        </label>
-        <input class="event__input  event__input--destination"
-          id="event-destination-1" type="text" name="event-destination"
-          value="${he.encode(destination)}" list="destination-list-1">
-        ${createCityListTemplate(CITY_LIST)}
-      </div>
-      ${createTimeGroupTemplate(start, end)}
-      <div class="event__field-group  event__field-group--price">
-        <label class="event__label" for="event-price-1">
-          <span class="visually-hidden">Price</span>
-          €
-        </label>
-          <input class="event__input  event__input--price"
-          id="event-price-1" type="text" name="event-price"
-          value="${he.encode(String(cost))}">
-      </div>
-      <button class="event__save-btn btn btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Delete</button>
-      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden"
+  const createOffers = () => {
+    const offersTemplate = offers.map((offer)=> {
+      const offerType = name.split(` `).pop();
+      return (
+        `<div class="event__offer-selector">
+          <input class="event__offer-checkbox visually-hidden" id="event-offer-${offerType}-${id}"
+            type="checkbox" name="event-offer-${offerType}"
+            ${getRandomInteger(0, 1) ? `checked` : ``} >
+          <label class="event__offer-label"
+            for="event-offer-${offerType}-${id}">
+            <span class="event__offer-title">${offer.name}</span> + €&nbsp;<span class="event__offer-price">${offer.price}</span>
+          </label>
+        </div>`);
+    }).join(``);
+
+    return (`
+    <section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">${offersTemplate}</div>
+    </section>`
+    );
+  };
+
+  const createTimeGroup = () => (`
+  <div class="event__field-group  event__field-group--time">
+    <label class="visually-hidden" for="event-start-time}">From</label>
+    <input class="event__input event__input--time"
+      id="event-start-time" type="text" name="event-start-time"
+      value="${formatDateToPlaceholder(start)}"> —
+    <label class="visually-hidden" for="event-end-time">To</label>
+    <input class="event__input  event__input--time"
+      id="event-end-time" type="text" name="event-end-time"
+      value="${formatDateToPlaceholder(end)}">
+   </div>`
+  );
+
+  const createCityList = (cities) => (
+    `<datalist id="destination-list-${id}">
+      ${cities.map((city) => `<option value="${city}"></option>`).join(``)}
+    </datalist>`
+  );
+
+  const pointTypeList = () => (`
+    <div class="event__type-list">
+      ${createPoints(transferType, transfer, waypoint)}
+      ${createPoints(activityType, activity, waypoint)}
+    </div>`
+  );
+
+  const pointTypeWrapper = (`
+    <div class="event__type-wrapper">
+      <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
+        <span class="visually-hidden">Choose event type</span>
+        <img class="event__type-icon" width="17" height="17"
+          src="img/icons/${waypoint.toLowerCase()}.png" alt="${waypoint} icon">
+      </label>
+      <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox">
+      ${pointTypeList()}
+    </div>`
+  );
+
+  const pointDestinationTemplate = (
+    `<div class="event__field-group  event__field-group--destination">
+      <label class="event__label  event__type-output" for="event-destination-${id}">
+        ${waypoint}${transfer.includes(waypoint) ? ` to` : ` in`}
+      </label>
+      <input class="event__input  event__input--destination"
+        id="event-destination-${id}" type="text" name="event-destination"
+        value="${he.encode(destination)}" list="destination-list-${id}">
+      ${createCityList(CITY_LIST)}
+    </div>`
+  );
+
+  const pointPriceTemplate = (
+    `<div class="event__field-group  event__field-group--price">
+      <label class="event__label" for="event-price-${id}">
+        <span class="visually-hidden">Price</span>€
+      </label>
+      <input class="event__input  event__input--price"
+        id="event-price-${id}" type="text" name="event-price" value="${he.encode(String(price))}">
+    </div>`
+  );
+
+  const favoriteInputTempalte = (
+    `<input id="event-favorite-${id}" class="event__favorite-checkbox  visually-hidden"
         type="checkbox" name="event-favorite" ${(isFavorite) ? `checked` : ``}>
-      <label class="event__favorite-btn" for="event-favorite-1"><span class="visually-hidden">Add to favorite</span>
+     <label class="event__favorite-btn" for="event-favorite-${id}"><span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
         <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"></path>
-        </svg></label>
-        <button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>
-    </header>
-    ${(hasOffers || hasInfo) ?
-    `<section class="event__details">
-        ${(hasOffers) ? createOffersTemplate(offers) : ``}
-        ${(hasInfo) ? createDetailsTemplate(info) : ``}
-     </section>` : ``}
-  </form>
-  </li>`;
+        </svg>
+     </label>`
+  );
+
+  const createFormTemplate = () => (
+    `<form class="trip-events__item event event--edit" action="#" method="post">
+      <header class="event__header">
+        ${pointTypeWrapper}
+        ${pointDestinationTemplate}
+        ${createTimeGroup()}
+        ${pointPriceTemplate}
+        <button class="event__save-btn btn btn--blue" type="submit">Save</button>
+        <button class="event__reset-btn" type="reset">Delete</button>
+        ${favoriteInputTempalte}
+        <button class="event__rollup-btn" type="button">
+          <span class="visually-hidden">Open event</span>
+        </button>
+      </header>
+      ${(hasOffers || hasInfo) ?
+      `<section class="event__details">
+          ${(hasOffers) ? createOffers() : ``}
+          ${(hasInfo) ? createDetailsTemplate(info) : ``}
+      </section>` : ``}
+    </form>`
+  );
+
+  return `<li class="trip-events__item">${createFormTemplate()}</li>`;
 };
 
 export default class PointForm extends SmartView {
@@ -305,7 +308,6 @@ export default class PointForm extends SmartView {
       this._dateChangeHandler(`end`, this._datepickerEnd.selectedDates[0]);
     });
 
-
   }
 
   _destinationToggleHandler(evt) {
@@ -339,8 +341,8 @@ export default class PointForm extends SmartView {
     const datepickerInstance = flatpickr(element, {
       "time_24hr": true,
       "enableTime": true,
-      "defaultDate": this._data.tripDates[time],
-      "minDate": this._data.tripDates.start,
+      "defaultDate": this._data.start,
+      "minDate": this._data.start,
     });
 
     if (time === `start`) {
@@ -356,9 +358,7 @@ export default class PointForm extends SmartView {
 
   _dateChangeHandler(name, value) {
     this.updateData({
-      tripDates: {
-        [name]: value
-      }
+      [name]: value
     });
   }
 
@@ -382,10 +382,6 @@ export default class PointForm extends SmartView {
       destination: point.destination,
       info: point.info,
       hasInfo: point.hasInfo,
-      tripDates: {
-        start: point.tripDates.start,
-        end: point.tripDates.end,
-      }
     });
   }
 

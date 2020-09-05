@@ -9,7 +9,7 @@ export const getRandomInteger = (a = 0, b = 1) => {
 
 export const getRandomIndex = (array) => array[getRandomInteger(0, array.length - 1)];
 
-export const sortPrice = (min, max) => (max.cost - min.cost);
+export const sortPrice = (min, max) => (max.price - min.price);
 
 export const generateSentence = (sentence, maxLength = 5) => {
   const sentenceQuantity = getRandomInteger(1, maxLength);
