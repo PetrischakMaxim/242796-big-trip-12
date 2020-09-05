@@ -31,7 +31,7 @@ const createDetailsTemplate = (info) => (
   </section>`
 );
 
-const createPointFormTemplate = (data) => {
+const createPointFormTemplate = (data, isNewPoint = false) => {
   const {
     id,
     waypoint,
@@ -172,11 +172,13 @@ const createPointFormTemplate = (data) => {
         ${createTimeGroup()}
         ${pointPriceTemplate}
         <button class="event__save-btn btn btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
-        ${favoriteInputTempalte}
-        <button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
+        <button class="event__reset-btn" type="reset">
+          ${(!isNewPoint) ? `Delete` : `Cancel`}
         </button>
+        ${(!isNewPoint) ? `${favoriteInputTempalte}` : ``}
+        ${(!isNewPoint) ? `<button class="event__rollup-btn" type="button">
+          <span class="visually-hidden">Open event</span>
+        </button>` : ``}
       </header>
       ${(hasOffers || hasInfo) ?
       `<section class="event__details">
@@ -186,7 +188,12 @@ const createPointFormTemplate = (data) => {
     </form>`
   );
 
-  return `<li class="trip-events__item">${createFormTemplate()}</li>`;
+  return `${(!isNewPoint) ?
+    `<li class="trip-events__item">${createFormTemplate()}</li>`
+    :
+    `${createFormTemplate()}`
+  }`;
+
 };
 
 export default class PointForm extends SmartView {
@@ -227,6 +234,10 @@ export default class PointForm extends SmartView {
 
   getTemplate() {
     return createPointFormTemplate(this._data);
+  }
+
+  getFormTemplate() {
+    return createPointFormTemplate(this._data, true);
   }
 
   setFormSubmitHandler(callback) {
