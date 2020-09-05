@@ -108,7 +108,7 @@ export default class Point {
   _formCloseHandler(point) {
     this._changeStatus(
         UserAction.UPDATE_POINT,
-        UpdateType.MINOR,
+        UpdateType.MAJOR,
         point
     );
     this._replaceFormToPoint();

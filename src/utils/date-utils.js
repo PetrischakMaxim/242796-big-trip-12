@@ -1,7 +1,7 @@
 import moment from "moment";
 
 export const getDateTimeFormat = (date) => moment(date).format(`YYYY-MM-DDTH:mm:ss`);
-export const getDateFormat = (date) => moment(date).format(`YYYY-MM-DD`);
+export const getDateFormat = (date) => moment(date).format(`DD/MM/YY`);
 export const getTimeFormat = (date) => moment(date).format(`HH:mm`);
 export const formatDateToPlaceholder = (date) => `${getDateFormat(date)} ${getTimeFormat(date)}`;
 export const getFormatedDate = (date) => moment(date).format(`D MMM`);
@@ -15,11 +15,13 @@ export const getTimeOfTrip = (d1, d2) => {
   );
 };
 
+const isNeededZero = (n) => (n < 10) ? `0${n}` : n;
+
 const isDate = (date, dateName) => {
   if (!date) {
     return ``;
   }
-  return `${date}${dateName}`;
+  return `${isNeededZero(date)}${dateName}`;
 };
 
 const getTripDuaration = (d1, d2) => moment.duration(moment(d2).diff(d1));

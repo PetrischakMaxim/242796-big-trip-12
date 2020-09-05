@@ -96,13 +96,13 @@ const createPointFormTemplate = (data) => {
 
   const createTimeGroup = () => (`
   <div class="event__field-group  event__field-group--time">
-    <label class="visually-hidden" for="event-start-time}">From</label>
+    <label class="visually-hidden" for="event-start-time">From</label>
     <input class="event__input event__input--time"
-      id="event-start-time" type="text" name="event-start-time"
+      id="event-start-time" type="text" data-time="start" name="event-start-time"
       value="${formatDateToPlaceholder(start)}"> —
     <label class="visually-hidden" for="event-end-time">To</label>
     <input class="event__input  event__input--time"
-      id="event-end-time" type="text" name="event-end-time"
+      id="event-end-time" type="text" data-time="end" name="event-end-time"
       value="${formatDateToPlaceholder(end)}">
    </div>`
   );
@@ -194,7 +194,6 @@ export default class PointForm extends SmartView {
   constructor(point = BLANK_POINT) {
     super();
     this._data = PointForm.parsePointToData(point);
-    this._datepicker = null;
 
     this._onSubmitHandler = this._onSubmitHandler.bind(this);
     this._onCloseClickHandler = this._onCloseClickHandler.bind(this);
@@ -214,7 +213,7 @@ export default class PointForm extends SmartView {
 
   removeElement() {
     super.removeElement();
-    this._removeDatePicker();
+    this._removeDatePickers();
   }
 
   restoreHandlers() {
@@ -258,20 +257,6 @@ export default class PointForm extends SmartView {
       .addEventListener(`click`, this._formDeleteClickHandler);
   }
 
-  _onSubmitHandler(evt) {
-    evt.preventDefault();
-    this._onSubmit(PointForm.parseDataToPoint(this._data));
-  }
-
-  _onCloseClickHandler() {
-    this._onCloseClick(PointForm.parseDataToPoint(this._data));
-  }
-
-  _onFavoriteClickHandler(evt) {
-    evt.preventDefault();
-    this._onFavoriteClick();
-  }
-
   _setInnerHandlers() {
     const element = this.getElement();
     element
@@ -284,30 +269,25 @@ export default class PointForm extends SmartView {
         .querySelector(`.event__input--destination`)
         .addEventListener(`change`, this._destinationToggleHandler);
 
-
-    const startTimeElement = element.querySelector(`[name="event-start-time"]`);
-    const endTimeElement = element.querySelector(`[name="event-end-time"]`);
-
-    startTimeElement.addEventListener(`focus`, (evt) => {
-      evt.preventDefault();
-      this._setDatepicker(startTimeElement, `start`);
+    element.querySelectorAll(`.event__input--time`).forEach((input) => {
+      this._initDatepicker(input, input.dataset.time);
     });
 
-    startTimeElement.addEventListener(`change`, (evt) => {
-      evt.preventDefault();
-      this._dateChangeHandler(`start`, this._datepickerStart.selectedDates[0]);
-    });
 
-    endTimeElement.addEventListener(`focus`, (evt)=> {
-      evt.preventDefault();
-      this._setDatepicker(endTimeElement, `end`);
-    });
+  }
 
-    endTimeElement.addEventListener(`change`, (evt)=> {
-      evt.preventDefault();
-      this._dateChangeHandler(`end`, this._datepickerEnd.selectedDates[0]);
-    });
+  _onSubmitHandler(evt) {
+    evt.preventDefault();
+    this._onSubmit(PointForm.parseDataToPoint(this._data));
+  }
 
+  _onCloseClickHandler() {
+    this._onCloseClick(PointForm.parseDataToPoint(this._data));
+  }
+
+  _onFavoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._onFavoriteClick();
   }
 
   _destinationToggleHandler(evt) {
@@ -337,22 +317,39 @@ export default class PointForm extends SmartView {
     });
   }
 
-  _setDatepicker(element, time) {
-    const datepickerInstance = flatpickr(element, {
+  _initDatepicker(element, name) {
+    const options = {
       "time_24hr": true,
       "enableTime": true,
-      "defaultDate": this._data.start,
-      "minDate": this._data.start,
-    });
+      "minuteIncrement": 1,
+      "dateFormat": `d/m/y H:i`,
+      "defaultDate": this._data[name] || `today`,
+    };
 
-    if (time === `start`) {
-      this._datepickerStart = datepickerInstance;
-      this._datepickerStart.open();
+
+    if (name === `start`) {
+      this._datepickerStart = flatpickr(element,
+          Object.assign({}, options, {
+            onChange: ([date]) => {
+              this._dateChangeHandler(`start`, date);
+              if (this._data.start > this._data.end) {
+                this._dateChangeHandler(`end`, date);
+              }
+              this._datepickerEnd.set(`minDate`, this._data.start);
+            },
+          })
+      );
     }
 
-    if (time === `end`) {
-      this._datepickerEnd = datepickerInstance;
-      this._datepickerEnd.open();
+    if (name === `end`) {
+      this._datepickerEnd = flatpickr(element,
+          Object.assign({}, options, {
+            "minDate": this._data.start,
+            "onChange": ([date]) => {
+              this._dateChangeHandler(`end`, date);
+            },
+          })
+      );
     }
   }
 
@@ -362,12 +359,12 @@ export default class PointForm extends SmartView {
     });
   }
 
-  _removeDatePicker() {
-    if (this._datepicker) {
-      this._datepicker.forEach((datepicker) => {
-        datepicker.destroy();
-        datepicker = null;
-      });
+  _removeDatePickers() {
+    if (this._datepickerStart || this._datepickerEnd) {
+      this._datepickerStart.destroy();
+      this._datepickerStart = null;
+      this._datepickerEnd.destroy();
+      this._datepickerEnd = null;
     }
   }
 
