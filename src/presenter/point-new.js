@@ -21,7 +21,6 @@ export default class PointNew {
       return;
     }
     this._pointEditView = new PointFormView();
-
     this._pointEditView.setFormSubmitHandler(this._onSubmitHandler);
     this._pointEditView.setDeletePointHandler(this._deleteClickHandler);
 

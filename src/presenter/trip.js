@@ -34,7 +34,7 @@ export default class Trip {
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
 
-    this._pointNewPresenter = new PointNewPresenter(this._containerInner, this._handleViewAction);
+    this._pointNewPresenter = new PointNewPresenter(this._dayListView, this._handleViewAction);
   }
 
   init() {
@@ -173,7 +173,6 @@ export default class Trip {
   }
 
   _clearTrip(resetSortType = false) {
-
     remove(this._dayListView);
     remove(this._sortView);
     remove(this._noPointView);
@@ -184,5 +183,6 @@ export default class Trip {
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
     }
+
   }
 }
