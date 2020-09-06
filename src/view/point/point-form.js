@@ -209,6 +209,7 @@ export default class PointForm extends SmartView {
     this._destinationToggleHandler = this._destinationToggleHandler.bind(this);
     this._dateChangeHandler = this._dateChangeHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
+    this._priceChangeHandler = this._priceChangeHandler.bind(this);
 
     this._onSubmit = null;
     this._onFavoriteClick = null;
@@ -234,10 +235,6 @@ export default class PointForm extends SmartView {
 
   getTemplate() {
     return createPointFormTemplate(this._data);
-  }
-
-  getFormTemplate() {
-    return createPointFormTemplate(this._data, true);
   }
 
   setFormSubmitHandler(callback) {
@@ -277,13 +274,18 @@ export default class PointForm extends SmartView {
       });
 
     element
+      .querySelector(`.event__input--price`)
+      .addEventListener(`change`, this._priceChangeHandler);
+
+    element
         .querySelector(`.event__input--destination`)
         .addEventListener(`change`, this._destinationToggleHandler);
 
-    element.querySelectorAll(`.event__input--time`).forEach((input) => {
-      this._initDatepicker(input, input.dataset.time);
-    });
-
+    element
+      .querySelectorAll(`.event__input--time`)
+      .forEach((input) => {
+        this._initDatepicker(input, input.dataset.time);
+      });
 
   }
 
@@ -328,6 +330,14 @@ export default class PointForm extends SmartView {
     });
   }
 
+  _priceChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      price: Math.round(evt.target.value)
+    });
+
+  }
+
   _initDatepicker(element, name) {
     const options = {
       "time_24hr": true,
@@ -336,7 +346,6 @@ export default class PointForm extends SmartView {
       "dateFormat": `d/m/y H:i`,
       "defaultDate": this._data[name] || `today`,
     };
-
 
     if (name === `start`) {
       this._datepickerStart = flatpickr(element,
