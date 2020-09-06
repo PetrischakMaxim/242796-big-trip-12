@@ -9,9 +9,7 @@ export const getRandomInteger = (a = 0, b = 1) => {
 
 export const getRandomIndex = (array) => array[getRandomInteger(0, array.length - 1)];
 
-export const sortPrice = (min, max) => (max.cost - min.cost);
-
-export const sortDate = (d1, d2) => (d2.tripDates.start.getTime() - d1.tripDates.start.getTime());
+export const sortPrice = (min, max) => (max.price - min.price);
 
 export const generateSentence = (sentence, maxLength = 5) => {
   const sentenceQuantity = getRandomInteger(1, maxLength);
@@ -30,21 +28,7 @@ export const generateImage = (url, maxLength = 5) => {
   return [...new Set(imagesList)];
 };
 
-export const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1)
-  ];
-};
-
-export const checkEscKeyButton = (evt) => {
+export const isEscKeyPressed = (evt) => {
   return (evt.key === `Escape` || evt.key === `Esc`) ? true : false;
 };
 

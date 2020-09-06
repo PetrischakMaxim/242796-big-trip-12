@@ -1,3 +1,5 @@
+import {generateId} from "./utils/utils.js";
+
 export const TRIP_IMAGE_URL = `http://picsum.photos/248/152?r=`;
 
 export const TRIP_SENTENCE = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`;
@@ -43,25 +45,45 @@ export const OFFER_LIST = [
 ];
 
 export const BLANK_POINT = {
+  id: generateId(),
   waypoint: `Taxi`,
   waypointTypes: {
     transfer: `Taxi`,
     activity: `Check-in`
   },
-  cost: `199`,
+  price: `199`,
   destination: `Westminster`,
-  tripDates: {
-    start: new Date(),
-    end: new Date(),
-  },
-  hasOffers: false,
+  start: new Date(),
+  end: new Date(),
   hasInfo: false,
+  hasOffers: false,
+  isFavorite: false,
+  info: null,
+  offers: null,
 };
 
-export const POINT_COUNT = 8;
+export const POINT_COUNT = 5;
 
 export const SortType = {
   DEFAULT: `event`,
   TIME: `time`,
-  PRICE: `price`
+  PRICE: `price`,
+};
+
+export const UserAction = {
+  UPDATE_POINT: `UPDATE_POINT`,
+  ADD_POINT: `ADD_POINT`,
+  DELETE_POINT: `DELETE_POINT`
+};
+
+export const UpdateType = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+
+export const FilterType = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`,
 };

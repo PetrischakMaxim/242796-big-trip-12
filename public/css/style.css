@@ -971,7 +971,7 @@ main {
   border-bottom: 1px solid #0d8ae4;
 }
 .event__field-group--destination {
-  width: 290px;
+  width: 500px;
 }
 
 .event__label {
@@ -1002,7 +1002,7 @@ main {
   display: none;
 }
 .event__input--time {
-  width: 130px;
+  width: 150px;
 
   text-align: center;
 }

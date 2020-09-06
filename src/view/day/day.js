@@ -5,12 +5,13 @@ const createDayTemplate = (date, count) => (
   `<li class="trip-days__item day">
     <div class="day__info">
       <span class="day__counter">
-        ${count}
+        ${(!count) ? `` : count}
       </span>
-      <time class="day__date" datetime="${getDateFormat(date)}">
-        ${getFormatedDate(date)}
+      <time class="day__date" datetime="${(!date) ? `` : getDateFormat(date)}">
+        ${(!date) ? `` : getFormatedDate(date)}
       </time>
     </div>
+    <ul class="trip-events__list"></ul>
   </li>`
 );
 
@@ -23,5 +24,10 @@ export default class Day extends AbstractView {
 
   getTemplate() {
     return createDayTemplate(this._date, this._count);
+  }
+
+  getList() {
+    return this.getElement()
+      .querySelector(`.trip-events__list`);
   }
 }
