@@ -34,13 +34,14 @@ export default class Tabs extends AbstractView {
     });
   }
 
-  setActiveTab(tab) {
+  _setActiveTab(tab) {
     const currentTab = this.getElement().querySelector(`[data-tab=${tab}]`);
-    const prevActiveTab = currentTab.previousSibling || currentTab.nextSibling;
+    const prevActiveTab = currentTab.previousElementSibling || currentTab.nextElementSibling;
 
     if (currentTab !== null) {
       currentTab.classList.add(this._activeClassName);
       prevActiveTab.classList.remove(this._activeClassName);
+
     }
   }
 
@@ -48,6 +49,7 @@ export default class Tabs extends AbstractView {
     evt.preventDefault();
     if (evt.target.nodeName === `A`) {
       this._click(evt.target.dataset.tab);
+      this._setActiveTab(evt.target.dataset.tab);
     }
   }
 
