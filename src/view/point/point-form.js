@@ -188,19 +188,16 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
     </form>`
   );
 
-  return `${(!isNewPoint) ?
-    `<li class="trip-events__item">${createFormTemplate()}</li>`
-    :
-    `${createFormTemplate()}`
-  }`;
+  return `<li class="trip-events__item">${createFormTemplate()}</li>`;
 
 };
 
 export default class PointForm extends SmartView {
 
-  constructor(point = BLANK_POINT) {
+  constructor(point = BLANK_POINT, isNewPoint = false) {
     super();
     this._data = PointForm.parsePointToData(point);
+    this._isNewPoint = isNewPoint;
 
     this._onSubmitHandler = this._onSubmitHandler.bind(this);
     this._onCloseClickHandler = this._onCloseClickHandler.bind(this);
@@ -234,7 +231,10 @@ export default class PointForm extends SmartView {
   }
 
   getTemplate() {
-    return createPointFormTemplate(this._data);
+    return (!this._isNewPoint) ?
+      createPointFormTemplate(this._data)
+      :
+      createPointFormTemplate(this._data, true);
   }
 
   setFormSubmitHandler(callback) {

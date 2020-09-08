@@ -161,14 +161,12 @@ export default class Trip {
     this._renderContainerForDays();
 
     let dayCounter = 1;
-
     let dayDate = null;
     let dayView = null;
 
     for (let point of points) {
       const pointDate = point.start;
       const pointDay = pointDate.getDate();
-      console.log(point.start);
 
       if (dayDate === pointDay) {
         this._renderPoint(dayView.getList(), point);

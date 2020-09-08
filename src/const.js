@@ -1,7 +1,4 @@
-import {generateId} from "./utils/utils.js";
-
 export const TRIP_IMAGE_URL = `http://picsum.photos/248/152?r=`;
-
 export const TRIP_SENTENCE = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`;
 
 export const CITY_LIST = [
@@ -45,21 +42,21 @@ export const OFFER_LIST = [
 ];
 
 export const BLANK_POINT = {
-  id: generateId(),
-  waypoint: `Taxi`,
-  waypointTypes: {
-    transfer: `Taxi`,
-    activity: `Check-in`
-  },
-  price: `199`,
-  destination: `Westminster`,
-  start: new Date(),
-  end: new Date(),
-  hasInfo: false,
-  hasOffers: false,
-  isFavorite: false,
-  info: null,
-  offers: null,
+  "waypoint": `Restaurant`,
+  "hasWaypoint": true,
+  "waypointTypes": {
+    "activity": [`Check-in`, `Sightseeing`, `Restaurant`],
+    "transfer": [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`]},
+  "destination": `Florida`,
+  "price": 105,
+  "info": {"description": `Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+    "images": [`http://picsum.photos/248/152?r=7`, `http://picsum.photos/248/152?r=3`]},
+  "start": new Date(),
+  "end": new Date(),
+  "offers": [{"name": `Switch to comfort class`, "price": 63}, {"name": `Choose seats`, "price": 79}],
+  "hasInfo": true,
+  "hasOffers": true,
+  "isFavorite": false
 };
 
 export const POINT_COUNT = 5;
