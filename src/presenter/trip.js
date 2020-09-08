@@ -4,10 +4,9 @@ import DayView from "../view/day/day.js";
 import NoPointView from "../view/point/no-point.js";
 import PointPresenter from "./point.js";
 import PointNewPresenter from "./point-new.js";
-
 import {render, remove} from "../utils/dom-utils.js";
-import {sortPrice} from "../utils/utils.js";
-import {sortDate} from "../utils/date-utils.js";
+import {sortByPrice} from "../utils/utils.js";
+import {sortByTime, sortByDate} from "../utils/date-utils.js";
 import {filter} from "../utils/filter-utils.js";
 import {SortType, UpdateType, UserAction, FilterType} from "../const.js";
 
@@ -61,9 +60,11 @@ export default class Trip {
     const filteredPoints = filter[filterType](points);
     switch (this._currentSortType) {
       case SortType.TIME:
-        return filteredPoints.sort(sortDate);
+        return filteredPoints.sort(sortByTime);
       case SortType.PRICE:
-        return filteredPoints.sort(sortPrice);
+        return filteredPoints.sort(sortByPrice);
+      case SortType.DEFAULT:
+        return filteredPoints.sort(sortByDate);
     }
 
     return filteredPoints;
@@ -160,12 +161,14 @@ export default class Trip {
     this._renderContainerForDays();
 
     let dayCounter = 1;
+
     let dayDate = null;
     let dayView = null;
 
     for (let point of points) {
       const pointDate = point.start;
       const pointDay = pointDate.getDate();
+      console.log(point.start);
 
       if (dayDate === pointDay) {
         this._renderPoint(dayView.getList(), point);

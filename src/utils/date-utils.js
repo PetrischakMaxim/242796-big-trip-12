@@ -40,9 +40,10 @@ export const isPastPoint = (date) => {
   return moment(new Date()).isAfter(date, `day`);
 };
 
-export const sortDate = (d1, d2) => {
+export const sortByTime = (d1, d2) => {
   const t1 = getTripDuaration(d1.start, d1.end)._milliseconds;
   const t2 = getTripDuaration(d2.start, d2.end)._milliseconds;
   return t2 - t1;
 };
 
+export const sortByDate = (d1, d2) => d1.start.valueOf() - d2.start.valueOf();
