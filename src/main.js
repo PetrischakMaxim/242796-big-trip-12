@@ -50,11 +50,16 @@ tabsView.setTabClickHandler(handleTabClick);
 filterPresenter.init();
 tripPresenter.init();
 
-headerElement
-  .querySelector(`.trip-main__event-add-btn`)
-  .addEventListener(`click`, (evt) => {
-    evt.preventDefault();
-    tripPresenter.createPoint();
-  });
+const pointNewButton = headerElement.querySelector(`.trip-main__event-add-btn`);
+
+pointNewButton.addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  tripPresenter.createPoint(toggleButtonState);
+  toggleButtonState(true);
+});
+
+const toggleButtonState = (flag = false) => {
+  pointNewButton.disabled = flag;
+};
 
 

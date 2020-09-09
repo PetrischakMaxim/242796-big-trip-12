@@ -17,7 +17,9 @@ export default class PointNew {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init() {
+  init(callback) {
+    this._callback = callback;
+
     if (this._pointNewView !== null) {
       return;
     }
@@ -37,6 +39,9 @@ export default class PointNew {
 
     remove(this._pointNewView);
     this._pointNewView = null;
+    if (this._callback !== null) {
+      this._callback();
+    }
 
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }

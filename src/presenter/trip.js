@@ -48,10 +48,10 @@ export default class Trip {
     this._filterModel.removeObserver(this._handleModelEvent);
   }
 
-  createPoint() {
+  createPoint(callback) {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._pointNewPresenter.init();
+    this._pointNewPresenter.init(callback);
   }
 
   _getPoints() {
