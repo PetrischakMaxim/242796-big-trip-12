@@ -1,5 +1,6 @@
 import TripInfoView from "./view/info/trip-info.js";
 import TabsView from "./view/tabs/tabs.js";
+import StatsView from "./view/stats/stats.js";
 
 import TripPresenter from "./presenter/trip.js";
 import FilterPresenter from "./presenter/filter.js";
@@ -7,7 +8,7 @@ import PointsModel from "./model/points.js";
 import FilterModel from "./model/filter.js";
 
 import {generatePoint} from "./mock/point.js";
-import {render, RenderPosition} from "./utils/dom-utils.js";
+import {render, remove, RenderPosition} from "./utils/dom-utils.js";
 import {MenuTab} from "./const.js";
 import {POINT_COUNT} from "./const.js";
 
@@ -33,14 +34,17 @@ const mainContainerElement = mainElement.querySelector(
 const tripPresenter = new TripPresenter(mainContainerElement, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(infoContainerElement, filterModel, pointsModel);
 
+let statsView = null;
 const handleTabClick = (tab) => {
   switch (tab) {
     case MenuTab.TABLE:
       tripPresenter.init();
-      // Скрыть статистику
+      remove(statsView);
       break;
     case MenuTab.STATS:
       tripPresenter.destroy();
+      statsView = new StatsView();
+      render(mainContainerElement, statsView.getElement());
       break;
   }
 };
