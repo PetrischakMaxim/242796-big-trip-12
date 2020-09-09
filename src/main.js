@@ -43,7 +43,7 @@ const handleTabClick = (tab) => {
       break;
     case MenuTab.STATS:
       tripPresenter.destroy();
-      statsView = new StatsView();
+      statsView = new StatsView(pointsModel.getPoints());
       render(mainContainerElement, statsView.getElement());
       break;
   }

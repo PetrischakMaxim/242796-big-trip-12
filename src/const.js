@@ -59,7 +59,7 @@ export const BLANK_POINT = {
   "isFavorite": false
 };
 
-export const POINT_COUNT = 5;
+export const POINT_COUNT = 10;
 
 export const SortType = {
   DEFAULT: `event`,
