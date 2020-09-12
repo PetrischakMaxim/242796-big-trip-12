@@ -6,6 +6,17 @@ export const getTimeFormat = (date) => moment(date).format(`HH:mm`);
 export const formatDateToPlaceholder = (date) => `${getDateFormat(date)} ${getTimeFormat(date)}`;
 export const getFormatedDate = (date) => moment(date).format(`D MMM`);
 
+
+export const getTotalDuration = (d1, d2) => {
+  const duration = d2 ? moment.duration(d2 - d1) : moment.duration(d1);
+  const days = duration.days();
+  const hours = duration.hours();
+  const minutes = duration.minutes();
+
+  return `${days ? isNeededZero(days) + `D ` : ``}${hours ? isNeededZero(hours) + `H ` : ``}${minutes !== 0 || !hours && !days ? isNeededZero(minutes) + `M` : ``}`;
+};
+
+
 export const getTimeOfTrip = (d1, d2) => {
   const {days, hours, minutes} = getTripDuration(d1, d2)._data;
   return (

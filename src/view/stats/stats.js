@@ -1,7 +1,7 @@
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import moment from "moment";
-import {getTimeOfTrip} from "../../utils/date-utils.js";
+import {getTripDuration, getTotalDuration} from "../../utils/date-utils.js";
 import SmartView from "../smart/smart.js";
 
 const ChartName = {
@@ -194,11 +194,9 @@ const renderTimeChart = (container, points) => {
   const getTimeByType = () => {
     return waypointTypes.map((i)=> {
       return i.points.reduce((total, point) =>
-        total + getTimeOfTrip(point.start, point.end), moment.duration(0));
+        total + getTripDuration(point.start, point.end), moment.duration(0));
     });
   };
-
-  console.log(getTimeByType()[0].replace(/\r|\n/g, ``).trim());
 
 
   container.height = BAR_HEIGHT * 4;
@@ -223,7 +221,7 @@ const renderTimeChart = (container, points) => {
           color: `#000000`,
           anchor: `end`,
           align: `start`,
-          formatter: (val) => `${val}`
+          formatter: (val) => `${getTotalDuration(val)}`
         }
       },
       title: {
