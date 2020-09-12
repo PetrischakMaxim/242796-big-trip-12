@@ -2,6 +2,7 @@ import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import moment from "moment";
 import {getTripDuration, getTotalDuration} from "../../utils/date-utils.js";
+import {transfer} from "../../const.js";
 import SmartView from "../smart/smart.js";
 
 const ChartName = {
@@ -114,20 +115,30 @@ const createChartOptions = ({
 };
 
 const createChartsData = (points) => {
-  const waypointTypes = [];
   const waypoints = [...new Set(points.map((point)=> point.waypoint))];
-  waypoints.forEach((waypoint) => {
-    waypointTypes.push({waypoint,
+
+  const choisedPoints = waypoints.map((waypoint) => {
+    return Object.assign({
+      waypoint,
       points: points.filter((point) => point.waypoint === waypoint)
     });
   });
 
-  const moneyData = waypointTypes.map((type) => type.points.reduce((total, point) => total + point.price, 0));
+  const getTransferData = () => {
+    const transfers = choisedPoints.filter((point) => transfer.includes(point.waypoint));
+    return {
+      transfer: transfers.map((type) => type.waypoint),
+      count: transfers.map((type) => type.points.length)
+    };
+  };
 
-  const transportCount = waypointTypes.map((i) => i.points.length);
+  const getMoneyData = () => choisedPoints
+    .map((type) => type.points
+    .reduce((total, point) => total + point.price, 0));
+
 
   const getTotalTime = () => {
-    return waypointTypes.map((i)=> {
+    return choisedPoints.map((i)=> {
       return i.points.reduce((total, point) =>
         total + getTripDuration(point.start, point.end), moment.duration(0));
     });
@@ -135,12 +146,11 @@ const createChartsData = (points) => {
 
   return {
     waypoints,
-    money: moneyData,
-    transport: transportCount,
+    money: getMoneyData(),
+    transport: getTransferData(),
     time: getTotalTime(),
   };
 };
-
 
 const createStatsItem = (name) => (
   `<div class="statistics__item statistics__item--${name.toLowerCase()}">
@@ -156,8 +166,7 @@ const createStatsTemplate = () => (
 );
 
 const renderMoneyChart = (container, chartsData) => {
-  const barsAmount = chartsData.waypoints.length;
-  container.height = Bar.HEIGHT * barsAmount;
+  container.height = Bar.HEIGHT * chartsData.waypoints.length;
 
   return new Chart(container, createChartOptions({
     title: ChartName.MONEY,
@@ -168,20 +177,18 @@ const renderMoneyChart = (container, chartsData) => {
 };
 
 const renderTransportChart = (container, chartsData) => {
-  const barsAmount = chartsData.waypoints.length;
-  container.height = Bar.HEIGHT * barsAmount;
+  container.height = Bar.HEIGHT * chartsData.transport.transfer.length;
 
   return new Chart(container, createChartOptions({
     title: ChartName.TRANSPORT,
-    labels: chartsData.waypoints,
-    barsData: chartsData.transport,
+    labels: chartsData.transport.transfer,
+    barsData: chartsData.transport.count,
     valueFormatter: (val) => `${val}x`,
   }));
 };
 
 const renderTimeChart = (container, chartsData) => {
-  const barsAmount = chartsData.waypoints.length;
-  container.height = Bar.HEIGHT * barsAmount;
+  container.height = Bar.HEIGHT * chartsData.waypoints.length;
 
   return new Chart(container, createChartOptions({
     title: ChartName.TIME,

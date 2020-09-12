@@ -12,7 +12,7 @@ export const CITY_LIST = [
   `Winter Haven`,
 ];
 
-const WAYPOINT = {
+export const WAYPOINT = {
   types: {
     transfer: [
       `Taxi`,
