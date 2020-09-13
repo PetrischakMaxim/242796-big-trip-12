@@ -4,10 +4,9 @@ import DayView from "../view/day/day.js";
 import NoPointView from "../view/point/no-point.js";
 import PointPresenter from "./point.js";
 import PointNewPresenter from "./point-new.js";
-
 import {render, remove} from "../utils/dom-utils.js";
-import {sortPrice} from "../utils/utils.js";
-import {sortDate} from "../utils/date-utils.js";
+import {sortByPrice} from "../utils/utils.js";
+import {sortByTime, sortByDate} from "../utils/date-utils.js";
 import {filter} from "../utils/filter-utils.js";
 import {SortType, UpdateType, UserAction, FilterType} from "../const.js";
 
@@ -31,20 +30,28 @@ export default class Trip {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortChange = this._handleSortChange.bind(this);
 
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
 
-    this._pointNewPresenter = new PointNewPresenter(this._containerInner, this._handleViewAction);
+    this._pointNewPresenter = new PointNewPresenter(this._dayListView, this._handleViewAction);
   }
 
   init() {
+    this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderTrip();
   }
 
-  createPoint() {
+  destroy() {
+    this._clearTrip(true);
+
+    this._pointsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
+  createPoint(callback) {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._pointNewPresenter.init();
+    this._pointNewPresenter.init(callback);
   }
 
   _getPoints() {
@@ -53,9 +60,11 @@ export default class Trip {
     const filteredPoints = filter[filterType](points);
     switch (this._currentSortType) {
       case SortType.TIME:
-        return filteredPoints.sort(sortDate);
+        return filteredPoints.sort(sortByTime);
       case SortType.PRICE:
-        return filteredPoints.sort(sortPrice);
+        return filteredPoints.sort(sortByPrice);
+      case SortType.DEFAULT:
+        return filteredPoints.sort(sortByDate);
     }
 
     return filteredPoints;
@@ -173,7 +182,6 @@ export default class Trip {
   }
 
   _clearTrip(resetSortType = false) {
-
     remove(this._dayListView);
     remove(this._sortView);
     remove(this._noPointView);
@@ -184,5 +192,6 @@ export default class Trip {
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
     }
+
   }
 }

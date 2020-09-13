@@ -21,8 +21,9 @@ export default class Point {
     this._pointEditView = null;
     this._mode = Mode.DEFAULT;
 
-    this._clickHandler = this._clickHandler.bind(this);
-    this._formCloseHandler = this._formCloseHandler.bind(this);
+    this._openFormClickHandler = this._openFormClickHandler.bind(this);
+    this._closeFormClickHandler = this._closeFormClickHandler.bind(this);
+    this._formSaveHandler = this._formSaveHandler.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
@@ -37,12 +38,11 @@ export default class Point {
     this._pointView = new PointView(point);
     this._pointEditView = new PointFormView(point);
 
-    this._pointView.setClickHandler(this._clickHandler);
-    this._pointEditView.setFormSubmitHandler(this._formCloseHandler);
-    this._pointEditView.setCloseButtonHandler(this._formCloseHandler);
+    this._pointView.setClickHandler(this._openFormClickHandler);
+    this._pointEditView.setFormSubmitHandler(this._formSaveHandler);
+    this._pointEditView.setCloseButtonHandler(this._closeFormClickHandler);
     this._pointEditView.setDeletePointHandler(this._deleteClickHandler);
     this._pointEditView.setFavoriteClickHandler(this._favoriteClickHandler);
-
 
     if (prevPointView === null || prevPointEditView === null) {
       render(this._container, this._pointView);
@@ -85,12 +85,15 @@ export default class Point {
     this._mode = Mode.DEFAULT;
   }
 
-  _clickHandler() {
+  _openFormClickHandler() {
     this._replacePointToForm();
   }
 
-  _escKeyDownHandler(evt) {
+  _closeFormClickHandler() {
+    this._replaceFormToPoint();
+  }
 
+  _escKeyDownHandler(evt) {
     if (isEscKeyPressed(evt)) {
       evt.preventDefault();
       this._replaceFormToPoint();
@@ -105,7 +108,7 @@ export default class Point {
     );
   }
 
-  _formCloseHandler(point) {
+  _formSaveHandler(point) {
     this._changeStatus(
         UserAction.UPDATE_POINT,
         UpdateType.MAJOR,
