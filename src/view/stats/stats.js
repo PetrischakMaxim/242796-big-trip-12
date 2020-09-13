@@ -136,7 +136,6 @@ const createChartsData = (points) => {
     .map((type) => type.points
     .reduce((total, point) => total + point.price, 0));
 
-
   const getTotalTime = () => {
     return choisedPoints.map((i)=> {
       return i.points.reduce((total, point) =>
@@ -150,6 +149,7 @@ const createChartsData = (points) => {
     transport: getTransferData(),
     time: getTotalTime(),
   };
+
 };
 
 const createStatsItem = (name) => (
@@ -202,11 +202,12 @@ export default class Stats extends SmartView {
 
   constructor(points) {
     super();
-
+    this._data = points;
     this._moneyChart = null;
     this._transportChart = null;
     this._timeChart = null;
-    this._setCharts(points);
+
+    this._setCharts(this._data);
   }
 
   getTemplate() {
@@ -217,10 +218,16 @@ export default class Stats extends SmartView {
     super.removeElement();
   }
 
-  _setCharts(points) {
-    if (this._moneyChart !== null) {
+  _resetCharts() {
+    if (this._moneyChart || this._transportChart || this._timeChart) {
       this._moneyChart = null;
+      this._transportChart = null;
+      this._timeChart = null;
     }
+  }
+
+  _setCharts(points) {
+    this._resetCharts();
     const chartsData = createChartsData(points);
     const moneyCtx = this.getElement().querySelector(`.statistics__chart--money`);
     const transportCtx = this.getElement().querySelector(`.statistics__chart--transport`);
