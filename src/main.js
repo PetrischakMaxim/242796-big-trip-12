@@ -22,8 +22,10 @@ const points = new Array(POINT_COUNT).fill().map(generatePoint);
 const api = new Api(END_POINT, AUTHORIZATION);
 
 api.getPoints().then((points) => {
-  console.log(points);
+  console.log(points[0]);
 });
+
+console.log(points[0]);
 
 const pointsModel = new PointsModel();
 pointsModel.setPoins(points);

@@ -51,4 +51,42 @@ export default class Points extends Observer {
     this._notify(updateType);
   }
 
+  static adaptToClient(point) {
+    const adaptedPoint = Object.assign(
+        {}, point,
+        {
+          id: Number(point.id),
+          price: point.base_price,
+          start: new Date(point.date_from),
+          end: new Date(point.date_to),
+          isFavorite: point.is_favorite,
+          info: point.destination,
+          destination: point.destination.name,
+          waypoint: point.type,
+          offers: point.offers,
+        }
+    );
+
+    delete adaptedPoint.is_favorite;
+    delete adaptedPoint.type;
+    delete adaptedPoint.date_to;
+    delete adaptedPoint.date_from;
+    delete adaptedPoint.base_price;
+
+    return adaptedPoint;
+  }
+
+  static adaptPointToServer(point) {
+    return {
+      "id": String(point.id),
+      "type": point.waypoint,
+      "base_price": point.price,
+      "date_from": String(point.start),
+      "date_to": String(point.end),
+      "destination": point.info,
+      "is_favorite": point.isFavorite,
+      "offers": point.offers,
+    };
+  }
+
 }
