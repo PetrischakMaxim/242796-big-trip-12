@@ -3,7 +3,6 @@ import {generateId} from "../utils/utils.js";
 import {remove, render, RenderPosition} from "../utils/dom-utils.js";
 import {UserAction, UpdateType, BLANK_POINT} from "../const.js";
 
-
 export default class PointNew {
 
   constructor(container, changeStatus) {

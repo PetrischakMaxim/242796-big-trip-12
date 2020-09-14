@@ -8,7 +8,7 @@ const createPointInfoTemplate = (points) => {
   let startDate;
   let endDate;
 
-  if (points.length === 0) {
+  if (!points || points.length === 0) {
     points = BLANK_POINT;
     startPoint = points.destination;
     finalPoint = ``;

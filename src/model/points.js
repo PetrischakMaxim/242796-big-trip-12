@@ -6,8 +6,9 @@ export default class Points extends Observer {
     this._points = [];
   }
 
-  setPoins(points) {
+  setPoints(updateType, points) {
     this._points = [...points];
+    this._notify(updateType);
   }
 
   getPoints() {
