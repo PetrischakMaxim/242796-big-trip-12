@@ -1,6 +1,7 @@
 import TripInfoView from "./view/info/trip-info.js";
 import TabsView from "./view/tabs/tabs.js";
 import StatsView from "./view/stats/stats.js";
+import Api from "./api/api.js";
 
 import TripPresenter from "./presenter/trip.js";
 import FilterPresenter from "./presenter/filter.js";
@@ -12,7 +13,17 @@ import {render, remove, RenderPosition} from "./utils/dom-utils.js";
 import {MenuTab} from "./const.js";
 import {POINT_COUNT} from "./const.js";
 
+const AUTHORIZATION = `Basic eo0w590ik291305`;
+const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
+
+
 const points = new Array(POINT_COUNT).fill().map(generatePoint);
+
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getPoints().then((points) => {
+  console.log(points);
+});
 
 const pointsModel = new PointsModel();
 pointsModel.setPoins(points);
