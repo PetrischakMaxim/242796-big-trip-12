@@ -39,7 +39,6 @@ export default class Trip {
   init() {
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
-
     this._renderTrip();
   }
 
@@ -59,8 +58,8 @@ export default class Trip {
   _getPoints() {
     const filterType = this._filterModel.getFilter();
     const points = this._pointsModel.getPoints();
-
     const filteredPoints = filter[filterType](points);
+
     switch (this._currentSortType) {
       case SortType.TIME:
         return filteredPoints.sort(sortByTime);
@@ -168,9 +167,7 @@ export default class Trip {
       return;
     }
     const points = this._getPoints();
-
     const pointsLength = points.length;
-
 
     if (pointsLength === 0) {
       this._renderNoPoints();
@@ -188,7 +185,6 @@ export default class Trip {
 
       const pointDate = point.start;
       const pointDay = pointDate.getDate();
-
 
       if (dayDate === pointDay) {
         this._renderPoint(dayView.getList(), point);

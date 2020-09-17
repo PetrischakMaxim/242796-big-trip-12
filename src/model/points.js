@@ -61,18 +61,22 @@ export default class Points extends Observer {
           start: new Date(point.date_from),
           end: new Date(point.date_to),
           isFavorite: point.is_favorite,
-          info: point.destination,
-          destination: point.destination.name,
+          info: {
+            name: point.destination.name,
+            description: point.destination.description,
+            images: point.destination.pictures,
+          },
           waypoint: point.type,
           offers: point.offers,
         }
     );
 
     delete adaptedPoint.is_favorite;
-    delete adaptedPoint.type;
     delete adaptedPoint.date_to;
     delete adaptedPoint.date_from;
     delete adaptedPoint.base_price;
+    delete adaptedPoint.destination;
+    delete adaptedPoint.type;
 
     return adaptedPoint;
   }

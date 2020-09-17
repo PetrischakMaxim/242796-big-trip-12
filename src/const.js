@@ -1,6 +1,3 @@
-export const TRIP_IMAGE_URL = `http://picsum.photos/248/152?r=`;
-export const TRIP_SENTENCE = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`;
-
 export const CITY_LIST = [
   `Westminster`,
   `Florida`,
@@ -12,27 +9,25 @@ export const CITY_LIST = [
   `Winter Haven`,
 ];
 
-export const WAYPOINT = {
-  types: {
-    transfer: [
-      `Taxi`,
-      `Bus`,
-      `Train`,
-      `Ship`,
-      `Transport`,
-      `Drive`,
-      `Flight`
-    ],
-    activity: [
-      `Check-in`,
-      `Sightseeing`,
-      `Restaurant`,
-    ],
-  }
+export const PointType = {
+  TRANSFER: [
+    `Taxi`,
+    `Bus`,
+    `Train`,
+    `Ship`,
+    `Transport`,
+    `Drive`,
+    `Flight`
+  ],
+  ACTIVITY: [
+    `Check-in`,
+    `Sightseeing`,
+    `Restaurant`,
+  ],
 };
 
-export const {types: {transfer, activity}} = WAYPOINT;
-export const WAYPOINT_LIST = [...transfer, ...activity];
+export const {TRANSFER, ACTIVITY} = PointType;
+export const POINT_LIST = [...TRANSFER, ...ACTIVITY];
 
 export const OFFER_LIST = [
   `Add luggage`,

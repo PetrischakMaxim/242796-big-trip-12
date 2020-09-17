@@ -1,30 +1,33 @@
 import AbstractView from "../abstract/abstract.js";
 import {getDateTimeFormat, getTimeFormat, getTimeOfTrip} from "../../utils/date-utils.js";
+import {changeString} from "../../utils/utils.js";
+import {PointType} from "../../const.js";
 
 export const createPointItemTemplate = (point) => {
 
   const {
     waypoint,
-    waypointTypes: {transfer},
-    offers,
-    destination,
     price,
     start,
     end,
+    offers,
+    info,
   } = point;
 
   const createOffersList = () => {
-    if (!offers || offers.length === 0) {
+    if (offers.length === 0) {
       return ``;
     }
     return (
       `<h4 class="visually-hidden">Offers:</h4>
        <ul class="event__selected-offers">
-        ${offers.map((offer) => (
-        `<li class="event__offer">
-          <span class="event__offer-title">${offer.name}</span> + €&nbsp;
-          <span class="event__offer-price">${offer.price}</span>
-        </li>`)).join(``)}
+        ${offers.map((offer, count) => {
+        const template = `<li class="event__offer">
+            <span class="event__offer-title">${offer.title}</span> + €&nbsp;
+            <span class="event__offer-price">${offer.price}</span>
+          </li>`;
+        return (count < 2) ? template : ``;
+      }).join(``)}
       </ul>`
     );
   };
@@ -39,8 +42,9 @@ export const createPointItemTemplate = (point) => {
 
   const pointTitle = (
     `<h3 class="event__title">
-      ${waypoint} ${transfer.includes(waypoint) ? ` to` : ` in`}
-      ${destination}
+      ${changeString(waypoint)}
+      ${PointType.TRANSFER.includes(changeString(waypoint)) ? ` to` : ` in`}
+      ${info.name}
     </h3>`
   );
 

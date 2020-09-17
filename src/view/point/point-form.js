@@ -6,49 +6,44 @@ import "../../../node_modules/flatpickr/dist/flatpickr.min.css";
 import {
   CITY_LIST,
   BLANK_POINT,
-  TRIP_IMAGE_URL,
-  TRIP_SENTENCE
+  PointType
 } from "../../const.js";
 
-import {getRandomInteger, generateSentence, generateImage} from "../../utils/utils.js";
+import {changeString} from "../../utils/utils.js";
 import {formatDateToPlaceholder} from "../../utils/date-utils.js";
 
-const createPhotoTape = (images) => (
+const createPhotoList = (images) => (
   `<div class="event__photos-tape">
-    ${images.map((url)=> `<img class="event__photo" src="${url}" alt="Event photo"/>`).join(``)}
+    ${images.map(({src, description})=> `<img class="event__photo" src="${src}" alt="${description}"/>`).join(``)}
   </div>`
 );
 
 const createDetailsTemplate = (info) => (
   `<section class="event__section  event__section--destination">
-    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+    <h3 class="event__section-title  event__section-title--destination">${info.name}</h3>
     <p class="event__destination-description">
       ${info.description}
     </p>
     <div class="event__photos-container">
-      ${createPhotoTape(info.images)}
+      ${createPhotoList(info.images)}
     </div>
   </section>`
 );
 
 const createPointFormTemplate = (data, isNewPoint = false) => {
+
   const {
     id,
     waypoint,
-    waypointTypes,
-    waypointTypes: {transfer, activity},
     price,
-    destination,
     start,
     end,
     offers,
     info,
-    hasOffers,
-    hasInfo,
     isFavorite,
   } = data;
 
-  const [transferType, activityType] = Object.keys(waypointTypes);
+  const [ACTIVITY, TRANSFER] = Object.keys(PointType);
 
   const createPoints = (type, points, currentPoint) => {
 
@@ -72,16 +67,14 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
   };
 
   const createOffers = () => {
-    const offersTemplate = offers.map((offer)=> {
-      const offerType = name.split(` `).pop();
+    const offersTemplate = offers.map((offer, ind)=> {
       return (
         `<div class="event__offer-selector">
-          <input class="event__offer-checkbox visually-hidden" id="event-offer-${offerType}-${id}"
-            type="checkbox" name="event-offer-${offerType}"
-            ${getRandomInteger(0, 1) ? `checked` : ``} >
+          <input class="event__offer-checkbox visually-hidden" id="event-offer-${waypoint.toLowerCase()}-${ind}"
+            type="checkbox" name="event-offer-${waypoint.toLowerCase()}" checked>
           <label class="event__offer-label"
-            for="event-offer-${offerType}-${id}">
-            <span class="event__offer-title">${offer.name}</span> + €&nbsp;<span class="event__offer-price">${offer.price}</span>
+            for="event-offer-${waypoint.toLowerCase()}-${ind}">
+            <span class="event__offer-title">${offer.title}</span> + €&nbsp;<span class="event__offer-price">${offer.price}</span>
           </label>
         </div>`);
     }).join(``);
@@ -115,8 +108,8 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
 
   const pointTypeList = () => (`
     <div class="event__type-list">
-      ${createPoints(transferType, transfer, waypoint)}
-      ${createPoints(activityType, activity, waypoint)}
+      ${createPoints(TRANSFER, PointType.TRANSFER, waypoint)}
+      ${createPoints(ACTIVITY, PointType.ACTIVITY, waypoint)}
     </div>`
   );
 
@@ -125,7 +118,7 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
       <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
         <span class="visually-hidden">Choose event type</span>
         <img class="event__type-icon" width="17" height="17"
-          src="img/icons/${waypoint.toLowerCase()}.png" alt="${waypoint} icon">
+          src="img/icons/${waypoint}.png" alt="${waypoint} icon">
       </label>
       <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox">
       ${pointTypeList()}
@@ -135,11 +128,11 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
   const pointDestinationTemplate = (
     `<div class="event__field-group  event__field-group--destination">
       <label class="event__label  event__type-output" for="event-destination-${id}">
-        ${waypoint}${transfer.includes(waypoint) ? ` to` : ` in`}
+        ${changeString(waypoint)}${PointType.TRANSFER.includes(changeString(waypoint)) ? ` to` : ` in`}
       </label>
       <input class="event__input  event__input--destination"
         id="event-destination-${id}" type="text" name="event-destination"
-        value="${he.encode(destination)}" list="destination-list-${id}">
+        value="${he.encode(info.name)}" list="destination-list-${id}">
       ${createCityList(CITY_LIST)}
     </div>`
   );
@@ -180,11 +173,10 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
           <span class="visually-hidden">Open event</span>
         </button>` : ``}
       </header>
-      ${(hasOffers || hasInfo) ?
-      `<section class="event__details">
-          ${(hasOffers) ? createOffers() : ``}
-          ${(hasInfo) ? createDetailsTemplate(info) : ``}
-      </section>` : ``}
+      <section class="event__details">
+          ${createOffers()}
+          ${createDetailsTemplate(info)}
+      </section>
     </form>`
   );
 
@@ -313,9 +305,8 @@ export default class PointForm extends SmartView {
     }
 
     this.updateData({
-      destination: evt.target.value,
-      hasInfo: Boolean(getRandomInteger(0, 1)),
       info: {
+        name: evt.target.value,
         description: generateSentence(TRIP_SENTENCE),
         images: generateImage(TRIP_IMAGE_URL)
       }
@@ -324,9 +315,8 @@ export default class PointForm extends SmartView {
 
   _typeToggleHandler(evt) {
     evt.preventDefault();
-    const updatedWaypoint = evt.target.value[0].toUpperCase() + evt.target.value.slice(1);
     this.updateData({
-      waypoint: updatedWaypoint,
+      waypoint: changeString(evt.target.value),
     });
   }
 
@@ -335,7 +325,6 @@ export default class PointForm extends SmartView {
     this.updateData({
       price: Math.round(evt.target.value)
     });
-
   }
 
   _initDatepicker(element, name) {
@@ -396,9 +385,7 @@ export default class PointForm extends SmartView {
   static parsePointToData(point) {
     return Object.assign({}, point, {
       waypoint: point.waypoint,
-      destination: point.destination,
       info: point.info,
-      hasInfo: point.hasInfo,
     });
   }
 

@@ -64,15 +64,16 @@ tripPresenter.init();
 api.getPoints()
   .then((points) => {
     pointsModel.setPoints(UpdateType.INIT, points);
-    render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
-    render(mainInfoElement, new TripInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
-    tabsView.setTabClickHandler(handleTabClick);
-  })
-  .catch(()=> {
-    pointsModel.setPoints(UpdateType.INIT, []);
+
     render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
     render(mainInfoElement, new TripInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
     tabsView.setTabClickHandler(handleTabClick);
   });
+// .catch(()=> {
+//   pointsModel.setPoints(UpdateType.INIT, []);
+//   render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
+//   render(mainInfoElement, new TripInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
+//   tabsView.setTabClickHandler(handleTabClick);
+// });
 
 
