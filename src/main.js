@@ -9,10 +9,8 @@ import PointsModel from "./model/points.js";
 import FilterModel from "./model/filter.js";
 
 import {render, remove, RenderPosition} from "./utils/dom-utils.js";
-import {MenuTab, UpdateType} from "./const.js";
+import {MenuTab, UpdateType, AUTHORIZATION, END_POINT} from "./const.js";
 
-const AUTHORIZATION = `Basic eo0w590ik291305`;
-const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
@@ -45,7 +43,6 @@ const handleTabClick = (tab) => {
   }
 };
 
-
 const pointNewButton = mainInfoElement.querySelector(`.trip-main__event-add-btn`);
 
 pointNewButton.addEventListener(`click`, (evt) => {
@@ -64,16 +61,15 @@ tripPresenter.init();
 api.getPoints()
   .then((points) => {
     pointsModel.setPoints(UpdateType.INIT, points);
-
+    render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
+    render(mainInfoElement, new TripInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
+    tabsView.setTabClickHandler(handleTabClick);
+  })
+  .catch(()=> {
+    pointsModel.setPoints(UpdateType.INIT, []);
     render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
     render(mainInfoElement, new TripInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
     tabsView.setTabClickHandler(handleTabClick);
   });
-// .catch(()=> {
-//   pointsModel.setPoints(UpdateType.INIT, []);
-//   render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
-//   render(mainInfoElement, new TripInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
-//   tabsView.setTabClickHandler(handleTabClick);
-// });
 
 

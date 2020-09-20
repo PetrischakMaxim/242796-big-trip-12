@@ -10,27 +10,16 @@ const SuccessHTTPStatusRange = {
   MAX: 299
 };
 
+const Url = {
+  POINTS: `points`,
+  DESTINATIONS: `destinations`,
+  OFFERS: `offers`,
+};
+
 export default class Api {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;
-  }
-
-  getPoints() {
-    return this._load({url: `points`})
-      .then(Api.toJSON)
-      .then((points) => points.map(PointsModel.adaptToClient));
-  }
-
-  updatePoint(point) {
-    return this._load({
-      url: `points/${point.id}`,
-      method: Method.PUT,
-      body: JSON.stringify(PointsModel.adaptPointToServer(point)),
-      headers: new Headers({"Content-Type": `application/json`})
-    })
-    .then(Api.toJSON)
-    .then(PointsModel.adaptToClient);
   }
 
   _load({
@@ -44,6 +33,33 @@ export default class Api {
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(Api.checkStatus)
       .catch(Api.catchError);
+  }
+
+  getDestinations() {
+    return this._load({url: Url.DESTINATIONS})
+      .then(Api.toJSON);
+  }
+
+  getOffers() {
+    return this._load({url: Url.OFFERS})
+      .then(Api.toJSON);
+  }
+
+  getPoints() {
+    return this._load({url: Url.POINTS})
+      .then(Api.toJSON)
+      .then((points) => points.map(PointsModel.adaptToClient));
+  }
+
+  updatePoint(point) {
+    return this._load({
+      url: `points/${point.id}`,
+      method: Method.PUT,
+      body: JSON.stringify(PointsModel.adaptPointToServer(point)),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+    .then(Api.toJSON)
+    .then(PointsModel.adaptToClient);
   }
 
   static checkStatus(response) {

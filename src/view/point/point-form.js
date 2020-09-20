@@ -3,8 +3,9 @@ import he from "he";
 import flatpickr from "flatpickr";
 import "../../../node_modules/flatpickr/dist/flatpickr.min.css";
 
+
 import {
-  CITY_LIST,
+  DESTINATIONS,
   BLANK_POINT,
   PointType
 } from "../../const.js";
@@ -100,9 +101,9 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
    </div>`
   );
 
-  const createCityList = (cities) => (
+  const createDesctinationList = (list) => (
     `<datalist id="destination-list-${id}">
-      ${cities.map((city) => `<option value="${city}"></option>`).join(``)}
+      ${list.map(({name}) => `<option value="${name}"></option>`).join(``)}
     </datalist>`
   );
 
@@ -133,7 +134,7 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
       <input class="event__input  event__input--destination"
         id="event-destination-${id}" type="text" name="event-destination"
         value="${he.encode(info.name)}" list="destination-list-${id}">
-      ${createCityList(CITY_LIST)}
+      ${createDesctinationList(DESTINATIONS)}
     </div>`
   );
 
@@ -278,7 +279,6 @@ export default class PointForm extends SmartView {
       .forEach((input) => {
         this._initDatepicker(input, input.dataset.time);
       });
-
   }
 
   _onSubmitHandler(evt) {
@@ -307,8 +307,8 @@ export default class PointForm extends SmartView {
     this.updateData({
       info: {
         name: evt.target.value,
-        description: generateSentence(TRIP_SENTENCE),
-        images: generateImage(TRIP_IMAGE_URL)
+        description: ``,
+        images: ``
       }
     });
   }
@@ -353,8 +353,8 @@ export default class PointForm extends SmartView {
     if (name === `end`) {
       this._datepickerEnd = flatpickr(element,
           Object.assign({}, options, {
-            "minDate": this._data.start,
-            "onChange": ([date]) => {
+            minDate: this._data.start,
+            onChange: ([date]) => {
               this._dateChangeHandler(`end`, date);
             },
           })
