@@ -11,7 +11,6 @@ import FilterModel from "./model/filter.js";
 import {render, remove, RenderPosition} from "./utils/dom-utils.js";
 import {MenuTab, UpdateType, AUTHORIZATION, END_POINT} from "./const.js";
 
-
 const api = new Api(END_POINT, AUTHORIZATION);
 
 const mainInfoElement = document.querySelector(`.trip-main`);
@@ -25,7 +24,7 @@ const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
 const tabsView = new TabsView();
 
-const tripPresenter = new TripPresenter(mainContainerElement, pointsModel, filterModel);
+const tripPresenter = new TripPresenter(mainContainerElement, pointsModel, filterModel, api);
 const filterPresenter = new FilterPresenter(infoContainerElement, filterModel, pointsModel);
 
 let statsView = null;
@@ -71,5 +70,3 @@ api.getPoints()
     render(mainInfoElement, new TripInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
     tabsView.setTabClickHandler(handleTabClick);
   });
-
-

@@ -1,6 +1,8 @@
+import Api from "./api/api.js";
+import {generateId} from "./utils/utils.js";
+
 export const AUTHORIZATION = `Basic eo0w590ik291305`;
 export const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
-import Api from "./api/api.js";
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
@@ -51,7 +53,7 @@ export const OFFER_LIST = [
 ];
 
 export const BLANK_POINT = {
-  "id": 1359,
+  "id": generateId(),
   "waypoint": `Restaurant`,
   "price": 105,
   "info": {

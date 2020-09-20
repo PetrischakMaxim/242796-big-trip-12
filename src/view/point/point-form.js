@@ -304,11 +304,14 @@ export default class PointForm extends SmartView {
       return;
     }
 
+    const choisedDestintation = DESTINATIONS.filter((desct) => desct.name === value);
+    const {name, description, pictures} = choisedDestintation[0];
+
     this.updateData({
       info: {
-        name: evt.target.value,
-        description: ``,
-        images: ``
+        name,
+        description,
+        images: pictures
       }
     });
   }

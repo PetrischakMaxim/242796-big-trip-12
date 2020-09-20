@@ -77,18 +77,21 @@ export default class Points extends Observer {
     delete adaptedPoint.base_price;
     delete adaptedPoint.destination;
     delete adaptedPoint.type;
-
     return adaptedPoint;
   }
 
   static adaptPointToServer(point) {
     return {
       "id": String(point.id),
-      "type": point.waypoint,
+      "type": point.waypoint.toLowerCase(),
       "base_price": point.price,
       "date_from": String(point.start),
       "date_to": String(point.end),
-      "destination": point.info,
+      "destination": {
+        "name": point.info.name,
+        "description": point.info.description,
+        "pictures": point.info.images,
+      },
       "is_favorite": point.isFavorite,
       "offers": point.offers,
     };
