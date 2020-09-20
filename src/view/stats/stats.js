@@ -2,6 +2,7 @@ import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import moment from "moment";
 import {getTripDuration, getTotalDuration} from "../../utils/date-utils.js";
+import {changeString} from "../../utils/utils.js";
 import {TRANSFER} from "../../const.js";
 import SmartView from "../smart/smart.js";
 
@@ -125,7 +126,10 @@ const createChartsData = (points) => {
   });
 
   const getTransferData = () => {
-    const transfers = choisedPoints.filter((point) => TRANSFER.includes(point.waypoint));
+    const transfers = choisedPoints
+      .filter((point) =>
+        TRANSFER.includes(changeString(point.waypoint)));
+
     return {
       transfer: transfers.map((type) => type.waypoint),
       count: transfers.map((type) => type.points.length)

@@ -61,7 +61,7 @@ api.getPoints()
   .then((points) => {
     pointsModel.setPoints(UpdateType.INIT, points);
     render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
-    render(mainInfoElement, new TripInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
+    render(mainInfoElement, new TripInfoView(points), RenderPosition.AFTERBEGIN);
     tabsView.setTabClickHandler(handleTabClick);
   })
   .catch(()=> {

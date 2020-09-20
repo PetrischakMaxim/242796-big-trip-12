@@ -21,7 +21,7 @@ const createPointInfoTemplate = (points) => {
     startDate = getFormatedDate(points[0].start);
     endDate = getFormatedDate(points[points.length - 1].end);
   }
-  // Todo - ... -
+
   return (
     `<div class="trip-info__main">
       <h1 class="trip-info__title">
