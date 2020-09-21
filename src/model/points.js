@@ -39,6 +39,7 @@ export default class Points extends Observer {
 
   deletePoint(updateType, update) {
     const index = this._points.findIndex((point) => point.id === update.id);
+    console.log(updateType, update);
 
     if (index === -1) {
       throw new Error(`Can't delete unexisting point`);

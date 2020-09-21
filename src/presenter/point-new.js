@@ -1,5 +1,4 @@
 import PointFormView from "../view/point/point-form.js";
-import {generateId} from "../utils/utils.js";
 import {remove, render, RenderPosition} from "../utils/dom-utils.js";
 import {UserAction, UpdateType, BLANK_POINT} from "../const.js";
 
@@ -49,7 +48,7 @@ export default class PointNew {
     this._changeStatus(
         UserAction.ADD_POINT,
         UpdateType.MINOR,
-        Object.assign({id: generateId()}, point)
+        point
     );
     this.destroy();
   }
