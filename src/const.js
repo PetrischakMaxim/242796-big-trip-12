@@ -1,38 +1,49 @@
-export const TRIP_IMAGE_URL = `http://picsum.photos/248/152?r=`;
-export const TRIP_SENTENCE = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`;
+import Api from "./api/api.js";
+import {generateId} from "./utils/utils.js";
 
-export const CITY_LIST = [
-  `Westminster`,
-  `Florida`,
-  `Boise`,
-  `Boston`,
-  `Fort Smith`,
-  `Wilmington`,
-  `Winston`,
-  `Winter Haven`,
-];
+export const AUTHORIZATION = `Basic eo0w590ik291305`;
+export const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
-export const WAYPOINT = {
-  types: {
-    transfer: [
-      `Taxi`,
-      `Bus`,
-      `Train`,
-      `Ship`,
-      `Transport`,
-      `Drive`,
-      `Flight`
-    ],
-    activity: [
-      `Check-in`,
-      `Sightseeing`,
-      `Restaurant`,
-    ],
-  }
+const api = new Api(END_POINT, AUTHORIZATION);
+
+const getDestinations = () => {
+  let result = [];
+  api.getDestinations()
+  .then((desctination) =>
+    desctination.forEach((desct) => result.push(desct)));
+  return result;
 };
 
-export const {types: {transfer, activity}} = WAYPOINT;
-export const WAYPOINT_LIST = [...transfer, ...activity];
+const getOffers = () => {
+  let result = [];
+  api.getOffers()
+  .then((offers) =>
+    offers.forEach((offer) => result.push(offer)));
+  return result;
+};
+
+export const DESTINATIONS = getDestinations();
+export const OFFERS = getOffers();
+
+export const PointType = {
+  TRANSFER: [
+    `Taxi`,
+    `Bus`,
+    `Train`,
+    `Ship`,
+    `Transport`,
+    `Drive`,
+    `Flight`
+  ],
+  ACTIVITY: [
+    `Check-in`,
+    `Sightseeing`,
+    `Restaurant`,
+  ],
+};
+
+export const {TRANSFER, ACTIVITY} = PointType;
+export const POINT_LIST = [...TRANSFER, ...ACTIVITY];
 
 export const OFFER_LIST = [
   `Add luggage`,
@@ -42,24 +53,18 @@ export const OFFER_LIST = [
 ];
 
 export const BLANK_POINT = {
+  "id": generateId(),
   "waypoint": `Restaurant`,
-  "hasWaypoint": true,
-  "waypointTypes": {
-    "activity": [`Check-in`, `Sightseeing`, `Restaurant`],
-    "transfer": [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`]},
-  "destination": `Florida`,
   "price": 105,
-  "info": {"description": `Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-    "images": [`http://picsum.photos/248/152?r=7`, `http://picsum.photos/248/152?r=3`]},
+  "info": {
+    "name": `Munich`,
+    "description": `"Munich, with crowded streets, in a middle of Europe, a perfect place to stay with a family."`,
+    "images": [[{src: `http://picsum.photos/300/200?r=0.8311431352799774`, description: `Munich parliament building`}]]},
   "start": new Date(),
   "end": new Date(),
-  "offers": [{"name": `Switch to comfort class`, "price": 63}, {"name": `Choose seats`, "price": 79}],
-  "hasInfo": true,
-  "hasOffers": true,
-  "isFavorite": false
+  "offers": ``,
+  "isFavorite": true
 };
-
-export const POINT_COUNT = 10;
 
 export const SortType = {
   DEFAULT: `event`,
@@ -76,7 +81,8 @@ export const UserAction = {
 export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  INIT: `INIT`,
 };
 
 export const FilterType = {

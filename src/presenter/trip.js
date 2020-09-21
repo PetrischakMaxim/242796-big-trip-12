@@ -2,6 +2,7 @@ import SortView from "../view/sort/sort.js";
 import DayListView from "../view/day/day-list.js";
 import DayView from "../view/day/day.js";
 import NoPointView from "../view/point/no-point.js";
+import LoadingView from "../view/loading/loading.js";
 import PointPresenter from "./point.js";
 import PointNewPresenter from "./point-new.js";
 import {render, remove} from "../utils/dom-utils.js";
@@ -12,7 +13,7 @@ import {SortType, UpdateType, UserAction, FilterType} from "../const.js";
 
 export default class Trip {
 
-  constructor(container, pointsModel, filterModel) {
+  constructor(container, pointsModel, filterModel, api) {
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._container = container;
@@ -23,6 +24,9 @@ export default class Trip {
     this._pointPresenter = new Map();
     this._sortView = null;
     this._currentSortType = SortType.DEFAULT;
+    this._isLoading = true;
+    this._loadingView = new LoadingView();
+    this._api = api;
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -30,14 +34,12 @@ export default class Trip {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortChange = this._handleSortChange.bind(this);
 
-
     this._pointNewPresenter = new PointNewPresenter(this._dayListView, this._handleViewAction);
   }
 
   init() {
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
-
     this._renderTrip();
   }
 
@@ -58,6 +60,7 @@ export default class Trip {
     const filterType = this._filterModel.getFilter();
     const points = this._pointsModel.getPoints();
     const filteredPoints = filter[filterType](points);
+
     switch (this._currentSortType) {
       case SortType.TIME:
         return filteredPoints.sort(sortByTime);
@@ -79,7 +82,9 @@ export default class Trip {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._pointsModel.updatePoint(updateType, update);
+        this._api.updatePoint(update).then((response) => {
+          this._pointsModel.updatePoint(updateType, response);
+        });
         break;
       case UserAction.ADD_POINT:
         this._pointsModel.addPoint(updateType, update);
@@ -108,9 +113,13 @@ export default class Trip {
         this._clearTrip(true);
         this._renderTrip();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingView);
+        this._renderTrip();
+        break;
     }
   }
-
 
   _handleSortChange(sortType) {
 
@@ -121,6 +130,10 @@ export default class Trip {
     this._currentSortType = sortType;
     this._clearTrip();
     this._renderTrip();
+  }
+
+  _renderLoading() {
+    render(this._container, this._loadingView);
   }
 
   _renderSort() {
@@ -139,16 +152,23 @@ export default class Trip {
   }
 
   _renderPoint(container, point) {
+
     const pointPresenter = new PointPresenter(
         container,
         this._handleViewAction,
         this._handleModeChange
     );
+
     pointPresenter.init(point);
+
     this._pointPresenter.set(point.id, pointPresenter);
   }
 
   _renderTrip() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
     const points = this._getPoints();
     const pointsLength = points.length;
 
@@ -165,6 +185,7 @@ export default class Trip {
     let dayView = null;
 
     for (let point of points) {
+
       const pointDate = point.start;
       const pointDay = pointDate.getDate();
 
@@ -172,8 +193,10 @@ export default class Trip {
         this._renderPoint(dayView.getList(), point);
       } else {
         dayView = new DayView(pointDate, dayCounter);
+
         render(this._dayListView, dayView.getElement());
         this._renderPoint(dayView.getList(), point);
+
         dayCounter++;
         dayDate = pointDay;
       }
@@ -185,6 +208,7 @@ export default class Trip {
     remove(this._dayListView);
     remove(this._sortView);
     remove(this._noPointView);
+    remove(this._loadingView);
     this._pointNewPresenter.destroy();
     this._pointPresenter.forEach((presenter) => presenter.destroy());
     this._pointPresenter.clear();
