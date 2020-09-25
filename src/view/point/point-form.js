@@ -12,9 +12,9 @@ import {
 import {changeString} from "../../utils/utils.js";
 import {formatDateToPlaceholder} from "../../utils/date-utils.js";
 
-const createPhotoList = (images) => (
+const createPhotoList = (pictures) => (
   `<div class="event__photos-tape">
-    ${images.map(({src, description})=> `<img class="event__photo" src="${src}" alt="${description}"/>`).join(``)}
+    ${pictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}"/>`).join(``)}
   </div>`
 );
 
@@ -25,7 +25,7 @@ const createDetailsTemplate = (info) => (
       ${info.description}
     </p>
     <div class="event__photos-container">
-      ${createPhotoList(info.images)}
+      ${createPhotoList(info.pictures)}
     </div>
   </section>`
 );
@@ -310,7 +310,7 @@ export default class PointForm extends SmartView {
       info: {
         name,
         description,
-        images: pictures
+        pictures,
       }
     });
   }

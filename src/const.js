@@ -57,7 +57,7 @@ export const BLANK_POINT = {
   info: {
     name: `Amsterdam`,
     description: `Amsterdam, a perfect place to stay with a family.`,
-    images: [
+    pictures: [
       {src: `http://picsum.photos/300/200?r=0.8386231864924261`, description: `Amsterdam park`},
       {src: `http://picsum.photos/300/200?r=0.40116945351116184`, description: `Amsterdam biggest supermarket`},
       {src: `http://picsum.photos/300/200?r=0.4030889096915611`, description: `Amsterdam zoo`},
