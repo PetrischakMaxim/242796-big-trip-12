@@ -6,7 +6,6 @@ export const getTimeFormat = (date) => moment(date).format(`HH:mm`);
 export const formatDateToPlaceholder = (date) => `${getDateFormat(date)} ${getTimeFormat(date)}`;
 export const getFormatedDate = (date) => moment(date).format(`D MMM`);
 
-
 export const getTotalDuration = (d1, d2) => {
   const duration = d2 ? moment.duration(d2 - d1) : moment.duration(d1);
   const days = duration.days();
