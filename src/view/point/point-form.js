@@ -3,7 +3,6 @@ import he from "he";
 import flatpickr from "flatpickr";
 import "../../../node_modules/flatpickr/dist/flatpickr.min.css";
 
-
 import {
   DESTINATIONS,
   BLANK_POINT,

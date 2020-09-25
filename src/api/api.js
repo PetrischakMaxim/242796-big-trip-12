@@ -57,7 +57,7 @@ export default class Api {
     return this._load({
       url: Url.POINTS,
       method: Method.POST,
-      body: JSON.stringify(PointsModel.adaptToServer(point)),
+      body: JSON.stringify(PointsModel.adaptPointToServer(point)),
       headers: new Headers({"Content-Type": `application/json`})
     })
     .then(PointsModel.adaptToClient);

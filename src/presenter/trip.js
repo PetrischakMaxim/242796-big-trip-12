@@ -83,14 +83,14 @@ export default class Trip {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this._api.updatePoint(update)
-        .then(() => {
-          this._pointsModel.updatePoint(updateType, update);
+        .then((response) => {
+          this._pointsModel.updatePoint(updateType, response);
         });
         break;
       case UserAction.ADD_POINT:
         this._api.addPoint(update)
-        .then(() => {
-          this._pointsModel.addPoint(updateType, update);
+        .then((response) => {
+          this._pointsModel.addPoint(updateType, response);
         });
         break;
       case UserAction.DELETE_POINT:

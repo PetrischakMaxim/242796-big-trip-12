@@ -1,37 +1,23 @@
 import AbstractView from "../abstract/abstract.js";
 import {getFormatedDate} from '../../utils/date-utils.js';
-import {BLANK_POINT} from '../../const.js';
 
 const createPointInfoTemplate = (points) => {
-  let startPoint;
-  let finalPoint;
-  let startDate;
-  let endDate;
-  const separator = (points && points.length > 3) ? `—...—` : `${points[1].info.name}`;
 
-  if (!points || points.length === 0) {
-    points = BLANK_POINT;
-    startPoint = points.info.name;
-    finalPoint = ``;
-    startDate = getFormatedDate(points.start);
-    endDate = getFormatedDate(points.end);
-  } else {
-    startPoint = points[0].info.name;
-    finalPoint = points[points.length - 1].info.name;
-    startDate = getFormatedDate(points[0].start);
-    endDate = getFormatedDate(points[points.length - 1].end);
+  if (!points.length) {
+    return ``;
   }
+  const separator = (points.length > 3) ? `—...—` : `${points[1].info.name}`;
+  const startPoint = points[0].info.name;
+  const finalPoint = points[points.length - 1].info.name;
+  const startDate = getFormatedDate(points[0].start);
+  const endDate = getFormatedDate(points[points.length - 1].end);
 
   return (
     `<div class="trip-info__main">
       <h1 class="trip-info__title">
-        ${startPoint}
-        ${separator}
-        ${finalPoint}
+        ${startPoint}${separator}${finalPoint}
       </h1>
-      <p class="trip-info__dates">
-        ${startDate}&nbsp;—&nbsp;${endDate}
-      </p>
+      <p class="trip-info__dates">${startDate}&nbsp;—&nbsp;${endDate}</p>
     </div>`
   );
 };

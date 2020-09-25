@@ -39,7 +39,6 @@ export default class Points extends Observer {
 
   deletePoint(updateType, update) {
     const index = this._points.findIndex((point) => point.id === update.id);
-    console.log(updateType, update);
 
     if (index === -1) {
       throw new Error(`Can't delete unexisting point`);
@@ -54,6 +53,7 @@ export default class Points extends Observer {
   }
 
   static adaptToClient(point) {
+
     const adaptedPoint = Object.assign(
         {}, point,
         {
@@ -72,12 +72,14 @@ export default class Points extends Observer {
         }
     );
 
+
     delete adaptedPoint.is_favorite;
     delete adaptedPoint.date_to;
     delete adaptedPoint.date_from;
     delete adaptedPoint.base_price;
     delete adaptedPoint.destination;
     delete adaptedPoint.type;
+
     return adaptedPoint;
   }
 
