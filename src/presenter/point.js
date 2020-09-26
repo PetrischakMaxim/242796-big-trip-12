@@ -100,11 +100,11 @@ export default class Point {
     }
   }
 
-  _favoriteClickHandler() {
+  _favoriteClickHandler(point) {
     this._changeStatus(
         UserAction.UPDATE_POINT,
         UpdateType.PATCH,
-        Object.assign({}, this._point, {isFavorite: !this._point.isFavorite})
+        point
     );
   }
 

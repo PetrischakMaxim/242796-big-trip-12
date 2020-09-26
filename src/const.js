@@ -1,6 +1,6 @@
 import Api from "./api/api.js";
 
-export const AUTHORIZATION = `Basic eo0w590ik291405`;
+export const AUTHORIZATION = `Basic eo0w590ik29105`;
 export const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
@@ -14,10 +14,12 @@ const getDestinations = () => {
 };
 
 const getOffers = () => {
-  let result = [];
-  api.getOffers()
-  .then((offers) =>
-    offers.forEach((offer) => result.push(offer)));
+  let result = {};
+  api.getOffers().then((offers) =>
+    offers.reduce((offerList, offer) => {
+      offerList[offer.type] = offer.offers;
+      return offerList;
+    }, result));
   return result;
 };
 

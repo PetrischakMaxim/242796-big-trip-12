@@ -6,6 +6,7 @@ import "../../../node_modules/flatpickr/dist/flatpickr.min.css";
 import {
   DESTINATIONS,
   BLANK_POINT,
+  OFFERS,
   PointType
 } from "../../const.js";
 
@@ -30,6 +31,30 @@ const createDetailsTemplate = (info) => (
   </section>`
 );
 
+const isSameOffer = (offers, currentOffer) =>
+  offers.some((offer) => (
+    offer.title === currentOffer.title && offer.price === currentOffer.price
+  ));
+
+const prepareOffers = (offers, checkedOffers) =>
+  offers.map((offer) => {
+    return {
+      title: offer.title,
+      price: offer.price,
+      isChecked: checkedOffers.length > 0 && isSameOffer(checkedOffers, offer),
+    };
+  });
+
+const convertToOffers = (renderedOffers) => renderedOffers.reduce((offers, offer) => {
+  if (offer.isChecked) {
+    offers.push({
+      title: offer.title,
+      price: Number(offer.price),
+    });
+  }
+  return offers;
+}, []);
+
 const createPointFormTemplate = (data, isNewPoint = false) => {
 
   const {
@@ -38,7 +63,7 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
     price,
     start,
     end,
-    offers,
+    checkedOffers,
     info,
     isFavorite,
   } = data;
@@ -66,25 +91,27 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
     );
   };
 
-  const createOffers = () => {
-    const offersTemplate = offers.map((offer, ind)=> {
+  const createOffers = (offrs) => {
+
+    const offersTemplate = offrs.map((offer, ind)=> {
       return (
         `<div class="event__offer-selector">
           <input class="event__offer-checkbox visually-hidden" id="event-offer-${waypoint.toLowerCase()}-${ind}"
-            type="checkbox" name="event-offer-${waypoint.toLowerCase()}" checked>
+            type="checkbox" name="event-offer-${waypoint.toLowerCase()}"
+            data-title="${offer.title}" data-price=${offer.price} ${offer.isChecked ? `checked` : ``}>
           <label class="event__offer-label"
             for="event-offer-${waypoint.toLowerCase()}-${ind}">
-            <span class="event__offer-title">${offer.title}</span> + €&nbsp;<span class="event__offer-price">${offer.price}</span>
+            <span class="event__offer-title">${offer.title}</span> + €&nbsp;
+            <span class="event__offer-price">${offer.price}</span>
           </label>
         </div>`);
     }).join(``);
 
-    return (`
-    <section class="event__section  event__section--offers">
-      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-      <div class="event__available-offers">${offersTemplate}</div>
-    </section>`
-    );
+    return (!offrs.length) ? `` :
+      `<section class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+        <div class="event__available-offers">${offersTemplate}</div>
+      </section>`;
   };
 
   const createTimeGroup = () => (`
@@ -120,7 +147,7 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
         <img class="event__type-icon" width="17" height="17"
           src="img/icons/${waypoint}.png" alt="${waypoint} icon">
       </label>
-      <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox">
+      <input class="event__type-toggle visually-hidden" id="event-type-toggle-${id}" type="checkbox">
       ${pointTypeList()}
     </div>`
   );
@@ -147,7 +174,7 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
     </div>`
   );
 
-  const favoriteInputTempalte = (
+  const favoriteInputTemplate = (
     `<input id="event-favorite-${id}" class="event__favorite-checkbox  visually-hidden"
         type="checkbox" name="event-favorite" ${(isFavorite) ? `checked` : ``}>
      <label class="event__favorite-btn" for="event-favorite-${id}"><span class="visually-hidden">Add to favorite</span>
@@ -168,13 +195,13 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
         <button class="event__reset-btn" type="reset">
           ${(!isNewPoint) ? `Delete` : `Cancel`}
         </button>
-        ${(!isNewPoint) ? `${favoriteInputTempalte}` : ``}
+        ${(!isNewPoint) ? `${favoriteInputTemplate}` : ``}
         ${(!isNewPoint) ? `<button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>` : ``}
       </header>
       <section class="event__details">
-          ${createOffers()}
+          ${createOffers(checkedOffers)}
           ${createDetailsTemplate(info)}
       </section>
     </form>`
@@ -199,6 +226,7 @@ export default class PointForm extends SmartView {
     this._dateChangeHandler = this._dateChangeHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
+    this._offerChangeHandler = this._offerChangeHandler.bind(this);
 
     this._onSubmit = null;
     this._onFavoriteClick = null;
@@ -259,25 +287,24 @@ export default class PointForm extends SmartView {
 
   _setInnerHandlers() {
     const element = this.getElement();
-    element
-      .querySelectorAll(`.event__type-input`)
-      .forEach((input) => {
-        input.addEventListener(`change`, this._typeToggleHandler);
-      });
 
-    element
-      .querySelector(`.event__input--price`)
+    element.querySelectorAll(`.event__type-input`).forEach((input) => {
+      input.addEventListener(`change`, this._typeToggleHandler);
+    });
+
+    element.querySelector(`.event__input--price`)
       .addEventListener(`change`, this._priceChangeHandler);
 
-    element
-        .querySelector(`.event__input--destination`)
-        .addEventListener(`change`, this._destinationToggleHandler);
+    element.querySelector(`.event__input--destination`)
+      .addEventListener(`change`, this._destinationToggleHandler);
 
-    element
-      .querySelectorAll(`.event__input--time`)
-      .forEach((input) => {
-        this._initDatepicker(input, input.dataset.time);
-      });
+    element.querySelectorAll(`.event__input--time`).forEach((input) => {
+      this._initDatepicker(input, input.dataset.time);
+    });
+
+    element.querySelectorAll(`.event__offer-checkbox`).forEach((offer) => {
+      offer.addEventListener(`change`, this._offerChangeHandler);
+    });
   }
 
   _onSubmitHandler(evt) {
@@ -291,7 +318,33 @@ export default class PointForm extends SmartView {
 
   _onFavoriteClickHandler(evt) {
     evt.preventDefault();
-    this._onFavoriteClick();
+
+    this.updateData({
+      isFavorite: evt.target.checked
+    });
+
+    this._onFavoriteClick(PointForm.parseDataToPoint(this._data));
+  }
+
+  _offerChangeHandler(evt) {
+    evt.preventDefault();
+    const {title, price} = evt.target.dataset;
+
+    const checkedOffers = this._data.checkedOffers.map((offer) => {
+      if (offer.title !== title && offer.price !== Number(price)) {
+        return offer;
+      }
+      return {
+        title,
+        price,
+        isChecked: evt.target.checked
+      };
+    });
+
+    this.updateData({
+      checkedOffers
+    });
+
   }
 
   _destinationToggleHandler(evt) {
@@ -317,8 +370,15 @@ export default class PointForm extends SmartView {
 
   _typeToggleHandler(evt) {
     evt.preventDefault();
+    const waypointOffers = OFFERS[evt.target.value];
+
+    const checkedOffers = waypointOffers.length > 0
+      ? prepareOffers(waypointOffers, [])
+      : [];
+
     this.updateData({
       waypoint: changeString(evt.target.value),
+      checkedOffers
     });
   }
 
@@ -327,6 +387,11 @@ export default class PointForm extends SmartView {
     this.updateData({
       price: Math.round(evt.target.value)
     });
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._onDeleteClick(PointForm.parseDataToPoint(this._data));
   }
 
   _initDatepicker(element, name) {
@@ -379,20 +444,23 @@ export default class PointForm extends SmartView {
     }
   }
 
-  _formDeleteClickHandler(evt) {
-    evt.preventDefault();
-    this._onDeleteClick(PointForm.parseDataToPoint(this._data));
-  }
-
   static parsePointToData(point) {
+    const {waypoint} = point;
+    const waypointOffers = OFFERS[waypoint];
+
+    const checkedOffers = waypointOffers.length > 0
+      ? prepareOffers(waypointOffers, point.offers)
+      : [];
+
     return Object.assign({}, point, {
-      waypoint: point.waypoint,
-      info: point.info,
+      checkedOffers
     });
   }
 
   static parseDataToPoint(data) {
-    return Object.assign({}, data);
+    return Object.assign({}, data, {
+      offers: convertToOffers(data.checkedOffers),
+    });
   }
 
 }

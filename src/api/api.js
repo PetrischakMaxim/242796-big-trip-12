@@ -18,6 +18,8 @@ const Url = {
   OFFERS: `offers`,
 };
 
+const HTTP_HEADERS = new Headers({"Content-Type": `application/json`});
+
 export default class Api {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
@@ -58,8 +60,9 @@ export default class Api {
       url: Url.POINTS,
       method: Method.POST,
       body: JSON.stringify(PointsModel.adaptPointToServer(point)),
-      headers: new Headers({"Content-Type": `application/json`})
+      headers: HTTP_HEADERS
     })
+    .then(Api.toJSON)
     .then(PointsModel.adaptToClient);
   }
 
@@ -68,7 +71,7 @@ export default class Api {
       url: `${Url.POINTS}/${point.id}`,
       method: Method.PUT,
       body: JSON.stringify(PointsModel.adaptPointToServer(point)),
-      headers: new Headers({"Content-Type": `application/json`})
+      headers: HTTP_HEADERS
     })
     .then(Api.toJSON)
     .then(PointsModel.adaptToClient);
