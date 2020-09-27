@@ -1,3 +1,11 @@
 export {default as TabsView} from "./tabs/tabs.js";
 export {default as StatsView} from "./stats/stats.js";
+export {default as FilterView} from "./filter/filter.js";
+export {default as InfoView} from "./info/info.js";
+export {default as PointView} from "./point/point-item.js";
+export {default as PointFormView} from "./point/point-form.js";
 export {default as NewPointBtnView} from "./new-point-btn/new-point-btn.js";
+export {default as SortView} from "./sort/sort.js";
+export {default as DayListView} from "./day/day-list.js";
+export {default as DayView} from "./day/day.js";
+export {default as MessageView} from "./message/message.js";

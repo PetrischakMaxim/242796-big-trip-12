@@ -1,4 +1,4 @@
-import InfoView from "../view/info/info.js";
+import {InfoView} from "../view/index.js";
 import {render, RenderPosition, replace, remove} from "../utils/dom-utils.js";
 import {getFormatedDate} from '../utils/date-utils.js';
 import {filter} from '../utils/filter-utils.js';
@@ -10,10 +10,10 @@ export default class Info {
     this._filterModel = filterModel;
 
     this._infoView = null;
-    this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._eventModelHandler = this._eventModelHandler.bind(this);
 
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
+    this._pointsModel.addObserver(this._eventModelHandler);
+    this._filterModel.addObserver(this._eventModelHandler);
   }
 
   init() {
@@ -47,7 +47,6 @@ export default class Info {
       if (point.offers.length) {
         total += this._getOffersCost(point.offers);
       }
-
       return total + point.price;
     }, 0);
   }
@@ -76,7 +75,7 @@ export default class Info {
     return `${getFormatedDate(points[0].start)} — ${getFormatedDate(points[length - 1].end)}`;
   }
 
-  _handleModelEvent() {
+  _eventModelHandler() {
     this.init();
   }
 }

@@ -5,7 +5,12 @@ import {TabsView, NewPointBtnView, StatsView} from "./view/index.js";
 import {TripPresenter, FilterPresenter, InfoPresenter} from "./presenter/index.js";
 
 import {render, remove, RenderPosition} from "./utils/dom-utils.js";
-import {MenuTab, UpdateType, AUTHORIZATION, END_POINT} from "./const.js";
+import {
+  MenuTab,
+  UpdateType,
+  AUTHORIZATION,
+  END_POINT
+} from "./const.js";
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
@@ -18,6 +23,7 @@ const mainContainerElement = mainElement.querySelector(
 
 const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
+
 const tabsView = new TabsView();
 const newPointBtnView = new NewPointBtnView();
 
@@ -64,10 +70,4 @@ api.getPoints()
     render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
     tabsView.setTabClickHandler(handleTabClick);
     newPointBtnView.toggleButtonState(false);
-  })
-  .catch(()=> {
-    pointsModel.setPoints(UpdateType.INIT, []);
-    infoPresenter.init();
-    render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
-    tabsView.setTabClickHandler(handleTabClick);
   });

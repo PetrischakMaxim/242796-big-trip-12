@@ -9,9 +9,11 @@ export default class NewPointBtn extends AbstractView {
   }
 
   getTemplate() {
-    return `<button class="trip-main__event-add-btn btn btn--big btn--yellow" type="button">
-      New event
-    </button>`;
+    return (
+      `<button class="trip-main__event-add-btn btn btn--big btn--yellow" type="button">
+         New event
+      </button>`
+    );
   }
 
   toggleButtonState(flag = true) {

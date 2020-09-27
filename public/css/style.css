@@ -302,6 +302,8 @@ main {
 .trip-tabs__btn--active:active {
   cursor: default;
   opacity: 1;
+
+  pointer-events: none;
 }
 
 .trip-filters {

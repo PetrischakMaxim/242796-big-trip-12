@@ -1,7 +1,9 @@
-import SortView from "../view/sort/sort.js";
-import DayListView from "../view/day/day-list.js";
-import DayView from "../view/day/day.js";
-import MessageView from "../view/message/message.js";
+import {
+  SortView,
+  DayListView,
+  DayView,
+  MessageView
+} from "../view/index.js";
 
 import PointPresenter, {State as PointPresenterViewState} from "./point.js";
 import PointNewPresenter from "./point-new.js";
@@ -10,6 +12,7 @@ import {render, remove} from "../utils/dom-utils.js";
 import {sortByPrice} from "../utils/utils.js";
 import {sortByTime, sortByDate} from "../utils/date-utils.js";
 import {filter} from "../utils/filter-utils.js";
+
 import {
   SortType,
   UpdateType,
@@ -216,7 +219,6 @@ export default class Trip {
     );
 
     pointPresenter.init(point);
-
     this._pointPresenter.set(point.id, pointPresenter);
   }
 
@@ -268,8 +270,8 @@ export default class Trip {
     this._pointPresenter.forEach((presenter) => presenter.destroy());
     this._pointPresenter.clear();
 
-    this._messageNoPointsView = null;
-    this._messageLoadingView = null;
+    remove(this._messageNoPointsView);
+    remove(this._messageLoadingView);
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;

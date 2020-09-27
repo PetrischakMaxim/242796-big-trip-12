@@ -41,7 +41,6 @@ export default class Tabs extends AbstractView {
     if (currentTab !== null) {
       currentTab.classList.add(this._activeClassName);
       prevActiveTab.classList.remove(this._activeClassName);
-
     }
   }
 
