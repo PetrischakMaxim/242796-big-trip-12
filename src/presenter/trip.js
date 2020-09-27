@@ -1,8 +1,7 @@
 import SortView from "../view/sort/sort.js";
 import DayListView from "../view/day/day-list.js";
 import DayView from "../view/day/day.js";
-import NoPointView from "../view/point/no-point.js";
-import LoadingView from "../view/loading/loading.js";
+import MessageView from "../view/message/message.js";
 
 import PointPresenter, {State as PointPresenterViewState} from "./point.js";
 import PointNewPresenter from "./point-new.js";
@@ -11,7 +10,13 @@ import {render, remove} from "../utils/dom-utils.js";
 import {sortByPrice} from "../utils/utils.js";
 import {sortByTime, sortByDate} from "../utils/date-utils.js";
 import {filter} from "../utils/filter-utils.js";
-import {SortType, UpdateType, UserAction, FilterType} from "../const.js";
+import {
+  SortType,
+  UpdateType,
+  UserAction,
+  FilterType,
+  Message
+} from "../const.js";
 
 export default class Trip {
 
@@ -24,17 +29,18 @@ export default class Trip {
 
     this._pointPresenter = new Map();
     this._dayListView = new DayListView();
-    this._noPointView = new NoPointView();
-    this._loadingView = new LoadingView();
     this._isLoading = true;
     this._currentSortType = SortType.DEFAULT;
-    this._sortView = null;
 
     this._actionViewHandler = this._actionViewHandler.bind(this);
     this._eventModelHandler = this._eventModelHandler.bind(this);
 
     this._modeChangeHandler = this._modeChangeHandler.bind(this);
     this._sortChangeHandler = this._sortChangeHandler.bind(this);
+
+    this._messageNoPointsView = null;
+    this._messageLoadingView = null;
+    this._sortView = null;
 
     this._pointNewPresenter = new PointNewPresenter(this._dayListView, this._actionViewHandler);
   }
@@ -100,14 +106,19 @@ export default class Trip {
           }
         });
         break;
+
       case UserAction.ADD_POINT:
         this._pointNewPresenter.setSaving();
         this._api.addPoint(update)
-        .then((response) => this._pointsModel.addPoint(updateType, response))
+        .then((response) => {
+          this._pointsModel.addPoint(updateType, response);
+          this._pointNewPresenter.destroy();
+        })
         .catch(() => {
           this._pointNewPresenter.setAborting();
         });
         break;
+
       case UserAction.DELETE_POINT:
         for (let i of this._pointPresenter.keys()) {
           if (i === update.id) {
@@ -149,8 +160,12 @@ export default class Trip {
         break;
       case UpdateType.INIT:
         this._isLoading = false;
-        remove(this._loadingView);
+        remove(this._messageLoadingView);
         this._renderTrip();
+        break;
+      case UpdateType.ERROR:
+        remove(this._messageLoadingView);
+        this._renderError();
         break;
     }
   }
@@ -173,16 +188,23 @@ export default class Trip {
     render(this._containerInner, this._sortView);
   }
 
-  _renderLoading() {
-    render(this._container, this._loadingView);
-  }
-
   _renderContainerForDays() {
     render(this._container, this._dayListView);
   }
 
   _renderNoPoints() {
-    render(this._containerInner, this._noPointView);
+    this._messageNoPointsView = new MessageView(Message.NO_POINTS);
+    render(this._container, this._messageNoPointsView);
+  }
+
+  _renderLoading() {
+    this._messageLoadingView = new MessageView(Message.LOADING);
+    render(this._container, this._messageLoadingView);
+  }
+
+  _renderError() {
+    this._messagErrorView = new MessageView(Message.ERROR);
+    render(this._container, this._messagErrorView);
   }
 
   _renderPoint(container, point) {
@@ -241,11 +263,13 @@ export default class Trip {
   _clearTrip(resetSortType = false) {
     remove(this._dayListView);
     remove(this._sortView);
-    remove(this._noPointView);
-    remove(this._loadingView);
+
     this._pointNewPresenter.destroy();
     this._pointPresenter.forEach((presenter) => presenter.destroy());
     this._pointPresenter.clear();
+
+    this._messageNoPointsView = null;
+    this._messageLoadingView = null;
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;

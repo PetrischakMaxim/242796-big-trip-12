@@ -1,6 +1,6 @@
 import Api from "./api/api.js";
 
-export const AUTHORIZATION = `Basic eo0w590ik29105`;
+export const AUTHORIZATION = `Basic eo0w590ik27405`;
 export const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
@@ -93,11 +93,18 @@ export const UpdateType = {
   MINOR: `MINOR`,
   MAJOR: `MAJOR`,
   INIT: `INIT`,
+  ERROR: `ERROR`
 };
 
 export const StatusMessage = {
   SAVE: `Saving…`,
   DELETE: `Deleting…`
+};
+
+export const Message = {
+  LOADING: `Loading...`,
+  NO_POINTS: `Click New Event to create your first point`,
+  ERROR: `Error loading data, try again later..`,
 };
 
 export const FilterType = {

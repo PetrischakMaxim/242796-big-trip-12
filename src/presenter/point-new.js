@@ -70,7 +70,7 @@ export default class PointNew {
   _onSubmitHandler(point) {
     this._changeStatus(
         UserAction.ADD_POINT,
-        UpdateType.MINOR,
+        UpdateType.MAJOR,
         point
     );
   }

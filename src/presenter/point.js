@@ -61,7 +61,6 @@ export default class Point {
 
     if (this._mode === Mode.EDITING) {
       replace(this._pointEditView, prevPointEditView);
-      this._mode = Mode.DEFAULT;
     }
 
     remove(prevPointView);
@@ -140,7 +139,7 @@ export default class Point {
   _favoriteClickHandler(point) {
     this._changeStatus(
         UserAction.UPDATE_POINT,
-        UpdateType.PATCH,
+        UpdateType.MINOR,
         point
     );
   }
@@ -148,7 +147,7 @@ export default class Point {
   _formSaveHandler(point) {
     this._changeStatus(
         UserAction.UPDATE_POINT,
-        UpdateType.MAJOR,
+        UpdateType.MINOR,
         point
     );
   }
@@ -156,7 +155,7 @@ export default class Point {
   _deleteClickHandler(point) {
     this._changeStatus(
         UserAction.DELETE_POINT,
-        UpdateType.MINOR,
+        UpdateType.MAJOR,
         point
     );
   }
