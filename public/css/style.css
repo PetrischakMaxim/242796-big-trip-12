@@ -693,6 +693,13 @@ main {
           box-shadow: 0 11px 20px rgba(0, 0, 0, 0.043);
 }
 
+.event--disabled {
+  -webkit-box-shadow: 0 11px 20px #078ff0;
+          box-shadow: 0 11px 20px #078ff0;
+
+  pointer-events: none;
+}
+
 .event__header {
   display: -ms-flexbox;
   display: flex;
@@ -1218,4 +1225,29 @@ main {
 
 .statistics__item:not(:last-child) {
   margin-bottom: 78px;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+.shake {
+  animation: shake 0.6s;
 }

@@ -7,7 +7,8 @@ import {
   DESTINATIONS,
   BLANK_POINT,
   OFFERS,
-  PointType
+  PointType,
+  StatusMessage,
 } from "../../const.js";
 
 import {changeString} from "../../utils/utils.js";
@@ -15,7 +16,9 @@ import {formatDateToPlaceholder} from "../../utils/date-utils.js";
 
 const createPhotoList = (pictures) => (
   `<div class="event__photos-tape">
-    ${pictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}"/>`).join(``)}
+    ${pictures.map(({src, description}) => `
+      <img class="event__photo" src="${src}" alt="${description}"/>
+    `).join(``)}
   </div>`
 );
 
@@ -66,6 +69,9 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
     checkedOffers,
     info,
     isFavorite,
+    isDisabled,
+    isSaving,
+    isDeleting
   } = data;
 
   const [ACTIVITY, TRANSFER] = Object.keys(PointType);
@@ -159,7 +165,7 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
       </label>
       <input class="event__input  event__input--destination"
         id="event-destination-${id}" type="text" name="event-destination"
-        value="${he.encode(info.name)}" list="destination-list-${id}">
+        value="${he.encode(info.name)}" list="destination-list-${id}" required>
       ${createDesctinationList(DESTINATIONS)}
     </div>`
   );
@@ -169,8 +175,8 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
       <label class="event__label" for="event-price-${id}">
         <span class="visually-hidden">Price</span>€
       </label>
-      <input class="event__input  event__input--price"
-        id="event-price-${id}" type="text" name="event-price" value="${he.encode(String(price))}">
+      <input class="event__input event__input--price"
+        id="event-price-${id}" type="text" maxlength="4" name="event-price" value="${he.encode(String(price))}" required>
     </div>`
   );
 
@@ -185,25 +191,30 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
   );
 
   const createFormTemplate = () => (
-    `<form class="trip-events__item event event--edit" action="#" method="post">
-      <header class="event__header">
-        ${pointTypeWrapper}
-        ${pointDestinationTemplate}
-        ${createTimeGroup()}
-        ${pointPriceTemplate}
-        <button class="event__save-btn btn btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">
-          ${(!isNewPoint) ? `Delete` : `Cancel`}
-        </button>
-        ${(!isNewPoint) ? `${favoriteInputTemplate}` : ``}
-        ${(!isNewPoint) ? `<button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
-        </button>` : ``}
-      </header>
-      <section class="event__details">
-          ${createOffers(checkedOffers)}
-          ${createDetailsTemplate(info)}
-      </section>
+    `<form class="trip-events__item event event--edit ${isDisabled ? `event--disabled` : ``}" action="#" method="post">
+        <header class="event__header">
+          ${pointTypeWrapper}
+          ${pointDestinationTemplate}
+          ${createTimeGroup()}
+          ${pointPriceTemplate}
+          <button class="event__save-btn btn btn--blue" type="submit"}>
+            ${isSaving ? `${StatusMessage.SAVE}` : `Save`}
+          </button>
+          <button class="event__reset-btn" type="reset">
+            ${(!isNewPoint) ? `
+              ${isDeleting ? `${StatusMessage.DELETE}` : `Delete`}
+              ` : `Cancel`}
+          </button>
+          ${(!isNewPoint) ? `${favoriteInputTemplate}` : ``}
+          ${(!isNewPoint) ? `
+          <button class="event__rollup-btn" type="button">
+            <span class="visually-hidden">Open event</span>
+          </button>` : ``}
+        </header>
+        <section class="event__details">
+            ${createOffers(checkedOffers)}
+            ${createDetailsTemplate(info)}
+        </section>
     </form>`
   );
 
@@ -242,11 +253,13 @@ export default class PointForm extends SmartView {
   }
 
   restoreHandlers() {
-    this.setFormSubmitHandler(this._onSubmit);
-    this.setCloseButtonHandler(this._onCloseClick);
-    this.setFavoriteClickHandler(this._onFavoriteClick);
-    this.setDeletePointHandler(this._onDeleteClick);
+    if (!this._isNewPoint) {
+      this.setFavoriteClickHandler(this._onFavoriteClick);
+      this.setCloseButtonHandler(this._onCloseClick);
+    }
 
+    this.setFormSubmitHandler(this._onSubmit);
+    this.setDeletePointHandler(this._onDeleteClick);
     this._setInnerHandlers();
   }
 
@@ -384,6 +397,11 @@ export default class PointForm extends SmartView {
 
   _priceChangeHandler(evt) {
     evt.preventDefault();
+    const {value} = evt.target;
+    if (!value) {
+      return;
+    }
+
     this.updateData({
       price: Math.round(evt.target.value)
     });
@@ -453,14 +471,24 @@ export default class PointForm extends SmartView {
       : [];
 
     return Object.assign({}, point, {
-      checkedOffers
+      checkedOffers,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false
     });
   }
 
   static parseDataToPoint(data) {
-    return Object.assign({}, data, {
+    data = Object.assign({}, data, {
       offers: convertToOffers(data.checkedOffers),
     });
+
+    delete data.checkedOffers;
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
+
+    return data;
   }
 
 }

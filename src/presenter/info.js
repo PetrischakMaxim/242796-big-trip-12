@@ -2,7 +2,6 @@ import InfoView from "../view/info/info.js";
 import {render, RenderPosition, replace, remove} from "../utils/dom-utils.js";
 import {getFormatedDate} from '../utils/date-utils.js';
 import {filter} from '../utils/filter-utils.js';
-import {FilterType} from '../const.js';
 
 export default class Info {
   constructor(container, pointsModel, filterModel) {
@@ -20,9 +19,7 @@ export default class Info {
   init() {
     const points = this._pointsModel.getPoints();
     const filterType = this._filterModel.getFilter();
-    const filteredPoints = filterType === FilterType.EVERYTHING
-      ? points
-      : filter[filterType](points);
+    const filteredPoints = filter[filterType](points);
 
     const cost = this._getTotalCost(filteredPoints);
     const title = this._getInfoTitle(filteredPoints);

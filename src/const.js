@@ -95,6 +95,11 @@ export const UpdateType = {
   INIT: `INIT`,
 };
 
+export const StatusMessage = {
+  SAVE: `Saving…`,
+  DELETE: `Deleting…`
+};
+
 export const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,
