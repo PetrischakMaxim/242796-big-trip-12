@@ -15,18 +15,19 @@ export const createPointItemTemplate = (point) => {
   } = point;
 
   const createOffersList = () => {
-    if (offers.length === 0) {
+    if (!offers.length) {
       return ``;
     }
     return (
       `<h4 class="visually-hidden">Offers:</h4>
        <ul class="event__selected-offers">
         ${offers.map((offer, count) => {
-        const template = `<li class="event__offer">
+        const template = `
+          <li class="event__offer">
             <span class="event__offer-title">${offer.title}</span> + €&nbsp;
             <span class="event__offer-price">${offer.price}</span>
           </li>`;
-        return (count < 2) ? template : ``;
+        return (count <= 2) ? template : ``;
       }).join(``)}
       </ul>`
     );

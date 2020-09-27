@@ -1,12 +1,8 @@
-import TripInfoView from "./view/info/trip-info.js";
-import TabsView from "./view/tabs/tabs.js";
-import StatsView from "./view/stats/stats.js";
 import Api from "./api/api.js";
 
-import TripPresenter from "./presenter/trip.js";
-import FilterPresenter from "./presenter/filter.js";
-import PointsModel from "./model/points.js";
-import FilterModel from "./model/filter.js";
+import {PointsModel, FilterModel} from "./model/index.js";
+import {TabsView, NewPointBtnView, StatsView} from "./view/index.js";
+import {TripPresenter, FilterPresenter, InfoPresenter} from "./presenter/index.js";
 
 import {render, remove, RenderPosition} from "./utils/dom-utils.js";
 import {MenuTab, UpdateType, AUTHORIZATION, END_POINT} from "./const.js";
@@ -23,36 +19,40 @@ const mainContainerElement = mainElement.querySelector(
 const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
 const tabsView = new TabsView();
+const newPointBtnView = new NewPointBtnView();
 
 const tripPresenter = new TripPresenter(mainContainerElement, pointsModel, filterModel, api);
 const filterPresenter = new FilterPresenter(infoContainerElement, filterModel, pointsModel);
+const infoPresenter = new InfoPresenter(mainInfoElement, pointsModel, filterModel);
 
 let statsView = null;
 const handleTabClick = (tab) => {
   switch (tab) {
     case MenuTab.TABLE:
       tripPresenter.init();
+      newPointBtnView.toggleButtonState(false);
       remove(statsView);
       break;
     case MenuTab.STATS:
       tripPresenter.destroy();
+      newPointBtnView.toggleButtonState(true);
       statsView = new StatsView(pointsModel.getPoints());
       render(mainContainerElement, statsView.getElement());
       break;
   }
 };
 
-const pointNewButton = mainInfoElement.querySelector(`.trip-main__event-add-btn`);
+render(mainInfoElement, newPointBtnView);
 
-pointNewButton.addEventListener(`click`, (evt) => {
-  evt.preventDefault();
-  tripPresenter.createPoint(toggleButtonState);
-  toggleButtonState(true);
-});
-
-const toggleButtonState = (flag = false) => {
-  pointNewButton.disabled = flag;
+const pointBtnClickHandler = () => {
+  newPointBtnView.toggleButtonState();
+  tripPresenter.createPoint(() => {
+    newPointBtnView.toggleButtonState(false);
+  });
 };
+
+newPointBtnView.toggleButtonState();
+newPointBtnView.setClickHandler(pointBtnClickHandler);
 
 filterPresenter.init();
 tripPresenter.init();
@@ -60,13 +60,14 @@ tripPresenter.init();
 api.getPoints()
   .then((points) => {
     pointsModel.setPoints(UpdateType.INIT, points);
+    infoPresenter.init();
     render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
-    render(mainInfoElement, new TripInfoView(points), RenderPosition.AFTERBEGIN);
     tabsView.setTabClickHandler(handleTabClick);
+    newPointBtnView.toggleButtonState(false);
   })
   .catch(()=> {
     pointsModel.setPoints(UpdateType.INIT, []);
+    infoPresenter.init();
     render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
-    render(mainInfoElement, new TripInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
     tabsView.setTabClickHandler(handleTabClick);
   });

@@ -13,7 +13,7 @@ export default class Filter {
     this._filterView = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
-    this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
+    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
 
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -26,7 +26,7 @@ export default class Filter {
     const prevFilterComponent = this._filterView;
 
     this._filterView = new FilterView(filters, this._currentFilter);
-    this._filterView.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this._filterView.setFilterTypeChangeHandler(this._filterTypeChangeHandler);
 
     if (prevFilterComponent === null) {
       render(this._filterContainer, this._filterView);
@@ -41,7 +41,7 @@ export default class Filter {
     this.init();
   }
 
-  _handleFilterTypeChange(filterType) {
+  _filterTypeChangeHandler(filterType) {
     if (this._currentFilter === filterType) {
       return;
     }

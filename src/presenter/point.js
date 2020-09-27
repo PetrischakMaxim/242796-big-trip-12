@@ -10,6 +10,12 @@ const Mode = {
   EDITING: `EDITING`
 };
 
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
+};
+
 export default class Point {
 
   constructor(container, changeStatus, changeMode) {
@@ -55,6 +61,7 @@ export default class Point {
 
     if (this._mode === Mode.EDITING) {
       replace(this._pointEditView, prevPointEditView);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevPointView);
@@ -70,6 +77,36 @@ export default class Point {
   destroy() {
     remove(this._pointView);
     remove(this._pointEditView);
+  }
+
+  setViewState(state) {
+
+    const resetFormState = () => {
+      this._pointEditView.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._pointEditView.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case State.DELETING:
+        this._pointEditView.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case State.ABORTING:
+        this._pointView.shake(resetFormState);
+        this._pointEditView.shake(resetFormState);
+        break;
+    }
   }
 
   _replacePointToForm() {
@@ -100,11 +137,11 @@ export default class Point {
     }
   }
 
-  _favoriteClickHandler() {
+  _favoriteClickHandler(point) {
     this._changeStatus(
         UserAction.UPDATE_POINT,
         UpdateType.PATCH,
-        Object.assign({}, this._point, {isFavorite: !this._point.isFavorite})
+        point
     );
   }
 
@@ -114,7 +151,6 @@ export default class Point {
         UpdateType.MAJOR,
         point
     );
-    this._replaceFormToPoint();
   }
 
   _deleteClickHandler(point) {

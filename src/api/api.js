@@ -2,7 +2,9 @@ import PointsModel from "../model/points.js";
 
 const Method = {
   GET: `GET`,
-  PUT: `PUT`
+  PUT: `PUT`,
+  POST: `POST`,
+  DELETE: `DELETE`
 };
 
 const SuccessHTTPStatusRange = {
@@ -15,6 +17,8 @@ const Url = {
   DESTINATIONS: `destinations`,
   OFFERS: `offers`,
 };
+
+const HTTP_HEADERS = new Headers({"Content-Type": `application/json`});
 
 export default class Api {
   constructor(endPoint, authorization) {
@@ -51,15 +55,33 @@ export default class Api {
       .then((points) => points.map(PointsModel.adaptToClient));
   }
 
-  updatePoint(point) {
+  addPoint(point) {
     return this._load({
-      url: `points/${point.id}`,
-      method: Method.PUT,
+      url: Url.POINTS,
+      method: Method.POST,
       body: JSON.stringify(PointsModel.adaptPointToServer(point)),
-      headers: new Headers({"Content-Type": `application/json`})
+      headers: HTTP_HEADERS
     })
     .then(Api.toJSON)
     .then(PointsModel.adaptToClient);
+  }
+
+  updatePoint(point) {
+    return this._load({
+      url: `${Url.POINTS}/${point.id}`,
+      method: Method.PUT,
+      body: JSON.stringify(PointsModel.adaptPointToServer(point)),
+      headers: HTTP_HEADERS
+    })
+    .then(Api.toJSON)
+    .then(PointsModel.adaptToClient);
+  }
+
+  deletePoint(point) {
+    return this._load({
+      url: `${Url.POINTS}/${point.id}`,
+      method: Method.DELETE
+    });
   }
 
   static checkStatus(response) {

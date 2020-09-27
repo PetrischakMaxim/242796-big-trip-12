@@ -16,7 +16,7 @@ export default class Points extends Observer {
   }
 
   updatePoint(updateType, update) {
-    const index = this._points.findIndex((point) => point.id === update.id);
+    const index = this._getPointIndex(this._points, update);
 
     if (index === -1) {
       throw new Error(`Can't update unexisting point`);
@@ -38,7 +38,7 @@ export default class Points extends Observer {
   }
 
   deletePoint(updateType, update) {
-    const index = this._points.findIndex((point) => point.id === update.id);
+    const index = this._getPointIndex(this._points, update);
 
     if (index === -1) {
       throw new Error(`Can't delete unexisting point`);
@@ -53,48 +53,33 @@ export default class Points extends Observer {
   }
 
   static adaptToClient(point) {
-    const adaptedPoint = Object.assign(
-        {}, point,
-        {
-          id: Number(point.id),
-          price: point.base_price,
-          start: new Date(point.date_from),
-          end: new Date(point.date_to),
-          isFavorite: point.is_favorite,
-          info: {
-            name: point.destination.name,
-            description: point.destination.description,
-            images: point.destination.pictures,
-          },
-          waypoint: point.type,
-          offers: point.offers,
-        }
-    );
-
-    delete adaptedPoint.is_favorite;
-    delete adaptedPoint.date_to;
-    delete adaptedPoint.date_from;
-    delete adaptedPoint.base_price;
-    delete adaptedPoint.destination;
-    delete adaptedPoint.type;
-    return adaptedPoint;
+    return {
+      id: point.id,
+      waypoint: point.type,
+      start: new Date(point.date_from),
+      end: new Date(point.date_to),
+      info: point.destination,
+      price: point.base_price,
+      offers: point.offers,
+      isFavorite: point.is_favorite,
+    };
   }
 
   static adaptPointToServer(point) {
     return {
-      "id": String(point.id),
+      "id": point.id,
       "type": point.waypoint.toLowerCase(),
-      "base_price": point.price,
       "date_from": String(point.start),
       "date_to": String(point.end),
-      "destination": {
-        "name": point.info.name,
-        "description": point.info.description,
-        "pictures": point.info.images,
-      },
-      "is_favorite": point.isFavorite,
+      "destination": point.info,
+      "base_price": point.price,
       "offers": point.offers,
+      "is_favorite": point.isFavorite,
     };
+  }
+
+  _getPointIndex(points, update) {
+    return points.findIndex((point) => point.id === update.id);
   }
 
 }

@@ -1,7 +1,6 @@
 import Api from "./api/api.js";
-import {generateId} from "./utils/utils.js";
 
-export const AUTHORIZATION = `Basic eo0w590ik291305`;
+export const AUTHORIZATION = `Basic eo0w590ik29105`;
 export const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
@@ -15,10 +14,12 @@ const getDestinations = () => {
 };
 
 const getOffers = () => {
-  let result = [];
-  api.getOffers()
-  .then((offers) =>
-    offers.forEach((offer) => result.push(offer)));
+  let result = {};
+  api.getOffers().then((offers) =>
+    offers.reduce((offerList, offer) => {
+      offerList[offer.type] = offer.offers;
+      return offerList;
+    }, result));
   return result;
 };
 
@@ -53,17 +54,26 @@ export const OFFER_LIST = [
 ];
 
 export const BLANK_POINT = {
-  "id": generateId(),
-  "waypoint": `Restaurant`,
-  "price": 105,
-  "info": {
-    "name": `Munich`,
-    "description": `"Munich, with crowded streets, in a middle of Europe, a perfect place to stay with a family."`,
-    "images": [[{src: `http://picsum.photos/300/200?r=0.8311431352799774`, description: `Munich parliament building`}]]},
-  "start": new Date(),
-  "end": new Date(),
-  "offers": ``,
-  "isFavorite": true
+  waypoint: `bus`,
+  price: 1200,
+  info: {
+    name: `Amsterdam`,
+    description: `Amsterdam, a perfect place to stay with a family.`,
+    pictures: [
+      {src: `http://picsum.photos/300/200?r=0.8386231864924261`, description: `Amsterdam park`},
+      {src: `http://picsum.photos/300/200?r=0.40116945351116184`, description: `Amsterdam biggest supermarket`},
+      {src: `http://picsum.photos/300/200?r=0.4030889096915611`, description: `Amsterdam zoo`},
+      {src: `http://picsum.photos/300/200?r=0.9796612528279129`, description: `Amsterdam park`}
+    ]
+  },
+  start: new Date(),
+  end: new Date(),
+  offers: [
+    {title: `Infotainment system`, price: 50},
+    {title: `Order meal`, price: 100},
+    {title: `Choose seats`, price: 190}
+  ],
+  isFavorite: false
 };
 
 export const SortType = {
@@ -83,6 +93,11 @@ export const UpdateType = {
   MINOR: `MINOR`,
   MAJOR: `MAJOR`,
   INIT: `INIT`,
+};
+
+export const StatusMessage = {
+  SAVE: `Saving…`,
+  DELETE: `Deleting…`
 };
 
 export const FilterType = {
