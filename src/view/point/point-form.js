@@ -176,7 +176,7 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
         <span class="visually-hidden">Price</span>€
       </label>
       <input class="event__input event__input--price"
-        id="event-price-${id}" type="text" maxlength="4" name="event-price" value="${he.encode(String(price))}" required>
+        id="event-price-${id}" type="number" min="0" step="1" maxlength="4" name="event-price" value="${he.encode(String(price))}" required>
     </div>`
   );
 
@@ -219,7 +219,6 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
   );
 
   return `<li class="trip-events__item">${createFormTemplate()}</li>`;
-
 };
 
 export default class PointForm extends SmartView {
@@ -356,7 +355,7 @@ export default class PointForm extends SmartView {
 
     this.updateData({
       checkedOffers
-    });
+    }, true);
 
   }
 

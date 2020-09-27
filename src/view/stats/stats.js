@@ -1,10 +1,10 @@
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import moment from "moment";
+import SmartView from "../smart/smart.js";
 import {getTripDuration, getTotalDuration} from "../../utils/date-utils.js";
 import {changeString} from "../../utils/utils.js";
 import {TRANSFER} from "../../const.js";
-import SmartView from "../smart/smart.js";
 
 const ChartName = {
   MONEY: `MONEY`,

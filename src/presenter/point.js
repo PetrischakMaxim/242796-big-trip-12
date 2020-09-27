@@ -137,7 +137,7 @@ export default class Point {
   _favoriteClickHandler(point) {
     this._changeStatus(
         UserAction.UPDATE_POINT,
-        UpdateType.MINOR,
+        UpdateType.PATCH,
         point
     );
   }
@@ -145,7 +145,7 @@ export default class Point {
   _formSaveHandler(point) {
     this._changeStatus(
         UserAction.UPDATE_POINT,
-        UpdateType.MINOR,
+        UpdateType.MAJOR,
         point
     );
   }

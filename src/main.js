@@ -31,6 +31,16 @@ const tripPresenter = new TripPresenter(mainContainerElement, pointsModel, filte
 const filterPresenter = new FilterPresenter(infoContainerElement, filterModel, pointsModel);
 const infoPresenter = new InfoPresenter(mainInfoElement, pointsModel, filterModel);
 
+
+render(mainInfoElement, newPointBtnView);
+
+const pointBtnClickHandler = () => {
+  newPointBtnView.toggleButtonState();
+  tripPresenter.createPoint(() => {
+    newPointBtnView.toggleButtonState(false);
+  });
+};
+
 let statsView = null;
 const handleTabClick = (tab) => {
   switch (tab) {
@@ -48,14 +58,6 @@ const handleTabClick = (tab) => {
   }
 };
 
-render(mainInfoElement, newPointBtnView);
-
-const pointBtnClickHandler = () => {
-  newPointBtnView.toggleButtonState();
-  tripPresenter.createPoint(() => {
-    newPointBtnView.toggleButtonState(false);
-  });
-};
 
 newPointBtnView.toggleButtonState();
 newPointBtnView.setClickHandler(pointBtnClickHandler);
@@ -71,3 +73,5 @@ api.getPoints()
     tabsView.setTabClickHandler(handleTabClick);
     newPointBtnView.toggleButtonState(false);
   });
+
+

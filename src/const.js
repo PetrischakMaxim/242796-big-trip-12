@@ -5,27 +5,6 @@ export const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
-const getDestinations = () => {
-  let result = [];
-  api.getDestinations()
-  .then((desctination) =>
-    desctination.forEach((desct) => result.push(desct)));
-  return result;
-};
-
-const getOffers = () => {
-  let result = {};
-  api.getOffers().then((offers) =>
-    offers.reduce((offerList, offer) => {
-      offerList[offer.type] = offer.offers;
-      return offerList;
-    }, result));
-  return result;
-};
-
-export const DESTINATIONS = getDestinations();
-export const OFFERS = getOffers();
-
 export const PointType = {
   TRANSFER: [
     `Taxi`,
@@ -45,13 +24,6 @@ export const PointType = {
 
 export const {TRANSFER, ACTIVITY} = PointType;
 export const POINT_LIST = [...TRANSFER, ...ACTIVITY];
-
-export const OFFER_LIST = [
-  `Add luggage`,
-  `Switch to comfort class`,
-  `Add meal`,
-  `Choose seats`
-];
 
 export const BLANK_POINT = {
   waypoint: `bus`,
@@ -117,3 +89,24 @@ export const MenuTab = {
   TABLE: `Table`,
   STATS: `Stats`
 };
+
+const getDestinations = () => {
+  let result = [];
+  api.getDestinations()
+  .then((desctination) =>
+    desctination.forEach((desct) => result.push(desct)));
+  return result;
+};
+
+const getOffers = () => {
+  let result = {};
+  api.getOffers().then((offers) =>
+    offers.reduce((offerList, offer) => {
+      offerList[offer.type] = offer.offers;
+      return offerList;
+    }, result));
+  return result;
+};
+
+export const DESTINATIONS = getDestinations();
+export const OFFERS = getOffers();

@@ -98,6 +98,7 @@ export default class Trip {
             break;
           }
         }
+
         this._api.updatePoint(update)
         .then((response) => this._pointsModel.updatePoint(updateType, response))
         .catch(() => {

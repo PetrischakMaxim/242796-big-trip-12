@@ -29,6 +29,4 @@ export default class NewPointBtn extends AbstractView {
     evt.preventDefault();
     this._newPointBtnClick();
   }
-
-
 }
