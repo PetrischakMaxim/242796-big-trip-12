@@ -12,7 +12,7 @@ const createFiltersTemplate = (filters, currentFilterType) => (
   `<div class="trip-filters-wrapper">
     <h2 class="visually-hidden">Filter events</h2>
     <form class="trip-filters" action="#" method="get">
-      ${filters.map((filter)=> createFilter(filter, currentFilterType)).join(``)}
+      ${filters.map((filter) => createFilter(filter, currentFilterType)).join(``)}
       <button class="visually-hidden" type="submit">Accept filter</button>
     </form>
   </div>`
@@ -36,7 +36,7 @@ export default class Filter extends AbstractView {
     this._filterTypeChange = callback;
     this.getElement()
       .querySelectorAll(`.trip-filters__filter-input`)
-      .forEach((filter)=> filter.addEventListener(`change`, this._filterTypeChangeHandler));
+      .forEach((filter) => filter.addEventListener(`change`, this._filterTypeChangeHandler));
   }
 
   _filterTypeChangeHandler(evt) {

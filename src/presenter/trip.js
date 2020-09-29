@@ -90,22 +90,13 @@ export default class Trip {
   _actionViewHandler(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        for (let i of this._pointPresenter.keys()) {
-          if (i === update.id) {
-            this._pointPresenter.get(update.id).setViewState(PointPresenterViewState.SAVING);
-            break;
-          }
-        }
-
+        this._pointPresenter.get(update.id).setViewState(PointPresenterViewState.SAVING);
         this._api.updatePoint(update)
-        .then((response) => this._pointsModel.updatePoint(updateType, response))
+        .then((response) => {
+          this._pointsModel.updatePoint(updateType, response);
+        })
         .catch(() => {
-          for (let i of this._pointPresenter.keys()) {
-            if (i === update.id) {
-              this._pointPresenter.get(update.id).setViewState(PointPresenterViewState.ABORTING);
-              break;
-            }
-          }
+          this._pointPresenter.get(update.id).setViewState(PointPresenterViewState.ABORTING);
         });
         break;
 
@@ -122,21 +113,11 @@ export default class Trip {
         break;
 
       case UserAction.DELETE_POINT:
-        for (let i of this._pointPresenter.keys()) {
-          if (i === update.id) {
-            this._pointPresenter.get(update.id).setViewState(PointPresenterViewState.DELETING);
-            break;
-          }
-        }
+        this._pointPresenter.get(update.id).setViewState(PointPresenterViewState.DELETING);
         this._api.deletePoint(update)
         .then(() => this._pointsModel.deletePoint(updateType, update))
         .catch(() => {
-          for (let i of this._pointPresenter.keys()) {
-            if (i === update.id) {
-              this._pointPresenter.get(update.id).setViewState(PointPresenterViewState.ABORTING);
-              break;
-            }
-          }
+          this._pointPresenter.get(update.id).setViewState(PointPresenterViewState.ABORTING);
         });
         break;
     }
@@ -145,12 +126,7 @@ export default class Trip {
   _eventModelHandler(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        for (let index of this._pointPresenter.keys()) {
-          if (index[0] !== data.id) {
-            this._pointPresenter.get(index).init(data);
-            break;
-          }
-        }
+        this._pointPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
         this._clearTrip();

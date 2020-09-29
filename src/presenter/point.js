@@ -147,7 +147,7 @@ export default class Point {
   _formSaveHandler(point) {
     this._changeStatus(
         UserAction.UPDATE_POINT,
-        UpdateType.MAJOR,
+        UpdateType.MINOR,
         point
     );
   }

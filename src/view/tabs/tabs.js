@@ -38,10 +38,12 @@ export default class Tabs extends AbstractView {
     const currentTab = this.getElement().querySelector(`[data-tab=${tab}]`);
     const prevActiveTab = currentTab.previousElementSibling || currentTab.nextElementSibling;
 
-    if (currentTab !== null) {
-      currentTab.classList.add(this._activeClassName);
-      prevActiveTab.classList.remove(this._activeClassName);
+    if (!currentTab) {
+      return;
     }
+
+    currentTab.classList.add(this._activeClassName);
+    prevActiveTab.classList.remove(this._activeClassName);
   }
 
   _tabClickHandler(evt) {

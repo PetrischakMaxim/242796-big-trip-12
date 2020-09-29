@@ -3,7 +3,9 @@ import {getDateTimeFormat, getTimeFormat, getTimeOfTrip} from "../../utils/date-
 import {capitalizeString} from "../../utils/utils.js";
 import {PointType} from "../../const.js";
 
-export const createPointItemTemplate = (point) => {
+const VISIBLE_OFFERS = 3;
+
+const createPointItemTemplate = (point) => {
 
   const {
     waypoint,
@@ -27,7 +29,7 @@ export const createPointItemTemplate = (point) => {
             <span class="event__offer-title">${offer.title}</span> + €&nbsp;
             <span class="event__offer-price">${offer.price}</span>
           </li>`;
-        return (count <= 2) ? template : ``;
+        return (count < VISIBLE_OFFERS) ? template : ``;
       }).join(``)}
       </ul>`
     );

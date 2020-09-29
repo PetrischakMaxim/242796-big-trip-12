@@ -3,16 +3,16 @@ import he from "he";
 import flatpickr from "flatpickr";
 import "../../../node_modules/flatpickr/dist/flatpickr.min.css";
 
+import {capitalizeString} from "../../utils/utils.js";
+import {formatDateToPlaceholder} from "../../utils/date-utils.js";
+
 import {
   DESTINATIONS,
   BLANK_POINT,
   OFFERS,
   PointType,
-  StatusMessage,
 } from "../../const.js";
 
-import {capitalizeString} from "../../utils/utils.js";
-import {formatDateToPlaceholder} from "../../utils/date-utils.js";
 
 const createPhotoList = (pictures) => (
   `<div class="event__photos-tape">
@@ -34,21 +34,21 @@ const createDetailsTemplate = (info) => (
   </section>`
 );
 
-const isSameOffer = (offers, currentOffer) =>
+const isOfferInclude = (offers, currentOffer) =>
   offers.some((offer) => (
     offer.title === currentOffer.title && offer.price === currentOffer.price
   ));
 
-const prepareOffers = (offers, checkedOffers) =>
+const convertOffers = (offers, checkedOffers) =>
   offers.map((offer) => {
     return {
       title: offer.title,
       price: offer.price,
-      isChecked: checkedOffers.length > 0 && isSameOffer(checkedOffers, offer),
+      isChecked: checkedOffers.length > 0 && isOfferInclude(checkedOffers, offer),
     };
   });
 
-const convertToOffers = (renderedOffers) => renderedOffers.reduce((offers, offer) => {
+const getCheckedOffers = (renderedOffers) => renderedOffers.reduce((offers, offer) => {
   if (offer.isChecked) {
     offers.push({
       title: offer.title,
@@ -198,11 +198,11 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
           ${createTimeGroup()}
           ${pointPriceTemplate}
           <button class="event__save-btn btn btn--blue" type="submit"}>
-            ${isSaving ? `${StatusMessage.SAVE}` : `Save`}
+            ${isSaving ? `Saving…` : `Save`}
           </button>
           <button class="event__reset-btn" type="reset">
             ${(!isNewPoint) ? `
-              ${isDeleting ? `${StatusMessage.DELETE}` : `Delete`}
+              ${isDeleting ? `Deleting…` : `Delete`}
               ` : `Cancel`}
           </button>
           ${(!isNewPoint) ? `${favoriteInputTemplate}` : ``}
@@ -385,7 +385,7 @@ export default class PointForm extends SmartView {
     const waypointOffers = OFFERS[evt.target.value];
 
     const checkedOffers = waypointOffers.length > 0
-      ? prepareOffers(waypointOffers, [])
+      ? convertOffers(waypointOffers, [])
       : [];
 
     this.updateData({
@@ -465,8 +465,8 @@ export default class PointForm extends SmartView {
     const {waypoint} = point;
     const waypointOffers = OFFERS[waypoint];
 
-    const checkedOffers = waypointOffers.length > 0
-      ? prepareOffers(waypointOffers, point.offers)
+    const checkedOffers = (waypointOffers && waypointOffers.length > 0)
+      ? convertOffers(waypointOffers, point.offers)
       : [];
 
     return Object.assign({}, point, {
@@ -479,7 +479,7 @@ export default class PointForm extends SmartView {
 
   static parseDataToPoint(data) {
     data = Object.assign({}, data, {
-      offers: convertToOffers(data.checkedOffers),
+      offers: getCheckedOffers(data.checkedOffers),
     });
 
     delete data.checkedOffers;

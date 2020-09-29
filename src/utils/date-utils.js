@@ -12,9 +12,12 @@ export const getTotalDuration = (d1, d2) => {
   const hours = duration.hours();
   const minutes = duration.minutes();
 
-  return `${days ? isNeededZero(days) + `D ` : ``}${hours ? isNeededZero(hours) + `H ` : ``}${minutes !== 0 || !hours && !days ? isNeededZero(minutes) + `M` : ``}`;
+  return `
+    ${days ? isNeededZero(days) + `D ` : ``}
+    ${hours ? isNeededZero(hours) + `H ` : ``}
+    ${minutes !== 0 || !hours && !days ? isNeededZero(minutes) + `M` : ``}
+    `;
 };
-
 
 export const getTimeOfTrip = (d1, d2) => {
   const {days, hours, minutes} = getTripDuration(d1, d2)._data;

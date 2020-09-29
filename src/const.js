@@ -1,6 +1,6 @@
 import Api from "./api/api.js";
 
-export const AUTHORIZATION = `Basic eo0w590ik27405`;
+export const AUTHORIZATION = `Basic eo0w590ik21305`;
 export const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
@@ -66,11 +66,6 @@ export const UpdateType = {
   MAJOR: `MAJOR`,
   INIT: `INIT`,
   ERROR: `ERROR`
-};
-
-export const StatusMessage = {
-  SAVE: `Saving…`,
-  DELETE: `Deleting…`
 };
 
 export const Message = {
