@@ -3,7 +3,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import moment from "moment";
 import SmartView from "../smart/smart.js";
 import {getTripDuration, getTotalDuration} from "../../utils/date-utils.js";
-import {changeString} from "../../utils/utils.js";
+import {capitalizeString} from "../../utils/utils.js";
 import {TRANSFER} from "../../const.js";
 
 const ChartName = {
@@ -14,7 +14,7 @@ const ChartName = {
 
 const CHART_TYPE = `horizontalBar`;
 
-const Bar = {
+const BAR_OPTIONS = {
   HEIGHT: 55,
   THICKNESS: 44,
   MIN_LENGTH: 50,
@@ -22,20 +22,20 @@ const Bar = {
   HOVER_BG_COLOR: `#ffffff`,
 };
 
-const BarText = {
+const BAR_TEXT = {
   COLOR: `#000000`,
   POSITION: `end`,
   ALIGN: `start`,
   FONT_SIZE: 13,
 };
 
-const BarTitle = {
+const BAR_TITLE = {
   FONT_COLOR: `#000000`,
   FONT_SIZE: 23,
   POSITION: `left`,
 };
 
-const BarLabel = {
+const BAR_LABEL = {
   FONT_COLOR: `#000000`,
   PADDING: 5,
   FONT_SIZE: 13,
@@ -56,38 +56,38 @@ const createChartOptions = ({
       labels,
       datasets: [{
         data: barsData,
-        backgroundColor: Bar.BG_COLOR,
-        hoverBackgroundColor: Bar.HOVER_BG_COLOR,
-        anchor: BarLabel.POSITION,
-        barThickness: Bar.THICKNESS,
-        minBarLength: Bar.MIN_LENGTH,
+        backgroundColor: BAR_OPTIONS.BG_COLOR,
+        hoverBackgroundColor: BAR_OPTIONS.HOVER_BG_COLOR,
+        anchor: BAR_LABEL.POSITION,
+        barThickness: BAR_OPTIONS.THICKNESS,
+        minBarLength: BAR_OPTIONS.MIN_LENGTH,
       }]
     },
     options: {
       plugins: {
         datalabels: {
           font: {
-            size: BarText.FONT_SIZE,
+            size: BAR_TEXT.FONT_SIZE,
           },
-          color: BarText.COLOR,
-          anchor: BarText.POSITION,
-          align: BarText.ALIGN,
+          color: BAR_TEXT.COLOR,
+          anchor: BAR_TEXT.POSITION,
+          align: BAR_TEXT.ALIGN,
           formatter: valueFormatter,
         }
       },
       title: {
         display: true,
         text: title,
-        fontColor: BarTitle.FONT_COLOR,
-        fontSize: BarTitle.FONT_SIZE,
-        position: BarTitle.POSITION,
+        fontColor: BAR_TITLE.FONT_COLOR,
+        fontSize: BAR_TITLE.FONT_SIZE,
+        position: BAR_TITLE.POSITION,
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: BarLabel.FONT_COLOR,
-            padding: BarLabel.PADDING,
-            fontSize: BarLabel.FONT_SIZE,
+            fontColor: BAR_LABEL.FONT_COLOR,
+            padding: BAR_LABEL.PADDING,
+            fontSize: BAR_LABEL.FONT_SIZE,
           },
           gridLines: {
             display: false,
@@ -128,7 +128,7 @@ const createChartsData = (points) => {
   const getTransferData = () => {
     const transfers = choisedPoints
       .filter((point) =>
-        TRANSFER.includes(changeString(point.waypoint)));
+        TRANSFER.includes(capitalizeString(point.waypoint)));
 
     return {
       transfer: transfers.map((type) => type.waypoint),
@@ -170,7 +170,7 @@ const createStatsTemplate = () => (
 );
 
 const renderMoneyChart = (container, chartsData) => {
-  container.height = Bar.HEIGHT * chartsData.waypoints.length;
+  container.height = BAR_OPTIONS.HEIGHT * chartsData.waypoints.length;
 
   return new Chart(container, createChartOptions({
     title: ChartName.MONEY,
@@ -181,7 +181,7 @@ const renderMoneyChart = (container, chartsData) => {
 };
 
 const renderTransportChart = (container, chartsData) => {
-  container.height = Bar.HEIGHT * chartsData.transport.transfer.length;
+  container.height = BAR_OPTIONS.HEIGHT * chartsData.transport.transfer.length;
 
   return new Chart(container, createChartOptions({
     title: ChartName.TRANSPORT,
@@ -192,7 +192,7 @@ const renderTransportChart = (container, chartsData) => {
 };
 
 const renderTimeChart = (container, chartsData) => {
-  container.height = Bar.HEIGHT * chartsData.waypoints.length;
+  container.height = BAR_OPTIONS.HEIGHT * chartsData.waypoints.length;
 
   return new Chart(container, createChartOptions({
     title: ChartName.TIME,

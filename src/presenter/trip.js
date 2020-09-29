@@ -1,9 +1,7 @@
-import {
-  SortView,
-  DayListView,
-  DayView,
-  MessageView
-} from "../view/index.js";
+import SortView from "../view/sort/sort.js";
+import DayListView from "../view/day/day-list.js";
+import DayView from "../view/day/day.js";
+import MessageView from "../view/message/message.js";
 
 import PointPresenter, {State as PointPresenterViewState} from "./point.js";
 import PointNewPresenter from "./point-new.js";

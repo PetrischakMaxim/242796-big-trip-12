@@ -4,5 +4,5 @@ export const isEscKeyPressed = (evt) => {
   return (evt.key === `Escape` || evt.key === `Esc`) ? true : false;
 };
 
-export const changeString = (str) => `${str[0].toUpperCase()}${str.slice(1)}`;
+export const capitalizeString = (str) => `${str[0].toUpperCase()}${str.slice(1)}`;
 

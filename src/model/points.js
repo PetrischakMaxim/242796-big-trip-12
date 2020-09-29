@@ -52,6 +52,10 @@ export default class Points extends Observer {
     this._notify(updateType);
   }
 
+  _getPointIndex(points, update) {
+    return points.findIndex((point) => point.id === update.id);
+  }
+
   static adaptToClient(point) {
     return {
       id: point.id,
@@ -76,10 +80,6 @@ export default class Points extends Observer {
       "offers": point.offers,
       "is_favorite": point.isFavorite,
     };
-  }
-
-  _getPointIndex(points, update) {
-    return points.findIndex((point) => point.id === update.id);
   }
 
 }

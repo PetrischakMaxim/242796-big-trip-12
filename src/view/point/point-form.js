@@ -11,7 +11,7 @@ import {
   StatusMessage,
 } from "../../const.js";
 
-import {changeString} from "../../utils/utils.js";
+import {capitalizeString} from "../../utils/utils.js";
 import {formatDateToPlaceholder} from "../../utils/date-utils.js";
 
 const createPhotoList = (pictures) => (
@@ -161,7 +161,7 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
   const pointDestinationTemplate = (
     `<div class="event__field-group  event__field-group--destination">
       <label class="event__label  event__type-output" for="event-destination-${id}">
-        ${changeString(waypoint)}${PointType.TRANSFER.includes(changeString(waypoint)) ? ` to` : ` in`}
+        ${capitalizeString(waypoint)}${PointType.TRANSFER.includes(capitalizeString(waypoint)) ? ` to` : ` in`}
       </label>
       <input class="event__input  event__input--destination"
         id="event-destination-${id}" type="text" name="event-destination"
@@ -389,7 +389,7 @@ export default class PointForm extends SmartView {
       : [];
 
     this.updateData({
-      waypoint: changeString(evt.target.value),
+      waypoint: capitalizeString(evt.target.value),
       checkedOffers
     });
   }

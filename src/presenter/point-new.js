@@ -1,4 +1,4 @@
-import {PointFormView} from "../view/index.js";
+import PointFormView from "../view/point/point-form.js";
 import {isEscKeyPressed} from "../utils/utils.js";
 import {remove, render, RenderPosition} from "../utils/dom-utils.js";
 import {UserAction, UpdateType, BLANK_POINT} from "../const.js";

@@ -1,7 +1,10 @@
-import {InfoView} from "../view/index.js";
+import InfoView from "../view/info/info.js";
+
 import {render, RenderPosition, replace, remove} from "../utils/dom-utils.js";
 import {getFormatedDate} from '../utils/date-utils.js';
 import {filter} from '../utils/filter-utils.js';
+
+const MIN_DESTIONATION_COUNT = 3;
 
 export default class Info {
   constructor(container, pointsModel, filterModel) {
@@ -58,7 +61,7 @@ export default class Info {
       return ``;
     }
 
-    if (length <= 3) {
+    if (length < MIN_DESTIONATION_COUNT) {
       return points.map((point) => point.info.name).join(` — `);
     }
 

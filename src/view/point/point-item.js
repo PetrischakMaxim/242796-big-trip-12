@@ -1,6 +1,6 @@
 import AbstractView from "../abstract/abstract.js";
 import {getDateTimeFormat, getTimeFormat, getTimeOfTrip} from "../../utils/date-utils.js";
-import {changeString} from "../../utils/utils.js";
+import {capitalizeString} from "../../utils/utils.js";
 import {PointType} from "../../const.js";
 
 export const createPointItemTemplate = (point) => {
@@ -43,8 +43,8 @@ export const createPointItemTemplate = (point) => {
 
   const pointTitle = (
     `<h3 class="event__title">
-      ${changeString(waypoint)}
-      ${PointType.TRANSFER.includes(changeString(waypoint)) ? ` to` : ` in`}
+      ${capitalizeString(waypoint)}
+      ${PointType.TRANSFER.includes(capitalizeString(waypoint)) ? ` to` : ` in`}
       ${info.name}
     </h3>`
   );

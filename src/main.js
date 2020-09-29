@@ -1,10 +1,18 @@
 import Api from "./api/api.js";
 
-import {PointsModel, FilterModel} from "./model/index.js";
-import {TabsView, NewPointBtnView, StatsView} from "./view/index.js";
-import {TripPresenter, FilterPresenter, InfoPresenter} from "./presenter/index.js";
+import FilterModel from "./model/filter.js";
+import PointsModel from "./model/points.js";
+
+import TabsView from "./view/tabs/tabs.js";
+import NewPointBtnView from "./view/new-point-btn/new-point-btn.js";
+import StatsView from "./view/stats/stats.js";
+
+import TripPresenter from "./presenter/trip.js";
+import FilterPresenter from "./presenter/filter.js";
+import InfoPresenter from "./presenter/info.js";
 
 import {render, remove, RenderPosition} from "./utils/dom-utils.js";
+
 import {
   MenuTab,
   UpdateType,
@@ -35,9 +43,9 @@ const infoPresenter = new InfoPresenter(mainInfoElement, pointsModel, filterMode
 render(mainInfoElement, newPointBtnView);
 
 const pointBtnClickHandler = () => {
-  newPointBtnView.toggleButtonState();
+  newPointBtnView.setEnabled();
   tripPresenter.createPoint(() => {
-    newPointBtnView.toggleButtonState(false);
+    newPointBtnView.setEnabled(false);
   });
 };
 
@@ -46,20 +54,19 @@ const handleTabClick = (tab) => {
   switch (tab) {
     case MenuTab.TABLE:
       tripPresenter.init();
-      newPointBtnView.toggleButtonState(false);
+      newPointBtnView.setEnabled(false);
       remove(statsView);
       break;
     case MenuTab.STATS:
       tripPresenter.destroy();
-      newPointBtnView.toggleButtonState(true);
+      newPointBtnView.setEnabled(true);
       statsView = new StatsView(pointsModel.getPoints());
       render(mainContainerElement, statsView.getElement());
       break;
   }
 };
 
-
-newPointBtnView.toggleButtonState();
+newPointBtnView.setEnabled();
 newPointBtnView.setClickHandler(pointBtnClickHandler);
 
 filterPresenter.init();
@@ -71,7 +78,7 @@ api.getPoints()
     infoPresenter.init();
     render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
     tabsView.setTabClickHandler(handleTabClick);
-    newPointBtnView.toggleButtonState(false);
+    newPointBtnView.setEnabled(false);
   });
 
 

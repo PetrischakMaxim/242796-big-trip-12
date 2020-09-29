@@ -16,7 +16,7 @@ export default class NewPointBtn extends AbstractView {
     );
   }
 
-  toggleButtonState(flag = true) {
+  setEnabled(flag = true) {
     this.getElement().disabled = flag;
   }
 

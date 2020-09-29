@@ -7,7 +7,7 @@ const Method = {
   DELETE: `DELETE`
 };
 
-const SuccessHTTPStatusRange = {
+const HTTP_STATUS_RANGE = {
   MIN: 200,
   MAX: 299
 };
@@ -17,8 +17,6 @@ const Url = {
   DESTINATIONS: `destinations`,
   OFFERS: `offers`,
 };
-
-const HTTP_HEADERS = new Headers({"Content-Type": `application/json`});
 
 export default class Api {
   constructor(endPoint, authorization) {
@@ -60,7 +58,7 @@ export default class Api {
       url: Url.POINTS,
       method: Method.POST,
       body: JSON.stringify(PointsModel.adaptPointToServer(point)),
-      headers: HTTP_HEADERS
+      headers: Api.getHeaders()
     })
     .then(Api.toJSON)
     .then(PointsModel.adaptToClient);
@@ -71,7 +69,7 @@ export default class Api {
       url: `${Url.POINTS}/${point.id}`,
       method: Method.PUT,
       body: JSON.stringify(PointsModel.adaptPointToServer(point)),
-      headers: HTTP_HEADERS
+      headers: Api.getHeaders()
     })
     .then(Api.toJSON)
     .then(PointsModel.adaptToClient);
@@ -86,8 +84,8 @@ export default class Api {
 
   static checkStatus(response) {
     if (
-      response.status < SuccessHTTPStatusRange.MIN &&
-      response.status > SuccessHTTPStatusRange.MAX
+      response.status < HTTP_STATUS_RANGE.MIN &&
+      response.status > HTTP_STATUS_RANGE.MAX
     ) {
       throw new Error(`${response.status}: ${response.statusText}`);
     }
@@ -101,5 +99,9 @@ export default class Api {
 
   static catchError(err) {
     throw err;
+  }
+
+  static getHeaders() {
+    return new Headers({"Content-Type": `application/json`});
   }
 }
