@@ -1,33 +1,36 @@
-import AbstractView from "../abstract/abstract.js";
-import {getDateFormat, getFormatedDate} from "../../utils/date-utils.js";
+import AbstractView from '../abstract/abstract.js';
 
-const createDayTemplate = (date, count) => (
-  `<li class="trip-days__item day">
-    <div class="day__info">
-      <span class="day__counter">
-        ${(!count) ? `` : count}
-      </span>
-      <time class="day__date" datetime="${(!date) ? `` : getDateFormat(date)}">
-        ${(!date) ? `` : getFormatedDate(date)}
+const convertToTitle = (value) => {
+  const date = new Date(value);
+  const day = date.getDate();
+  const month = date.toLocaleString(`en-us`, {month: `short`});
+
+  return `${month} ${day}`;
+};
+
+const getDayInfoTemplate = ({dayCount, date}) => {
+  return (
+    `<div class="day__info">
+      <span class="day__counter">${dayCount}</span>
+      <time class="day__date" datetime=${date}>
+        ${convertToTitle(date)}
       </time>
-    </div>
-    <ul class="trip-events__list"></ul>
-  </li>`
-);
+    </div>`
+  );
+};
+
 
 export default class Day extends AbstractView {
-  constructor(date, count) {
+  constructor(dayData) {
     super();
-    this._date = date;
-    this._count = count;
+    this._dayData = dayData;
   }
 
   getTemplate() {
-    return createDayTemplate(this._date, this._count);
-  }
-
-  getList() {
-    return this.getElement()
-      .querySelector(`.trip-events__list`);
+    return (
+      `<li class="trip-days__item  day">
+        ${this._dayData.isCountRender ? getDayInfoTemplate(this._dayData) : `<div class="day__info"></div>`}
+      </li>`
+    );
   }
 }

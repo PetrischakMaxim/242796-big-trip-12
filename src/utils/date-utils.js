@@ -1,59 +1,46 @@
-import moment from "moment";
+import moment from 'moment';
 
-export const getDateTimeFormat = (date) => moment(date).format(`YYYY-MM-DDTH:mm:ss`);
-export const getDateFormat = (date) => moment(date).format(`DD/MM/YY`);
-export const getTimeFormat = (date) => moment(date).format(`HH:mm`);
-export const formatDateToPlaceholder = (date) => `${getDateFormat(date)} ${getTimeFormat(date)}`;
-export const getFormatedDate = (date) => moment(date).format(`D MMM`);
+const isDate = (date) => date instanceof Date;
 
-export const getTotalDuration = (d1, d2) => {
-  const duration = d2 ? moment.duration(d2 - d1) : moment.duration(d1);
-  const days = duration.days();
-  const hours = duration.hours();
-  const minutes = duration.minutes();
+export const convertNumberOfDate = (value) => String(value).padStart(2, `0`);
+/**
+ * @param {date} date
+ * @return {date} 17/08/20 18:00
+ */
+export const formatDateYyyyMmDdHhMmWithDash = (date) => isDate(date) ? moment(date).format(`DD/MM/YY HH:mm`) : ``;
 
-  return `${days ? isNeededZero(days) + `D ` : ``}${hours ? isNeededZero(hours) + `H ` : ``}${minutes !== 0 || !hours && !days ? isNeededZero(minutes) + `M` : ``}`;
+/**
+ * @param {date} date
+ * @return {date} 2020-08-17T18:00
+ */
+export const formatDateISODdMmYyyyHhMm = (date) => isDate(date) ? moment(date).format(`YYYY-MM-DD[T]HH:mm`) : ``;
+
+export const formatDateMmmDd = (date) => isDate(date) ? moment(date).format(`MMM DD`) : ``;
+
+/**
+ * @param {number} ms
+ * @return {object} {days: number, hours: number, minutes: number}
+ */
+export const convertMsToDHM = (ms) => {
+  const duration = moment.duration(ms);
+  return {
+    days: duration.days(),
+    hours: duration.hours(),
+    minutes: duration.minutes(),
+  };
 };
 
+export const isDateAfter = (date1, date2) => {
+  date1 = moment(date1).format(`YYYY-MM-DD`);
+  date2 = moment(date2).format(`YYYY-MM-DD`);
 
-export const getTimeOfTrip = (d1, d2) => {
-  const {days, hours, minutes} = getTripDuration(d1, d2)._data;
-  return (
-    `${isDate(days, `D`)}
-     ${isDate(hours, `H`)}
-     ${isDate(minutes, `M`)}`
-  );
+  return moment(date1).isAfter(date2);
 };
 
-const isNeededZero = (n) => (n < 10) ? `0${n}` : n;
-
-const isDate = (date, dateName) => {
-  if (!date) {
-    return ``;
-  }
-  return `${isNeededZero(date)}${dateName}`;
+export const isDateBefore = (date1, date2) => {
+  date1 = moment(date1).format(`YYYY-MM-DD`);
+  date2 = moment(date2).format(`YYYY-MM-DD`);
+  return moment(date1).isBefore(date2);
 };
 
-export const getTripDuration = (d1, d2) => moment.duration(moment(d2).diff(d1));
-
-export const isFuturePoint = (date) => {
-  if (date === null) {
-    return false;
-  }
-  return moment(new Date()).isBefore(date, `day`);
-};
-
-export const isPastPoint = (date) => {
-  if (date === null) {
-    return false;
-  }
-  return moment(new Date()).isAfter(date, `day`);
-};
-
-export const sortByTime = (d1, d2) => {
-  const t1 = getTripDuration(d1.start, d1.end)._milliseconds;
-  const t2 = getTripDuration(d2.start, d2.end)._milliseconds;
-  return t2 - t1;
-};
-
-export const sortByDate = (d1, d2) => d1.start.valueOf() - d2.start.valueOf();
+export const addDaysToDate = (date, count = 1) => new Date(moment(date).add(count, `day`).format());

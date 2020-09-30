@@ -1,56 +1,46 @@
-import AbstractView from "../abstract/abstract.js";
-import {MenuTab} from "../../const.js";
+import AbstractView from '../abstract/abstract.js';
+import {TabItem} from '../../const.js';
 
-const createTabsTemplate = () => (
-  `<div class="trip-controls-wrapper">
-    <h2 class="visually-hidden">Switch trip view</h2>
-    <nav class="trip-controls__trip-tabs  trip-tabs">
-      <a class="trip-tabs__btn  trip-tabs__btn--active"  data-tab="${MenuTab.TABLE}" href="#">${MenuTab.TABLE}</a>
-      <a class="trip-tabs__btn" data-tab="${MenuTab.STATS}" href="#">${MenuTab.STATS}</a>
-    </nav>
-  </div>`
-);
+const TABS = Object.values(TabItem);
+const ACTIVE_TAB_CLASS = `trip-tabs__btn--active`;
 
 export default class Tabs extends AbstractView {
-
   constructor() {
     super();
-
-    this._tabClickHandler = this._tabClickHandler.bind(this);
-    this._activeClassName = `trip-tabs__btn--active`;
-    this._click = null;
+    this._tabsClickHandler = this._tabsClickHandler.bind(this);
   }
 
   getTemplate() {
-    return createTabsTemplate();
+    return (
+      `<nav class="trip-controls__trip-tabs  trip-tabs">
+        ${TABS.map((tab) => (
+        `<a class="trip-tabs__btn ${tab === TabItem.TABLE ? ACTIVE_TAB_CLASS : ``}"
+              href="#"
+              data-tab="${tab}"
+            >
+              ${tab}
+            </a>`
+      )).join(``)}
+      </nav>`
+    );
   }
 
-  setTabClickHandler(callback) {
-    this._click = callback;
-    this.getElement()
-    .querySelectorAll(`[data-tab]`)
-    .forEach((tab) => {
-      tab.addEventListener(`click`, this._tabClickHandler);
-    });
+  setClickHandler(callback) {
+    this._tabsClick = callback;
+    this.getElement().addEventListener(`click`, this._tabsClickHandler);
   }
 
-  _setActiveTab(tab) {
-    const currentTab = this.getElement().querySelector(`[data-tab=${tab}]`);
-    const prevActiveTab = currentTab.previousElementSibling || currentTab.nextElementSibling;
-
-    if (currentTab !== null) {
-      currentTab.classList.add(this._activeClassName);
-      prevActiveTab.classList.remove(this._activeClassName);
-
-    }
-  }
-
-  _tabClickHandler(evt) {
+  _tabsClickHandler(evt) {
     evt.preventDefault();
-    if (evt.target.nodeName === `A`) {
-      this._click(evt.target.dataset.tab);
-      this._setActiveTab(evt.target.dataset.tab);
+    const prevActiveTabElement = this.getElement().querySelector(`.${ACTIVE_TAB_CLASS}`);
+    const prevActiveTab = prevActiveTabElement.dataset.tab;
+    prevActiveTabElement.classList.remove(ACTIVE_TAB_CLASS);
+
+    evt.target.classList.add(ACTIVE_TAB_CLASS);
+    const activeTab = evt.target.dataset.tab;
+
+    if (activeTab !== prevActiveTab) {
+      this._tabsClick(activeTab);
     }
   }
-
 }

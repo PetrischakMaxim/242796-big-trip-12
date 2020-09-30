@@ -1,85 +1,57 @@
-import Api from "./api/api.js";
-
-export const AUTHORIZATION = `Basic eo0w590ik29105`;
-export const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
-
-const api = new Api(END_POINT, AUTHORIZATION);
-
-const getDestinations = () => {
-  let result = [];
-  api.getDestinations()
-  .then((desctination) =>
-    desctination.forEach((desct) => result.push(desct)));
-  return result;
+export const PointMessage = {
+  LOADING: `Loading...`,
+  NO_EVENTS: `Click New Event to create your first point`,
+  ERROR: `Error loading data, try again later..`,
 };
 
-const getOffers = () => {
-  let result = {};
-  api.getOffers().then((offers) =>
-    offers.reduce((offerList, offer) => {
-      offerList[offer.type] = offer.offers;
-      return offerList;
-    }, result));
-  return result;
+export const TRANSFERS = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`];
+export const ACTIVITIES = [`Check-in`, `Sightseeing`, `Restaurant`];
+
+export const PointGroupType = {
+  TRANSFER: `Transfer`,
+  ACTVITY: `Activity`,
 };
 
-export const DESTINATIONS = getDestinations();
-export const OFFERS = getOffers();
-
-export const PointType = {
-  TRANSFER: [
-    `Taxi`,
-    `Bus`,
-    `Train`,
-    `Ship`,
-    `Transport`,
-    `Drive`,
-    `Flight`
-  ],
-  ACTIVITY: [
-    `Check-in`,
-    `Sightseeing`,
-    `Restaurant`,
-  ],
+export const pointGroupToTypes = {
+  [PointGroupType.TRANSFER]: TRANSFERS,
+  [PointGroupType.ACTVITY]: ACTIVITIES,
 };
 
-export const {TRANSFER, ACTIVITY} = PointType;
-export const POINT_LIST = [...TRANSFER, ...ACTIVITY];
+const pointGropTypeToPreposition = {
+  [PointGroupType.TRANSFER]: `to`,
+  [PointGroupType.ACTVITY]: `in`,
+};
 
-export const OFFER_LIST = [
-  `Add luggage`,
-  `Switch to comfort class`,
-  `Add meal`,
-  `Choose seats`
-];
+export const pointTypeToPreposition = {
+  'taxi': pointGropTypeToPreposition[PointGroupType.TRANSFER],
+  'bus': pointGropTypeToPreposition[PointGroupType.TRANSFER],
+  'train': pointGropTypeToPreposition[PointGroupType.TRANSFER],
+  'ship': pointGropTypeToPreposition[PointGroupType.TRANSFER],
+  'transport': pointGropTypeToPreposition[PointGroupType.TRANSFER],
+  'drive': pointGropTypeToPreposition[PointGroupType.TRANSFER],
+  'flight': pointGropTypeToPreposition[PointGroupType.TRANSFER],
+  'check-in': pointGropTypeToPreposition[PointGroupType.ACTVITY],
+  'sightseeing': pointGropTypeToPreposition[PointGroupType.ACTVITY],
+  'restaurant': pointGropTypeToPreposition[PointGroupType.ACTVITY],
+};
 
-export const BLANK_POINT = {
-  waypoint: `bus`,
-  price: 1200,
-  info: {
-    name: `Amsterdam`,
-    description: `Amsterdam, a perfect place to stay with a family.`,
-    pictures: [
-      {src: `http://picsum.photos/300/200?r=0.8386231864924261`, description: `Amsterdam park`},
-      {src: `http://picsum.photos/300/200?r=0.40116945351116184`, description: `Amsterdam biggest supermarket`},
-      {src: `http://picsum.photos/300/200?r=0.4030889096915611`, description: `Amsterdam zoo`},
-      {src: `http://picsum.photos/300/200?r=0.9796612528279129`, description: `Amsterdam park`}
-    ]
-  },
-  start: new Date(),
-  end: new Date(),
-  offers: [
-    {title: `Infotainment system`, price: 50},
-    {title: `Order meal`, price: 100},
-    {title: `Choose seats`, price: 190}
-  ],
-  isFavorite: false
+export const pointTypeToEmoji = {
+  'taxi': `🚕`,
+  'bus': `🚌`,
+  'train': `🚂`,
+  'ship': `🛳`,
+  'transport': `🚊`,
+  'drive': `🚗`,
+  'flight': `✈️`,
+  'check-in': `🏨`,
+  'sightseeing': `🏛`,
+  'restaurant': `🍴`,
 };
 
 export const SortType = {
-  DEFAULT: `event`,
-  TIME: `time`,
-  PRICE: `price`,
+  EVENT: `Event`,
+  TIME: `Time`,
+  PRICE: `Price`,
 };
 
 export const UserAction = {
@@ -93,20 +65,22 @@ export const UpdateType = {
   MINOR: `MINOR`,
   MAJOR: `MAJOR`,
   INIT: `INIT`,
-};
-
-export const StatusMessage = {
-  SAVE: `Saving…`,
-  DELETE: `Deleting…`
+  ERROR: `ERROR`,
 };
 
 export const FilterType = {
-  EVERYTHING: `everything`,
-  FUTURE: `future`,
-  PAST: `past`,
+  EVERYTHING: `Everything`,
+  FUTURE: `Future`,
+  PAST: `Past`,
 };
 
-export const MenuTab = {
+export const TabItem = {
   TABLE: `Table`,
-  STATS: `Stats`
+  STATS: `Stats`,
+};
+
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`,
 };

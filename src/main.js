@@ -1,73 +1,114 @@
-import Api from "./api/api.js";
+import ControlsView from "./view/controls/controls.js";
+import TabsView from "./view/tabs/tabs.js";
+import NewPointButtonView from "./view/new-point-button/new-point-button.js";
 
-import {PointsModel, FilterModel} from "./model/index.js";
-import {TabsView, NewPointBtnView, StatsView} from "./view/index.js";
-import {TripPresenter, FilterPresenter, InfoPresenter} from "./presenter/index.js";
+import TripPresenter from "./presenter/trip/trip.js";
+import FilterPresenter from "./presenter/filter/filter.js";
+import InfoPresenter from "./presenter/info/info.js";
+import StatsPresenter from "./presenter/stats/stats.js";
 
-import {render, remove, RenderPosition} from "./utils/dom-utils.js";
-import {MenuTab, UpdateType, AUTHORIZATION, END_POINT} from "./const.js";
+import TripModel from "./model/trip/trip.js";
+import FilterModel from "./model/filter/filter.js";
+
+import {RenderPosition, render} from './utils/dom-utils.js';
+import {TabItem, UpdateType} from './const.js';
+
+import Provider from './api/provider.js';
+import Store from './api/store.js';
+import Api from './api/api.js';
+
+const AUTHORIZATION = `Basic RegregkjHhfre342`;
+const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
+const STORE_PREFIX = `big-trip`;
+const STORE_VER = `v1`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 
-const mainInfoElement = document.querySelector(`.trip-main`);
-const infoContainerElement = mainInfoElement.querySelector(`.trip-controls`);
-const mainElement = document.querySelector(`.page-main`);
-const mainContainerElement = mainElement.querySelector(
-    `.page-body__container`
-);
-
-const pointsModel = new PointsModel();
+const tripModel = new TripModel();
 const filterModel = new FilterModel();
+
+const tripMainElement = document.querySelector(`.trip-main`);
+
+const controlsView = new ControlsView();
+render(tripMainElement, controlsView);
+
 const tabsView = new TabsView();
-const newPointBtnView = new NewPointBtnView();
+render(controlsView.getFilterEventsHeaderElement(), tabsView, RenderPosition.BEFORE_BEGIN);
 
-const tripPresenter = new TripPresenter(mainContainerElement, pointsModel, filterModel, api);
-const filterPresenter = new FilterPresenter(infoContainerElement, filterModel, pointsModel);
-const infoPresenter = new InfoPresenter(mainInfoElement, pointsModel, filterModel);
+const newPointButtonView = new NewPointButtonView();
+render(tripMainElement, newPointButtonView);
 
-let statsView = null;
-const handleTabClick = (tab) => {
-  switch (tab) {
-    case MenuTab.TABLE:
+const bodyContainerElement = document.querySelector(`.page-main`).querySelector(`.page-body__container`);
+const tripEventsElement = bodyContainerElement.querySelector(`.trip-events`);
+
+const tripPresenter = new TripPresenter(tripEventsElement, tripModel, filterModel, apiWithProvider);
+const filterPresenter = new FilterPresenter(controlsView, tripModel, filterModel);
+const infoPresenter = new InfoPresenter(tripMainElement, tripModel, filterModel);
+const statisticsPresenter = new StatsPresenter(bodyContainerElement, tripModel, filterModel);
+
+const newPointButtonClickHandler = () => {
+  newPointButtonView.setEnabled();
+  tripPresenter.createPoint(() => {
+    newPointButtonView.setEnabled(false);
+  });
+};
+
+newPointButtonView.setEnabled(false);
+newPointButtonView.setClickHandler(newPointButtonClickHandler);
+
+const tabsClickHandler = (activeTab) => {
+  statisticsPresenter.changeMode(activeTab);
+
+  switch (activeTab) {
+    case TabItem.TABLE:
       tripPresenter.init();
-      newPointBtnView.toggleButtonState(false);
-      remove(statsView);
+      statisticsPresenter.destroy();
       break;
-    case MenuTab.STATS:
+    case TabItem.STATS:
       tripPresenter.destroy();
-      newPointBtnView.toggleButtonState(true);
-      statsView = new StatsView(pointsModel.getPoints());
-      render(mainContainerElement, statsView.getElement());
+      statisticsPresenter.init();
       break;
   }
 };
 
-render(mainInfoElement, newPointBtnView);
-
-const pointBtnClickHandler = () => {
-  newPointBtnView.toggleButtonState();
-  tripPresenter.createPoint(() => {
-    newPointBtnView.toggleButtonState(false);
-  });
-};
-
-newPointBtnView.toggleButtonState();
-newPointBtnView.setClickHandler(pointBtnClickHandler);
-
-filterPresenter.init();
 tripPresenter.init();
 
-api.getPoints()
-  .then((points) => {
-    pointsModel.setPoints(UpdateType.INIT, points);
+Promise.all([
+  apiWithProvider.getDestinations(),
+  apiWithProvider.getOffers(),
+  apiWithProvider.getPoints()
+])
+  .then((values) => {
+    const [destinations, offers, points] = values;
+
+    tripModel.setDestinations(destinations);
+    tripModel.setOffers(offers);
+    tripModel.setPoints(UpdateType.INIT, points);
+
+    tabsView.setClickHandler(tabsClickHandler);
+    newPointButtonView.setEnabled(false);
+
+    filterPresenter.init();
     infoPresenter.init();
-    render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
-    tabsView.setTabClickHandler(handleTabClick);
-    newPointBtnView.toggleButtonState(false);
   })
-  .catch(()=> {
-    pointsModel.setPoints(UpdateType.INIT, []);
-    infoPresenter.init();
-    render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
-    tabsView.setTabClickHandler(handleTabClick);
+  .catch(() => {
+    tripModel.setError(UpdateType.ERROR);
   });
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+
+  if (apiWithProvider.isSyncRequired) {
+    apiWithProvider.sync()
+      .then((syncedPoints) => {
+        tripModel.setPoints(UpdateType.MINOR, syncedPoints);
+      });
+  }
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
+});

@@ -1,64 +1,113 @@
+import AbstractView from '../abstract/abstract.js';
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import moment from "moment";
-import {getTripDuration, getTotalDuration} from "../../utils/date-utils.js";
-import {changeString} from "../../utils/utils.js";
-import {TRANSFER} from "../../const.js";
-import SmartView from "../smart/smart.js";
+import {capitalizeString, convertDurationValue} from '../../utils/utils.js';
+import {TRANSFERS, pointTypeToEmoji, PointGroupType} from '../../const.js';
 
-const ChartName = {
-  MONEY: `MONEY`,
-  TRANSPORT: `TRANSPORT`,
-  TIME: `TIME SPENT`,
+const CHAR_TYPE = `horizontalBar`;
+const COUNT = 1;
+
+const HeightGap = {
+  MONEY: 6,
+  TRANSPORT: 4,
+  TIME: 6,
 };
-
-const CHART_TYPE = `horizontalBar`;
 
 const Bar = {
-  HEIGHT: 55,
-  THICKNESS: 44,
+  HEIGHT: 70,
+  THICKNESS: 50,
   MIN_LENGTH: 50,
-  BG_COLOR: `#ffffff`,
-  HOVER_BG_COLOR: `#ffffff`,
+  BACKGROUND: `#ffffff`,
+  HOVER_BACKGROUND: `#ffffff`,
+  ANCHOR: `start`,
 };
 
-const BarText = {
+const Tick = {
   COLOR: `#000000`,
-  POSITION: `end`,
-  ALIGN: `start`,
-  FONT_SIZE: 13,
+  PADDING: 5,
+  FONT_SIZE: 18,
 };
 
-const BarTitle = {
+const Title = {
   FONT_COLOR: `#000000`,
-  FONT_SIZE: 23,
+  FONT_SIZE: 15,
   POSITION: `left`,
 };
 
-const BarLabel = {
+const Label = {
   FONT_COLOR: `#000000`,
   PADDING: 5,
-  FONT_SIZE: 13,
-  POSITION: `start`,
+  FONT_SIZE: 10,
+  ANCHOR: `end`,
+  ALIGN: `start`,
 };
 
-const createChartOptions = ({
-  title,
-  labels,
-  barsData,
-  valueFormatter,
-}) => {
+const moneyChartConfig = {
+  key: `price`,
+  datalabelsFormater: (val) => `€ ${val}`,
+  title: `MONEY`,
+};
 
-  return {
+const transportChartConfig = {
+  key: `count`,
+  datalabelsFormater: (val) => `${val}x`,
+  title: `TRANSPORT`,
+};
+
+const timeSpentChartConfig = {
+  key: `duration`,
+  datalabelsFormater: (val) => `${convertDurationValue(val)}`,
+  title: `TIME SPENT`,
+};
+
+const convertToData = (points) => {
+  const chartData = {};
+  points.forEach((point) => {
+    if (!chartData[point.type]) {
+      chartData[point.type] = {
+        label: pointTypeToEmoji[point.type],
+        price: point.price,
+        duration: point.duration,
+        count: COUNT,
+        groupType: TRANSFERS.includes(capitalizeString(point.type))
+          ? PointGroupType.TRANSFER
+          : PointGroupType.ACTVITY,
+      };
+    } else {
+      chartData[point.type].price += point.price;
+      chartData[point.type].duration += point.duration;
+      chartData[point.type].count++;
+    }
+  });
+
+  return chartData;
+};
+
+const renderChart = (chartCtx, chartData, chartConfig) => {
+  const labels = [];
+  const data = [];
+
+  const {
+    key,
+    datalabelsFormater,
+    title,
+  } = chartConfig;
+
+  chartData.forEach((item) => {
+    labels.push(item.label);
+    data.push(item[key]);
+  });
+
+  return new Chart(chartCtx, {
     plugins: [ChartDataLabels],
-    type: CHART_TYPE,
+    type: CHAR_TYPE,
     data: {
       labels,
       datasets: [{
-        data: barsData,
-        backgroundColor: Bar.BG_COLOR,
-        hoverBackgroundColor: Bar.HOVER_BG_COLOR,
-        anchor: BarLabel.POSITION,
+        data,
+        backgroundColor: Bar.BACKGROUND,
+        hoverBackgroundColor: Bar.HOVER_BACKGROUND,
+        anchor: Bar.ANCHOR,
         barThickness: Bar.THICKNESS,
         minBarLength: Bar.MIN_LENGTH,
       }]
@@ -67,27 +116,28 @@ const createChartOptions = ({
       plugins: {
         datalabels: {
           font: {
-            size: BarText.FONT_SIZE,
+            size: Label.FONT_SIZE,
           },
-          color: BarText.COLOR,
-          anchor: BarText.POSITION,
-          align: BarText.ALIGN,
-          formatter: valueFormatter,
+          color: Label.FONT_COLOR,
+          padding: Label.PADDING,
+          anchor: Label.ANCHOR,
+          align: Label.ALIGN,
+          formatter: datalabelsFormater,
         }
       },
       title: {
         display: true,
         text: title,
-        fontColor: BarTitle.FONT_COLOR,
-        fontSize: BarTitle.FONT_SIZE,
-        position: BarTitle.POSITION,
+        fontColor: Title.FONT_COLOR,
+        fontSize: Title.FONT_SIZE,
+        position: Title.POSITION,
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: BarLabel.FONT_COLOR,
-            padding: BarLabel.PADDING,
-            fontSize: BarLabel.FONT_SIZE,
+            fontColor: Tick.FONT_COLOR,
+            padding: Tick.PADDING,
+            fontSize: Tick.FONT_SIZE,
           },
           gridLines: {
             display: false,
@@ -101,7 +151,7 @@ const createChartOptions = ({
           },
           gridLines: {
             display: false,
-            drawBorder: false
+            drawBorder: false,
           },
         }],
       },
@@ -112,132 +162,86 @@ const createChartOptions = ({
         enabled: false,
       }
     }
-  };
-};
-
-const createChartsData = (points) => {
-  const waypoints = [...new Set(points.map((point)=> point.waypoint))];
-
-  const choisedPoints = waypoints.map((waypoint) => {
-    return Object.assign({
-      waypoint,
-      points: points.filter((point) => point.waypoint === waypoint)
-    });
   });
-
-  const getTransferData = () => {
-    const transfers = choisedPoints
-      .filter((point) =>
-        TRANSFER.includes(changeString(point.waypoint)));
-
-    return {
-      transfer: transfers.map((type) => type.waypoint),
-      count: transfers.map((type) => type.points.length)
-    };
-  };
-
-  const getMoneyData = () => choisedPoints
-    .map((type) => type.points
-    .reduce((total, point) => total + point.price, 0));
-
-  const getTotalTime = () => {
-    return choisedPoints.map((i)=> {
-      return i.points.reduce((total, point) =>
-        total + getTripDuration(point.start, point.end), moment.duration(0));
-    });
-  };
-
-  return {
-    waypoints,
-    money: getMoneyData(),
-    transport: getTransferData(),
-    time: getTotalTime(),
-  };
-
 };
 
-const createStatsItem = (name) => (
-  `<div class="statistics__item statistics__item--${name.toLowerCase()}">
-      <canvas class="statistics__chart  statistics__chart--${name.toLowerCase()}" width="900"></canvas>
-  </div>`
-);
-
-const createStatsTemplate = () => (
-  `<section class="statistics">
-    <h2 class="visually-hidden">Trip statistics</h2>
-    ${Object.keys(ChartName).map(createStatsItem).join(``)}
-  </section>`
-);
-
-const renderMoneyChart = (container, chartsData) => {
-  container.height = Bar.HEIGHT * chartsData.waypoints.length;
-
-  return new Chart(container, createChartOptions({
-    title: ChartName.MONEY,
-    labels: chartsData.waypoints,
-    barsData: chartsData.money,
-    valueFormatter: (val) => `€ ${val}`,
-  }));
+const createStatisticsTemplate = () => {
+  return (
+    `<section class="statistics">
+      <h2 class="visually-hidden">
+        Trip statistics
+      </h2>
+      <div class="statistics__item statistics__item--money">
+        <canvas class="statistics__chart  statistics__chart--money" width="900">
+        </canvas>
+      </div>
+      <div class="statistics__item statistics__item--transport">
+        <canvas class="statistics__chart  statistics__chart--transport" width="900">
+        </canvas>
+      </div>
+      <div class="statistics__item statistics__item--time-spend">
+        <canvas class="statistics__chart  statistics__chart--time" width="900">
+        </canvas>
+      </div>
+    </section>`
+  );
 };
 
-const renderTransportChart = (container, chartsData) => {
-  container.height = Bar.HEIGHT * chartsData.transport.transfer.length;
-
-  return new Chart(container, createChartOptions({
-    title: ChartName.TRANSPORT,
-    labels: chartsData.transport.transfer,
-    barsData: chartsData.transport.count,
-    valueFormatter: (val) => `${val}x`,
-  }));
-};
-
-const renderTimeChart = (container, chartsData) => {
-  container.height = Bar.HEIGHT * chartsData.waypoints.length;
-
-  return new Chart(container, createChartOptions({
-    title: ChartName.TIME,
-    labels: chartsData.waypoints,
-    barsData: chartsData.time,
-    valueFormatter: (val) => `${getTotalDuration(val)}`,
-  }));
-};
-
-export default class Stats extends SmartView {
+export default class Stats extends AbstractView {
 
   constructor(points) {
     super();
-    this._data = points;
-    this._moneyChart = null;
-    this._transportChart = null;
-    this._timeChart = null;
+    this._data = convertToData(points);
 
-    this._setCharts(this._data);
+    this._setChart();
   }
+
 
   getTemplate() {
-    return createStatsTemplate();
+    return createStatisticsTemplate();
   }
 
-  removeElement() {
-    super.removeElement();
+  _getMoneyChartData() {
+    return Object.values(this._data).sort((itemA, itemB) => itemB.price - itemA.price);
   }
 
-  _resetCharts() {
-    if (this._moneyChart || this._transportChart || this._timeChart) {
-      this._moneyChart = null;
-      this._transportChart = null;
-      this._timeChart = null;
-    }
+  _getTransportChartData() {
+    return Object.values(this._data).
+      filter((item) => item.groupType === PointGroupType.TRANSFER)
+      .sort((itemA, itemB) => itemB.count - itemA.count);
   }
 
-  _setCharts(points) {
-    this._resetCharts();
-    const chartsData = createChartsData(points);
-    const moneyCtx = this.getElement().querySelector(`.statistics__chart--money`);
-    const transportCtx = this.getElement().querySelector(`.statistics__chart--transport`);
-    const timeCtx = this.getElement().querySelector(`.statistics__chart--time`);
-    this._moneyChart = renderMoneyChart(moneyCtx, chartsData);
-    this._transportChart = renderTransportChart(transportCtx, chartsData);
-    this._timeChart = renderTimeChart(timeCtx, chartsData);
+  _getTimeSpentChartData() {
+    return Object.values(this._data).sort((itemA, itemB) => itemB.duration - itemA.duration);
+  }
+
+  _setChart() {
+
+    const element = this.getElement();
+    const moneyCtx = element.querySelector(`.statistics__chart--money`);
+    const transportCtx = element.querySelector(`.statistics__chart--transport`);
+    const timeSpendCtx = element.querySelector(`.statistics__chart--time`);
+
+    moneyCtx.height = Bar.HEIGHT * HeightGap.MONEY;
+    transportCtx.height = Bar.HEIGHT * HeightGap.MONEY;
+    timeSpendCtx.height = Bar.HEIGHT * HeightGap.MONEY;
+
+    this._moneyChart = renderChart(
+        moneyCtx,
+        this._getMoneyChartData(),
+        moneyChartConfig
+    );
+
+    this._transportChart = renderChart(
+        transportCtx,
+        this._getTransportChartData(),
+        transportChartConfig
+    );
+
+    this._timeSpentChart = renderChart(
+        timeSpendCtx,
+        this._getTimeSpentChartData(),
+        timeSpentChartConfig
+    );
   }
 }

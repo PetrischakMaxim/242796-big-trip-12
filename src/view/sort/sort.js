@@ -1,63 +1,69 @@
-import AbstractView from "../abstract/abstract.js";
-import {SortType} from "../../const.js";
+import AbstractView from '../abstract/abstract.js';
+import {SortType} from '../../const.js';
 
-const createSortFormTemplate = (currentSortType) => (
-  `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-    <span class="trip-sort__item  trip-sort__item--day">Day</span>
-    <div class="trip-sort__item  trip-sort__item--event">
-      <input data-sort-type="${SortType.DEFAULT}" id="sort-event" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-event"
-      ${currentSortType === SortType.DEFAULT ? `checked` : ``}>
-      <label class="trip-sort__btn" for="sort-event">Event</label>
-    </div>
-    <div class="trip-sort__item  trip-sort__item--time">
-      <input data-sort-type="${SortType.TIME}" id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time"
-      ${currentSortType === SortType.TIME ? `checked` : ``}>
-      <label class="trip-sort__btn" for="sort-time">
-        Time
-        <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
-          <path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"></path>
-        </svg>
-      </label>
-    </div>
-    <div class="trip-sort__item  trip-sort__item--price">
-      <input data-sort-type="${SortType.PRICE}" id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price"
-      ${currentSortType === SortType.PRICE ? `checked` : ``}>
-      <label class="trip-sort__btn" for="sort-price">
-        Price
-        <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
-          <path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"></path>
-        </svg>
-      </label>
-    </div>
-    <span class="trip-sort__item trip-sort__item--offers">Offers</span>
-  </form>`
+const SORT_ICON = (
+  `<svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
+    <path
+      d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"
+    />
+  </svg>`
 );
 
+const createSortTemplate = (defaultSortType) => {
+  return (
+    `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+      <span class="trip-sort__item  trip-sort__item--day">
+        Day
+      </span>
+
+      ${Object.values(SortType)
+        .map((sort) => {
+          const key = sort.toLowerCase();
+          return (
+            `<div class="trip-sort__item  trip-sort__item--${key}">
+              <input
+                id="sort-${key}"
+                class="trip-sort__input  visually-hidden"
+                type="radio" name="trip-sort"
+                value="sort-${key}"
+                ${sort === defaultSortType ? `checked` : ``}
+                data-sort-type="${sort}"
+              >
+              <label class="trip-sort__btn" for="sort-${key}">
+                ${sort}
+                ${sort === defaultSortType ? `` : SORT_ICON}
+              </label>
+            </div>`
+          );
+        })
+        .join(``)}
+
+        <span class="trip-sort__item  trip-sort__item--offers">
+          Offers
+        </span>
+    </form>`
+  );
+};
+
 export default class Sort extends AbstractView {
-
-  constructor(currentSortType) {
+  constructor(sortType = SortType.EVENT) {
     super();
-
-    this._currentSortType = currentSortType;
-    this._sortChangeHandler = this._sortChangeHandler.bind(this);
-    this._sortChange = null;
+    this._sortType = sortType;
+    this._formChangeHandler = this._formChangeHandler.bind(this);
+    this._formChange = null;
   }
 
   getTemplate() {
-    return createSortFormTemplate(this._currentSortType);
+    return createSortTemplate(this._sortType);
   }
 
-  setSortChangeHandler(callback) {
-    this._sortChange = callback;
-    this.getElement().addEventListener(`click`, this._sortChangeHandler);
+  setChangeHandler(callback) {
+    this._formChange = callback;
+    this.getElement().addEventListener(`change`, this._formChangeHandler);
   }
 
-  _sortChangeHandler(evt) {
-    if (evt.target.tagName !== `INPUT`) {
-      return;
-    }
-
+  _formChangeHandler(evt) {
     evt.preventDefault();
-    this._sortChange(evt.target.dataset.sortType);
+    this._formChange(evt.target.dataset.sortType);
   }
 }
