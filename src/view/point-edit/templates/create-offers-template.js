@@ -1,4 +1,4 @@
-export const createOffersTemplate = (renderedOffers) => {
+export const createOffersTemplate = (renderedOffers, isDisabled) => {
 
   return (
     `<section class="event__section  event__section--offers">
@@ -9,6 +9,7 @@ export const createOffersTemplate = (renderedOffers) => {
         ${renderedOffers
           .map((offer, index) => {
             const {title, price} = offer;
+
             return (
               `<div class="event__offer-selector">
                 <input
@@ -17,7 +18,8 @@ export const createOffersTemplate = (renderedOffers) => {
                   data-title="${title}"
                   data-price="${price}"
                   type="checkbox" name="event-offer-${index}"
-                  ${offer.isChecked ? `checked` : ``}
+                  ${offer.isActivated ? `checked` : ``}
+                  ${isDisabled ? `disabled` : ``}
                 >
                  <label class="event__offer-label" for="event-offer-${index}">
                   <span class="event__offer-title">

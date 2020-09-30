@@ -302,8 +302,6 @@ main {
 .trip-tabs__btn--active:active {
   cursor: default;
   opacity: 1;
-
-  pointer-events: none;
 }
 
 .trip-filters {
@@ -698,8 +696,6 @@ main {
 .event--disabled {
   -webkit-box-shadow: 0 11px 20px #078ff0;
           box-shadow: 0 11px 20px #078ff0;
-
-  pointer-events: none;
 }
 
 .event__header {

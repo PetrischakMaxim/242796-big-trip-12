@@ -5,13 +5,14 @@ const FAVORITE_ICON = (
   </svg>`
 );
 
-export const createFavoriteTemplate = (isFavorite) => {
+export const createFavoriteTemplate = (isFavorite, isDisabled) => {
   return (
     `<input
       id="event-favorite-1"
-      class="event__favorite-checkbox visually-hidden"
+      class="event__favorite-checkbox  visually-hidden"
       type="checkbox" name="event-favorite"
       ${isFavorite ? `checked` : ``}
+      ${isDisabled ? `disabled` : ``}
     >
       <label class="event__favorite-btn" for="event-favorite-1">
       <span class="visually-hidden">Add to favorite</span>

@@ -1,4 +1,4 @@
-import {createElement} from "../../utils/dom-utils.js";
+import {createElement} from "../../utils/dom-utils";
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
@@ -13,7 +13,7 @@ export default class Abstract {
   }
 
   getTemplate() {
-    throw new Error(`Abstract method not implemented: getTemplate`);
+    throw new Error(`Abstract method not implemented: getTemplate.`);
   }
 
   getElement() {
@@ -36,4 +36,3 @@ export default class Abstract {
     }, SHAKE_ANIMATION_TIMEOUT);
   }
 }
-
