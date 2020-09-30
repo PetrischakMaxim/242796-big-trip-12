@@ -4,51 +4,32 @@ import flatpickr from "flatpickr";
 import "../../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 import {capitalizeString} from "../../utils/utils.js";
-import {formatDateToPlaceholder} from "../../utils/date-utils.js";
+
 
 import {
-  DESTINATIONS,
   BLANK_POINT,
-  OFFERS,
   PointType,
 } from "../../const.js";
 
-
-const createPhotoList = (pictures) => (
-  `<div class="event__photos-tape">
-    ${pictures.map(({src, description}) => `
-      <img class="event__photo" src="${src}" alt="${description}"/>
-    `).join(``)}
-  </div>`
-);
-
-const createDetailsTemplate = (info) => (
-  `<section class="event__section  event__section--destination">
-    <h3 class="event__section-title  event__section-title--destination">${info.name}</h3>
-    <p class="event__destination-description">
-      ${info.description}
-    </p>
-    <div class="event__photos-container">
-      ${createPhotoList(info.pictures)}
-    </div>
-  </section>`
-);
+import {createDetailsTemplate} from './templates/create-details-template.js';
+import {createFavoriteTemplate} from './templates/create-favorite-template.js';
+import {createTimeTemplate} from './templates/create-time-template.js';
 
 const isOfferInclude = (offers, currentOffer) =>
   offers.some((offer) => (
     offer.title === currentOffer.title && offer.price === currentOffer.price
   ));
 
-const convertOffers = (offers, checkedOffers) =>
+const convertOffers = (offers, renderedOffers) =>
   offers.map((offer) => {
     return {
       title: offer.title,
       price: offer.price,
-      isChecked: checkedOffers.length > 0 && isOfferInclude(checkedOffers, offer),
+      isChecked: renderedOffers.length > 0 && isOfferInclude(renderedOffers, offer),
     };
   });
 
-const getCheckedOffers = (renderedOffers) => renderedOffers.reduce((offers, offer) => {
+const getRenderedPoints = (renderedOffers) => renderedOffers.reduce((offers, offer) => {
   if (offer.isChecked) {
     offers.push({
       title: offer.title,
@@ -58,15 +39,12 @@ const getCheckedOffers = (renderedOffers) => renderedOffers.reduce((offers, offe
   return offers;
 }, []);
 
-const createPointFormTemplate = (data, isNewPoint = false) => {
+const createPointFormTemplate = (data, destinations, isNewPoint = false) => {
 
   const {
     id,
     waypoint,
     price,
-    start,
-    end,
-    checkedOffers,
     info,
     isFavorite,
     isDisabled,
@@ -96,42 +74,6 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
       </fieldset>`
     );
   };
-
-  const createOffers = (offrs) => {
-
-    const offersTemplate = offrs.map((offer, ind)=> {
-      return (
-        `<div class="event__offer-selector">
-          <input class="event__offer-checkbox visually-hidden" id="event-offer-${waypoint.toLowerCase()}-${ind}"
-            type="checkbox" name="event-offer-${waypoint.toLowerCase()}"
-            data-title="${offer.title}" data-price=${offer.price} ${offer.isChecked ? `checked` : ``}>
-          <label class="event__offer-label"
-            for="event-offer-${waypoint.toLowerCase()}-${ind}">
-            <span class="event__offer-title">${offer.title}</span> + €&nbsp;
-            <span class="event__offer-price">${offer.price}</span>
-          </label>
-        </div>`);
-    }).join(``);
-
-    return (!offrs.length) ? `` :
-      `<section class="event__section  event__section--offers">
-        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-        <div class="event__available-offers">${offersTemplate}</div>
-      </section>`;
-  };
-
-  const createTimeGroup = () => (`
-  <div class="event__field-group  event__field-group--time">
-    <label class="visually-hidden" for="event-start-time">From</label>
-    <input class="event__input event__input--time"
-      id="event-start-time" type="text" data-time="start" name="event-start-time"
-      value="${formatDateToPlaceholder(start)}"> —
-    <label class="visually-hidden" for="event-end-time">To</label>
-    <input class="event__input  event__input--time"
-      id="event-end-time" type="text" data-time="end" name="event-end-time"
-      value="${formatDateToPlaceholder(end)}">
-   </div>`
-  );
 
   const createDesctinationList = (list) => (
     `<datalist id="destination-list-${id}">
@@ -166,7 +108,7 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
       <input class="event__input  event__input--destination"
         id="event-destination-${id}" type="text" name="event-destination"
         value="${he.encode(info.name)}" list="destination-list-${id}" required>
-      ${createDesctinationList(DESTINATIONS)}
+      ${createDesctinationList(destinations)}
     </div>`
   );
 
@@ -180,22 +122,12 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
     </div>`
   );
 
-  const favoriteInputTemplate = (
-    `<input id="event-favorite-${id}" class="event__favorite-checkbox  visually-hidden"
-        type="checkbox" name="event-favorite" ${(isFavorite) ? `checked` : ``}>
-     <label class="event__favorite-btn" for="event-favorite-${id}"><span class="visually-hidden">Add to favorite</span>
-        <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
-        <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"></path>
-        </svg>
-     </label>`
-  );
-
   const createFormTemplate = () => (
     `<form class="trip-events__item event event--edit ${isDisabled ? `event--disabled` : ``}" action="#" method="post">
         <header class="event__header">
           ${pointTypeWrapper}
           ${pointDestinationTemplate}
-          ${createTimeGroup()}
+          ${createTimeTemplate(data)}
           ${pointPriceTemplate}
           <button class="event__save-btn btn btn--blue" type="submit"}>
             ${isSaving ? `Saving…` : `Save`}
@@ -205,16 +137,13 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
               ${isDeleting ? `Deleting…` : `Delete`}
               ` : `Cancel`}
           </button>
-          ${(!isNewPoint) ? `${favoriteInputTemplate}` : ``}
+          ${(!isNewPoint) ? `${createFavoriteTemplate(isFavorite)}` : ``}
           ${(!isNewPoint) ? `
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
           </button>` : ``}
         </header>
-        <section class="event__details">
-            ${createOffers(checkedOffers)}
-            ${createDetailsTemplate(info)}
-        </section>
+        ${createDetailsTemplate(data)}
     </form>`
   );
 
@@ -223,10 +152,15 @@ const createPointFormTemplate = (data, isNewPoint = false) => {
 
 export default class PointForm extends SmartView {
 
-  constructor(point = BLANK_POINT, isNewPoint = false) {
+  constructor(point = BLANK_POINT, destinations, offers, isNewPoint = false) {
     super();
+
     this._data = PointForm.parsePointToData(point);
+    this._destinations = destinations;
+    this._offers = offers;
+
     this._isNewPoint = isNewPoint;
+
 
     this._onSubmitHandler = this._onSubmitHandler.bind(this);
     this._onCloseClickHandler = this._onCloseClickHandler.bind(this);
@@ -244,6 +178,7 @@ export default class PointForm extends SmartView {
     this._onDeleteClick = null;
 
     this._setInnerHandlers();
+
   }
 
   removeElement() {
@@ -264,9 +199,9 @@ export default class PointForm extends SmartView {
 
   getTemplate() {
     return (!this._isNewPoint) ?
-      createPointFormTemplate(this._data)
+      createPointFormTemplate(this._data, this._destinations)
       :
-      createPointFormTemplate(this._data, true);
+      createPointFormTemplate(this._data, this.destinations, true);
   }
 
   setFormSubmitHandler(callback) {
@@ -342,7 +277,7 @@ export default class PointForm extends SmartView {
     evt.preventDefault();
     const {title, price} = evt.target.dataset;
 
-    const checkedOffers = this._data.checkedOffers.map((offer) => {
+    const renderedOffers = this._data.renderedOffers.map((offer) => {
       if (offer.title !== title && offer.price !== Number(price)) {
         return offer;
       }
@@ -354,7 +289,7 @@ export default class PointForm extends SmartView {
     });
 
     this.updateData({
-      checkedOffers
+      renderedOffers
     }, true);
 
   }
@@ -368,7 +303,7 @@ export default class PointForm extends SmartView {
       return;
     }
 
-    const choisedDestintation = DESTINATIONS.filter((desct) => desct.name === value);
+    const choisedDestintation = this._destinations.filter((desct) => desct.name === value);
     const {name, description, pictures} = choisedDestintation[0];
 
     this.updateData({
@@ -382,15 +317,15 @@ export default class PointForm extends SmartView {
 
   _typeToggleHandler(evt) {
     evt.preventDefault();
-    const waypointOffers = OFFERS[evt.target.value];
+    const waypointOffers = this._offers[evt.target.value];
 
-    const checkedOffers = waypointOffers.length > 0
+    const renderedOffers = waypointOffers.length > 0
       ? convertOffers(waypointOffers, [])
       : [];
 
     this.updateData({
       waypoint: capitalizeString(evt.target.value),
-      checkedOffers
+      renderedOffers
     });
   }
 
@@ -463,14 +398,15 @@ export default class PointForm extends SmartView {
 
   static parsePointToData(point) {
     const {waypoint} = point;
-    const waypointOffers = OFFERS[waypoint];
+    console.log(this._offers);
+    const waypointOffers = this._offers[waypoint];
 
-    const checkedOffers = (waypointOffers && waypointOffers.length > 0)
+    const renderedOffers = (waypointOffers && waypointOffers.length > 0)
       ? convertOffers(waypointOffers, point.offers)
       : [];
 
     return Object.assign({}, point, {
-      checkedOffers,
+      renderedOffers,
       isDisabled: false,
       isSaving: false,
       isDeleting: false
@@ -479,10 +415,10 @@ export default class PointForm extends SmartView {
 
   static parseDataToPoint(data) {
     data = Object.assign({}, data, {
-      offers: getCheckedOffers(data.checkedOffers),
+      offers: getRenderedPoints(data.renderedOffers),
     });
 
-    delete data.checkedOffers;
+    delete data.renderedOffers;
     delete data.isDisabled;
     delete data.isSaving;
     delete data.isDeleting;

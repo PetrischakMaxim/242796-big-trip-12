@@ -1,9 +1,4 @@
-import Api from "./api/api.js";
 
-export const AUTHORIZATION = `Basic eo0w590ik21305`;
-export const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
-
-const api = new Api(END_POINT, AUTHORIZATION);
 
 export const PointType = {
   TRANSFER: [
@@ -84,24 +79,3 @@ export const MenuTab = {
   TABLE: `Table`,
   STATS: `Stats`
 };
-
-const getDestinations = () => {
-  let result = [];
-  api.getDestinations()
-  .then((desctination) =>
-    desctination.forEach((desct) => result.push(desct)));
-  return result;
-};
-
-const getOffers = () => {
-  let result = {};
-  api.getOffers().then((offers) =>
-    offers.reduce((offerList, offer) => {
-      offerList[offer.type] = offer.offers;
-      return offerList;
-    }, result));
-  return result;
-};
-
-export const DESTINATIONS = getDestinations();
-export const OFFERS = getOffers();

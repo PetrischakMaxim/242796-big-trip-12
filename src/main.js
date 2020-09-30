@@ -12,7 +12,10 @@ import FilterPresenter from "./presenter/filter.js";
 import InfoPresenter from "./presenter/info.js";
 
 import {render, remove, RenderPosition} from "./utils/dom-utils.js";
-import {MenuTab, UpdateType, AUTHORIZATION, END_POINT} from "./const.js";
+import {MenuTab, UpdateType} from "./const.js";
+
+const AUTHORIZATION = `Basic eo0w590ik21305`;
+const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
@@ -75,13 +78,30 @@ const handleTabClick = (tab) => {
 newPointBtnView.setEnabled();
 newPointBtnView.setClickHandler(pointBtnClickHandler);
 
-filterPresenter.init();
 tripPresenter.init();
 
-api.getPoints().then((points) => {
+Promise.all([
+  api.getDestinations(),
+  api.getOffers(),
+  api.getPoints()
+]).then((values) => {
+  const [destinations, offers, points] = values;
+  pointsModel.setDestinations(destinations);
+  pointsModel.setOffers(offers);
   pointsModel.setPoints(UpdateType.INIT, points);
+
+
+  filterPresenter.init();
   infoPresenter.init();
   render(infoContainerElement, tabsView, RenderPosition.AFTERBEGIN);
   tabsView.setTabClickHandler(handleTabClick);
   newPointBtnView.setEnabled(false);
 });
+
+
+// .catch((e) => {
+//   console.log(e);
+//   pointsModel.setError(UpdateType.ERROR);
+// });
+
+

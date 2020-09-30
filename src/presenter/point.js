@@ -89,18 +89,21 @@ export default class Point {
     };
 
     switch (state) {
+
       case State.SAVING:
         this._pointEditView.updateData({
           isDisabled: true,
           isSaving: true
         });
         break;
+
       case State.DELETING:
         this._pointEditView.updateData({
           isDisabled: true,
           isDeleting: true
         });
         break;
+
       case State.ABORTING:
         this._pointView.shake(resetFormState);
         this._pointEditView.shake(resetFormState);

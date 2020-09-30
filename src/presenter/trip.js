@@ -41,6 +41,7 @@ export default class Trip {
 
     this._messageNoPointsView = null;
     this._messageLoadingView = null;
+    this._messageErrorView = null;
     this._sortView = null;
 
     this._pointNewPresenter = new PointNewPresenter(this._dayListView, this._actionViewHandler);
@@ -80,6 +81,14 @@ export default class Trip {
     }
 
     return filteredPoints;
+  }
+
+  _getDestinations() {
+    return this._pointsModel.getDestinations();
+  }
+
+  _getOffers() {
+    return this._pointsModel.getOffers();
   }
 
   _modeChangeHandler() {
@@ -124,9 +133,10 @@ export default class Trip {
   }
 
   _eventModelHandler(updateType, data) {
+
     switch (updateType) {
       case UpdateType.PATCH:
-        this._pointPresenter.get(data.id).init(data);
+        this._pointPresenter.get(data.id).init(data, this._getDestinations(), this._getOffers());
         break;
       case UpdateType.MINOR:
         this._clearTrip();
@@ -144,6 +154,7 @@ export default class Trip {
       case UpdateType.ERROR:
         remove(this._messageLoadingView);
         this._renderError();
+        this._clearTrip();
         break;
     }
   }
@@ -192,8 +203,7 @@ export default class Trip {
         this._actionViewHandler,
         this._modeChangeHandler
     );
-
-    pointPresenter.init(point);
+    pointPresenter.init(point, this._getDestinations(), this._getOffers());
     this._pointPresenter.set(point.id, pointPresenter);
   }
 
@@ -234,7 +244,6 @@ export default class Trip {
         dayDate = pointDay;
       }
     }
-
   }
 
   _clearTrip(resetSortType = false) {
