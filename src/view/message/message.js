@@ -8,10 +8,6 @@ export default class Message extends AbstractView {
   }
 
   getTemplate() {
-    return (`
-    <p class="trip-events__msg">
-      ${this._message}
-    </p>`
-    );
+    return `<p class="trip-events__msg">${this._message}</p>`;
   }
 }
