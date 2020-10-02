@@ -1,13 +1,11 @@
 import {extend} from '../utils/utils';
 
-
 const Key = {
   POINTS: `points`,
   OFFERS: `offers`,
   DESTINATIONS: `destinations`,
   SYNC_REQUIRED: `sync_required`,
 };
-
 
 export default class Store {
   constructor(key, storage) {

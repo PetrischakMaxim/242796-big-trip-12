@@ -135,12 +135,14 @@ export default class PointEdit extends SmartView {
 
   setRollupButtonClickHandler(callback) {
     this._rollupButtonClick = callback;
-    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._rollupButtonClickHandler);
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, this._rollupButtonClickHandler);
   }
 
   setFavoriteCheckboxClickHandler(callback) {
     this._favoriteCheckboxClick = callback;
-    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`click`, this._favoriteCheckboxClickHandler);
+    this.getElement().querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`click`, this._favoriteCheckboxClickHandler);
   }
 
   restoreHandlers() {
@@ -197,7 +199,7 @@ export default class PointEdit extends SmartView {
           'time_24hr': true,
           'dateFormat': `d/m/y H:i`,
           'defaultDate': this._data.start || new Date(),
-          'maxDate': this._data.end,
+          'minDate': this._data.start || new Date(),
           'onChange': this._startDateInputChangeHandler,
         }
     );
@@ -247,13 +249,9 @@ export default class PointEdit extends SmartView {
   _favoriteCheckboxClickHandler(evt) {
     evt.preventDefault();
 
-    this.updateData(extend(this._point,
-        {
-          isFavorite: evt.target.checked,
-        })
-    );
-
-    this._favoriteCheckboxClick(PointEdit.parseDataToPoint(this._data));
+    this.updateData({
+      isFavorite: evt.target.checked,
+    });
   }
 
   _priceInputChangeHandler(evt) {

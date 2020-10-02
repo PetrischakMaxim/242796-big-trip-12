@@ -8,21 +8,16 @@ import MessageView from '../../view/message/message.js';
 import PointPresenter from '../point/point.js';
 import PointNewPresenter from '../point-new/point-new.js';
 
-import {
-  formatDateISODdMmYyyyHhMm,
-} from '../../utils/date-utils';
+import {formatDateISODdMmYyyyHhMm} from '../../utils/date-utils.js';
 
 import {
   RenderPosition,
   render,
   remove,
   getElement,
-} from '../../utils/dom-utils';
+} from '../../utils/dom-utils.js';
 
-import {
-  sortPointDurationDown,
-  sortPointPriceDown,
-} from '../../utils/sort-utils.js';
+import {sortPointDurationDown, sortPointPriceDown} from '../../utils/sort-utils.js';
 
 import {
   FilterType,
@@ -31,7 +26,7 @@ import {
   UpdateType,
   UserAction,
   State,
-} from '../../const';
+} from '../../const.js';
 
 import {filter} from '../../utils/filter-utils.js';
 
@@ -61,9 +56,9 @@ const groupPointsByDays = (points) => points
 
 
 export default class Trip {
-  constructor(tripContainer, tripModel, filterModel, api) {
-    this._tripContainerElement = getElement(tripContainer);
-    this._tripModel = tripModel;
+  constructor(container, tripModel, filterModel, api) {
+    this._containerElement = getElement(container);
+    this._model = tripModel;
     this._filterModel = filterModel;
     this._api = api;
 
@@ -84,11 +79,11 @@ export default class Trip {
     this._viewActionHandler = this._viewActionHandler.bind(this);
     this._modelEventHandler = this._modelEventHandler.bind(this);
 
-    this._pointNewPresenter = new PointNewPresenter(this._tripContainerElement, this._viewActionHandler);
+    this._pointNewPresenter = new PointNewPresenter(this._containerElement, this._viewActionHandler);
   }
 
   init() {
-    this._tripModel.add(this._modelEventHandler);
+    this._model.add(this._modelEventHandler);
     this._filterModel.add(this._modelEventHandler);
 
 
@@ -98,20 +93,20 @@ export default class Trip {
   destroy() {
     this._clear({isResetSortType: true});
 
-    this._tripModel.remove(this._modelEventHandler);
+    this._model.remove(this._modelEventHandler);
     this._filterModel.remove(this._modelEventHandler);
   }
 
   createPoint(callback) {
     this._currentSortType = SortType.EVENT;
-    const destinations = this._tripModel.getDestinations();
-    const offers = this._tripModel.getOffers();
+    const destinations = this._model.getDestinations();
+    const offers = this._model.getOffers();
     this._filterModel.set(UpdateType.MINOR, FilterType.EVERYTHING);
     this._pointNewPresenter.init(destinations, offers, callback);
   }
 
   _getPoints() {
-    const points = this._tripModel.getPoints();
+    const points = this._model.getPoints();
     const filterType = this._filterModel.get();
     const filteredPoints = filterType === FilterType.EVERYTHING
       ? points
@@ -128,11 +123,11 @@ export default class Trip {
   }
 
   _getDestinations() {
-    return this._tripModel.getDestinations();
+    return this._model.getDestinations();
   }
 
   _getOffers() {
-    return this._tripModel.getOffers();
+    return this._model.getOffers();
   }
 
   _sortChangeHandler(sortType) {
@@ -146,7 +141,7 @@ export default class Trip {
 
   _renderSort() {
     this._sortView = new SortView(this._currentSortType);
-    render(this._tripContainerElement, this._sortView, BEFORE_END);
+    render(this._containerElement, this._sortView, BEFORE_END);
     this._sortView.setChangeHandler(this._sortChangeHandler);
   }
 
@@ -179,11 +174,11 @@ export default class Trip {
 
   _createEventDay(points, date, counter) {
     const dayCount = counter + 1;
-    const tripPointsCount = this._getPoints().length;
+    const pointsCount = this._getPoints().length;
 
     const dayView = new DayView({
       dayCount,
-      isCountRender: tripPointsCount > 1 && points.length < tripPointsCount,
+      isCountRender: pointsCount > 1 && points.length < pointsCount,
       date,
     });
 
@@ -226,22 +221,22 @@ export default class Trip {
         BEFORE_END
     );
 
-    render(this._tripContainerElement, this._daysView, BEFORE_END);
+    render(this._containerElement, this._daysView, BEFORE_END);
   }
 
   _renderNoEvents() {
     this._pointMessageNoEventsView = new MessageView(PointMessage.NO_EVENTS);
-    render(this._tripContainerElement, this._pointMessageNoEventsView, BEFORE_END);
+    render(this._containerElement, this._pointMessageNoEventsView, BEFORE_END);
   }
 
   _renderLoading() {
     this._pointMessageLoadingView = new MessageView(PointMessage.LOADING);
-    render(this._tripContainerElement, this._pointMessageLoadingView, BEFORE_END);
+    render(this._containerElement, this._pointMessageLoadingView, BEFORE_END);
   }
 
   _renderError() {
     this._pointMessageErrorView = new MessageView(PointMessage.ERROR);
-    render(this._tripContainerElement, this._pointMessageErrorView, BEFORE_END);
+    render(this._containerElement, this._pointMessageErrorView, BEFORE_END);
   }
 
   _render() {
@@ -250,7 +245,7 @@ export default class Trip {
       return;
     }
 
-    if (!this._tripModel.isEmpty()) {
+    if (!this._model.isEmpty()) {
       const points = this._getPoints();
       this._renderEvents(points);
       return;
@@ -350,7 +345,7 @@ export default class Trip {
         this._pointPresenter.get(update.id).setViewState(State.SAVING);
         this._api.updatePoint(update)
             .then((response) => {
-              this._tripModel.updatePoint(updateType, response);
+              this._model.updatePoint(updateType, response);
               successHandler();
             })
             .catch(() => {
@@ -362,7 +357,7 @@ export default class Trip {
         this._pointNewPresenter.setSaving();
         this._api.addPoint(update)
             .then((response) => {
-              this._tripModel.addPoint(updateType, response);
+              this._model.addPoint(updateType, response);
               this._pointNewPresenter.destroy();
               successHandler();
             })
@@ -375,7 +370,7 @@ export default class Trip {
         this._pointPresenter.get(update.id).setViewState(State.DELETING);
         this._api.deletePoint(update)
             .then(() => {
-              this._tripModel.deletePoint(updateType, update);
+              this._model.deletePoint(updateType, update);
               successHandler();
             })
             .catch(() => {

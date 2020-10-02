@@ -1,5 +1,5 @@
-import PointView from '../../view/point/point.js';
-import PointEditView from '../../view/point-edit/point-edit.js';
+import PointView from "../../view/point/point.js";
+import PointEditView from "../../view/point-edit/point-edit.js";
 
 import {
   RenderPosition,
@@ -7,36 +7,26 @@ import {
   replace,
   remove,
   getElement,
-} from '../../utils/dom-utils';
+} from "../../utils/dom-utils.js";
 
-import {
-  isEscPressed,
-} from '../../utils/utils';
+import {isEscPressed} from "../../utils/utils.js";
 
-import {
-  UpdateType,
-  UserAction,
-  State,
-} from '../../const';
+import {UpdateType, UserAction, State} from "../../const.js";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
-  EDITING: `EDITING`
+  EDITING: `EDITING`,
 };
 
-const {
-  BEFORE_END,
-} = RenderPosition;
-
 export default class Point {
-  constructor(pointContainer, changePoint, changeMode, changeData) {
-    this._pointContainerElement = getElement(pointContainer);
+  constructor(container, changePoint, changeMode, changeData) {
+    this._containerElement = getElement(container);
     this._changePoint = changePoint;
     this._changeMode = changeMode;
     this._changeData = changeData;
     this._destinations = null;
-    this._pointView = null;
-    this._pointEditView = null;
+    this._view = null;
+    this._editView = null;
     this._point = null;
     this._mode = Mode.DEFAULT;
     this._isShouldUpdateTrip = null;
@@ -46,7 +36,9 @@ export default class Point {
     this._rollupPointEditHandler = this._rollupPointEditHandler.bind(this);
     this._submitPointEditHandler = this._submitPointEditHandler.bind(this);
     this._deletePointEditHandler = this._deletePointEditHandler.bind(this);
-    this._favoriteCheckboxClickHandler = this._favoriteCheckboxClickHandler.bind(this);
+    this._favoriteCheckboxClickHandler = this._favoriteCheckboxClickHandler.bind(
+        this
+    );
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
@@ -55,34 +47,39 @@ export default class Point {
     this._destinations = destinations;
     this._offers = offers;
 
-    const prevPointView = this._pointView;
-    const prevPointEditView = this._pointEditView;
+    const prevPointView = this._view;
+    const prevPointEditView = this._editView;
 
-    this._pointView = new PointView(point);
+    this._view = new PointView(point);
 
-    this._pointEditView = new PointEditView({
+    this._editView = new PointEditView({
       point,
       destinations: this._destinations,
       offers: this._offers,
     });
 
-    this._pointView.setRollupButtonClickHandler(this._rollupPointHandler);
-    this._pointEditView.setFormSubmitHandler(this._submitPointEditHandler);
-    this._pointEditView.setFormResetHandler(this._deletePointEditHandler);
-    this._pointEditView.setRollupButtonClickHandler(this._rollupPointEditHandler);
-    this._pointEditView.setFavoriteCheckboxClickHandler(this._favoriteCheckboxClickHandler);
+    this._view.setRollupButtonClickHandler(this._rollupPointHandler);
+    this._editView.setFormSubmitHandler(this._submitPointEditHandler);
+    this._editView.setFormResetHandler(this._deletePointEditHandler);
+    this._editView.setRollupButtonClickHandler(
+        this._rollupPointEditHandler
+    );
+
+    this._editView.setFavoriteCheckboxClickHandler(
+        this._favoriteCheckboxClickHandler
+    );
 
     if (prevPointView === null || prevPointEditView === null) {
-      render(this._pointContainerElement, this._pointView, BEFORE_END);
+      render(this._containerElement, this._view, RenderPosition.BEFORE_END);
       return;
     }
 
     if (this._mode === Mode.DEFAULT) {
-      replace(this._pointView, prevPointView);
+      replace(this._view, prevPointView);
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._pointEditView, prevPointEditView);
+      replace(this._editView, prevPointEditView);
     }
 
     remove(prevPointView);
@@ -90,8 +87,8 @@ export default class Point {
   }
 
   destroy() {
-    remove(this._pointView);
-    remove(this._pointEditView);
+    remove(this._view);
+    remove(this._editView);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
@@ -105,31 +102,31 @@ export default class Point {
   setViewState(state) {
     switch (state) {
       case State.SAVING:
-        this._pointEditView.updateData({
+        this._editView.updateData({
           isDisabled: true,
           isSaving: true,
         });
         break;
       case State.DELETING:
-        this._pointEditView.updateData({
+        this._editView.updateData({
           isDisabled: true,
           isDeleting: true,
         });
         break;
       case State.ABORTING:
-        this._pointEditView.shakeForm();
+        this._editView.shakeForm();
         break;
     }
   }
 
   _replacePointToPointEdit() {
-    replace(this._pointEditView, this._pointView);
+    replace(this._editView, this._view);
     this._changeMode();
     this._mode = Mode.EDITING;
   }
 
   _replacePointEditToPoint() {
-    replace(this._pointView, this._pointEditView);
+    replace(this._view, this._editView);
     this._mode = Mode.DEFAULT;
   }
 
@@ -139,7 +136,7 @@ export default class Point {
   }
 
   _resetPointEdit() {
-    this._pointEditView.reset(this._point);
+    this._editView.reset(this._point);
     this._rollupPointEdit();
   }
 
@@ -153,7 +150,7 @@ export default class Point {
   }
 
   _submitPointEditHandler(point) {
-    const updateType = this._pointEditView.isStartDateUpdate
+    const updateType = this._editView.isStartDateUpdate
       ? UpdateType.MINOR
       : UpdateType.PATCH;
 
@@ -166,20 +163,11 @@ export default class Point {
   }
 
   _favoriteCheckboxClickHandler(point) {
-    this._changeData(
-        UserAction.UPDATE_POINT,
-        UpdateType.PATCH,
-        point
-    );
+    this._changeData(UserAction.UPDATE_POINT, UpdateType.PATCH, point);
   }
 
-  // Use as delede in view
   _deletePointEditHandler(point) {
-    this._changeData(
-        UserAction.DELETE_POINT,
-        UpdateType.MAJOR,
-        point
-    );
+    this._changeData(UserAction.DELETE_POINT, UpdateType.MAJOR, point);
   }
 
   _escKeyDownHandler(evt) {

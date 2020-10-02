@@ -1,6 +1,7 @@
 import Observer from "../../utils/observer.js";
 
 const getPointIndex = (points, point) => points.findIndex((item) => item.id === point.id);
+
 export default class Trip extends Observer {
   constructor() {
     super();

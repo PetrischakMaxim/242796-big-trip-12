@@ -10,29 +10,26 @@ import {filter} from '../../utils/filter-utils.js';
 import {getElement} from '../../utils/dom-utils';
 import {UpdateType, FilterType} from '../../const';
 
-const {
-  BEFORE_END,
-} = RenderPosition;
 
 export default class Filter {
-  constructor(filterContainer, tripModel, filterModel) {
-    this._filterContainerElement = getElement(filterContainer);
+  constructor(container, tripModel, filterModel) {
+    this._containerElement = getElement(container);
     this._tripModel = tripModel;
-    this._filterModel = filterModel;
-    this._currentFilter = null;
+    this._model = filterModel;
+    this._current = null;
 
-    this._filterView = null;
+    this._view = null;
 
     this._modelEventHandler = this._modelEventHandler.bind(this);
-    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
+    this._typeChangeHandler = this._typeChangeHandler.bind(this);
 
     this._tripModel.add(this._modelEventHandler);
-    this._filterModel.add(this._modelEventHandler);
+    this._model.add(this._modelEventHandler);
   }
 
   init() {
-    this._currentFilter = this._filterModel.get();
-    const prevFilterView = this._filterView;
+    this._current = this._model.get();
+    const prevView = this._view;
     const points = this._tripModel.getPoints();
     const filtersStatus = {
       [FilterType.EVERYTHING]: points.length > 0,
@@ -40,27 +37,27 @@ export default class Filter {
       [FilterType.PAST]: filter[FilterType.PAST](points).length > 0,
     };
 
-    this._filterView = new FiltersView(this._currentFilter, filtersStatus);
-    this._filterView.setChangeHandler(this._filterTypeChangeHandler);
+    this._view = new FiltersView(this._current, filtersStatus);
+    this._view.setChangeHandler(this._typeChangeHandler);
 
-    if (prevFilterView === null) {
-      render(this._filterContainerElement, this._filterView, BEFORE_END);
+    if (prevView === null) {
+      render(this._containerElement, this._view, RenderPosition.BEFORE_END);
       return;
     }
 
-    replace(this._filterView, prevFilterView);
-    remove(prevFilterView);
+    replace(this._view, prevView);
+    remove(prevView);
   }
 
   _modelEventHandler() {
     this.init();
   }
 
-  _filterTypeChangeHandler(filterType) {
-    if (this._currentFilter === filterType) {
+  _typeChangeHandler(filterType) {
+    if (this._current === filterType) {
       return;
     }
 
-    this._filterModel.set(UpdateType.MAJOR, filterType);
+    this._model.set(UpdateType.MAJOR, filterType);
   }
 }

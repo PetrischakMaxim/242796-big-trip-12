@@ -1,5 +1,5 @@
 import {nanoid} from 'nanoid';
-import {extend} from '../utils/utils';
+import {extend} from '../utils/utils.js';
 import TripModel from "../model/trip/trip.js";
 
 const getSyncedPoints = (items) => {

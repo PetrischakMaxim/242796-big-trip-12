@@ -10,19 +10,14 @@ import {
 import {FilterType, TabItem} from '../../const';
 import {filter} from '../../utils/filter-utils';
 
-const {
-  BEFORE_END,
-} = RenderPosition;
-
-export default class Statistics {
-  constructor(statisticsContainer, tripModel, filterModel, mode) {
-    this._statisticsContainerElement = getElement(statisticsContainer);
+export default class Stats {
+  constructor(container, tripModel, filterModel, mode) {
+    this._containerElement = getElement(container);
     this._tripModel = tripModel;
     this._filterModel = filterModel;
     this._mode = mode;
 
-    this._statisticsView = null;
-
+    this._view = null;
     this._modelEventHandler = this._modelEventHandler.bind(this);
   }
 
@@ -39,8 +34,8 @@ export default class Statistics {
         : filter[filterType](points);
 
       this._clear();
-      this._statisticsView = new StatsView(filteredPoints);
-      render(this._statisticsContainerElement, this._statisticsView, BEFORE_END);
+      this._view = new StatsView(filteredPoints);
+      render(this._containerElement, this._view, RenderPosition.BEFORE_END);
     }
   }
 
@@ -56,9 +51,9 @@ export default class Statistics {
   }
 
   _clear() {
-    if (this._statisticsView !== null) {
-      remove(this._statisticsView);
-      this._statisticsView = null;
+    if (this._view !== null) {
+      remove(this._view);
+      this._view = null;
     }
   }
 

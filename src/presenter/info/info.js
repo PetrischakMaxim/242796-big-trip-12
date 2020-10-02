@@ -6,18 +6,14 @@ import {
   replace,
   remove,
   getElement,
-} from '../../utils/dom-utils';
+} from '../../utils/dom-utils.js';
 
 import {
   formatDateMmmDd,
-} from '../../utils/date-utils';
+} from '../../utils/date-utils.js';
 
 import {FilterType} from '../../const';
 import {filter} from '../../utils/filter-utils.js';
-
-const {
-  AFTER_BEGIN,
-} = RenderPosition;
 
 const DESTINATION_COUNT = 3;
 
@@ -57,12 +53,13 @@ const getPeriod = (points) => {
 };
 
 export default class Info {
-  constructor(infoContainer, tripModel, filterModel) {
-    this._infoContainerElement = getElement(infoContainer);
+
+  constructor(container, tripModel, filterModel) {
+    this._containerElement = getElement(container);
     this._tripModel = tripModel;
     this._filterModel = filterModel;
 
-    this._infoView = null;
+    this._view = null;
     this._currentFilter = null;
 
     this._modelEventHandler = this._modelEventHandler.bind(this);
@@ -82,18 +79,18 @@ export default class Info {
     const route = getRoute(filteredPoints);
     const period = getPeriod(filteredPoints);
 
-    const prevInfoView = this._infoView;
+    const prevView = this._view;
 
 
-    this._infoView = new InfoView(route, period, cost);
+    this._view = new InfoView(route, period, cost);
 
-    if (prevInfoView === null) {
-      render(this._infoContainerElement, this._infoView, AFTER_BEGIN);
+    if (prevView === null) {
+      render(this._containerElement, this._view, RenderPosition.AFTER_BEGIN);
       return;
     }
 
-    replace(this._infoView, prevInfoView);
-    remove(prevInfoView);
+    replace(this._view, prevView);
+    remove(prevView);
   }
 
   _modelEventHandler() {

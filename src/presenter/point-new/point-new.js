@@ -17,11 +17,11 @@ const {
 } = RenderPosition;
 
 export default class PointNew {
-  constructor(tripContainer, changeData) {
-    this._tripContainerElement = getElement(tripContainer);
+  constructor(container, changeData) {
+    this._containerElement = getElement(container);
     this._changeData = changeData;
 
-    this._pointEditView = null;
+    this._editView = null;
     this._destroyCallback = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
@@ -30,52 +30,52 @@ export default class PointNew {
   }
 
   init(destinations, offers, callback) {
-    if (this._pointEditView !== null) {
+    if (this._editView !== null) {
       return;
     }
 
-    this._renderPointEdit(destinations, offers, callback);
+    this._renderEdit(destinations, offers, callback);
   }
 
   destroy() {
-    if (this._pointEditView === null) {
+    if (this._editView === null) {
       return;
     }
 
-    remove(this._pointEditView);
-    this._pointEditView = null;
+    remove(this._editView);
+    this._editView = null;
     this._destroyCallback();
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
   setSaving() {
-    this._pointEditView.updateData({
+    this._editView.updateData({
       isDisabled: true,
       isSaving: true,
     });
   }
 
   setAborting() {
-    this._pointEditView.shakeForm();
+    this._editView.shakeForm();
   }
 
-  _renderPointEdit(destinations, offers, callback) {
+  _renderEdit(destinations, offers, callback) {
     this._destroyCallback = callback;
 
-    this._pointEditView = new PointEditView({destinations, offers, isAddMode: true});
-    this._pointEditView.setFormSubmitHandler(this._formSubmitHandler);
-    this._pointEditView.setFormResetHandler(this._formResetHandler);
+    this._editView = new PointEditView({destinations, offers, isAddMode: true});
+    this._editView.setFormSubmitHandler(this._formSubmitHandler);
+    this._editView.setFormResetHandler(this._formResetHandler);
 
-    if (this._tripContainerElement instanceof AbstractView) {
-      this._tripContainerElement = this._tripContainerElement.getElement();
+    if (this._containerElement instanceof AbstractView) {
+      this._containerElement = this._containerElement.getElement();
     }
 
-    const sortTripElement = this._tripContainerElement.querySelector(`.trip-sort`);
+    const sortTripElement = this._containerElement.querySelector(`.trip-sort`);
 
     if (sortTripElement) {
-      render(sortTripElement, this._pointEditView, AFTER_END);
+      render(sortTripElement, this._editView, AFTER_END);
     } else {
-      render(this._tripContainerElement, this._pointEditView, AFTER_BEGIN);
+      render(this._containerElement, this._editView, AFTER_BEGIN);
     }
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);

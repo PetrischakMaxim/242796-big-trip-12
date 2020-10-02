@@ -17,7 +17,7 @@ import Provider from './api/provider.js';
 import Store from './api/store.js';
 import Api from './api/api.js';
 
-const AUTHORIZATION = `Basic RegregkjHhfre342`;
+const AUTHORIZATION = `Basic fjewfjewf213213`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `big-trip`;
 const STORE_VER = `v1`;
