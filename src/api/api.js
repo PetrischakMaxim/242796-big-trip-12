@@ -19,9 +19,10 @@ const Url = {
   SYNC: `points/sync`,
 };
 
-const HEADER = {"Content-Type": `application/json`};
+const HTTP_HEADER = {"Content-Type": `application/json`};
 
 export default class Api {
+
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;
@@ -51,7 +52,7 @@ export default class Api {
       url: `${Url.POINTS}/${point.id}`,
       method: Method.PUT,
       body: JSON.stringify(TripModel.adaptPointToServer(point)),
-      headers: new Headers(HEADER)
+      headers: new Headers(HTTP_HEADER)
     })
     .then(Api.toJSON)
     .then(TripModel.adaptPointToClient);
@@ -62,10 +63,10 @@ export default class Api {
       url: Url.POINTS,
       method: Method.POST,
       body: JSON.stringify(TripModel.adaptPointToServer(point)),
-      headers: new Headers(HEADER)
+      headers: new Headers(HTTP_HEADER)
     })
-      .then(Api.toJSON)
-      .then(TripModel.adaptPointToClient);
+    .then(Api.toJSON)
+    .then(TripModel.adaptPointToClient);
   }
 
   deletePoint(point) {
@@ -80,9 +81,9 @@ export default class Api {
       url: Url.SYNC,
       method: Method.POST,
       body: JSON.stringify(data),
-      headers: new Headers(HEADER)
+      headers: new Headers(HTTP_HEADER)
     })
-      .then(Api.toJSON);
+    .then(Api.toJSON);
   }
 
   _load({
@@ -97,8 +98,8 @@ export default class Api {
         `${this._endPoint}/${url}`,
         {method, body, headers}
     )
-      .then(Api.checkStatus)
-      .catch(Api.catchError);
+    .then(Api.checkStatus)
+    .catch(Api.catchError);
   }
 
   static checkStatus(response) {

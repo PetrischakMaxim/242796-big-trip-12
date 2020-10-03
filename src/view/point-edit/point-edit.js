@@ -7,6 +7,8 @@ import {ACTIVITIES} from '../../const.js';
 import {extend} from '../../utils/utils.js';
 import {addDaysToDate} from '../../utils/date-utils.js';
 
+const MAX_DAYS_DURATION = 30;
+
 const BLANK_DESTINATION = {
   name: ``,
   pictures: [],
@@ -76,8 +78,8 @@ export default class PointEdit extends SmartView {
     this._offers = offers;
     this._isAddMode = isAddMode;
     this._typeListElement = null;
-    this._startDatePicker = null;
-    this._endDatePicker = null;
+    this._flatpickrStart = null;
+    this._flatpickrEnd = null;
     this.isStartDateUpdate = false;
 
     this.resetFormState = this.resetFormState.bind(this);
@@ -157,23 +159,23 @@ export default class PointEdit extends SmartView {
     this._setInnerHandlers();
   }
 
-  _destroyStartDatePicker() {
-    if (this._startDatePicker !== null) {
-      this._startDatePicker.destroy();
-      this._startDatePicker = null;
+  _destroyFlatpickrStart() {
+    if (this._flatpickrStart !== null) {
+      this._flatpickrStart.destroy();
+      this._flatpickrStart = null;
     }
   }
 
-  _destroyEndDatePicker() {
-    if (this._endDatePicker !== null) {
-      this._endDatePicker.destroy();
-      this._endDatePicker = null;
+  _destroyFlatpickrEnd() {
+    if (this._flatpickrEnd !== null) {
+      this._flatpickrEnd.destroy();
+      this._flatpickrEnd = null;
     }
   }
 
   _destroyPointDatePickers() {
-    this._destroyStartDatePicker();
-    this._destroyEndDatePicker();
+    this._destroyFlatpickrStart();
+    this._destroyFlatpickrEnd();
   }
 
   _setTypeInputChangeHandlers() {
@@ -190,36 +192,6 @@ export default class PointEdit extends SmartView {
     });
   }
 
-  _setStartDateInputChangeHandler() {
-    this._destroyStartDatePicker();
-    this._startDatePicker = flatpickr(
-        this.getElement().querySelector(`#event-start-time-1`),
-        {
-          'enableTime': true,
-          'time_24hr': true,
-          'dateFormat': `d/m/y H:i`,
-          'defaultDate': this._data.start || new Date(),
-          'minDate': this._data.start || new Date(),
-          'onChange': this._startDateInputChangeHandler,
-        }
-    );
-  }
-
-  _setEndDateInputChangeHandler() {
-    this._destroyEndDatePicker();
-    this._endDatePicker = flatpickr(
-        this.getElement().querySelector(`#event-end-time-1`),
-        {
-          'enableTime': true,
-          'time_24hr': true,
-          'dateFormat': `d/m/y H:i`,
-          'defaultDate': this._data.end || new Date(),
-          'minDate': this._data.start,
-          'onChange': this._endDateInputChangeHandler,
-        }
-    );
-  }
-
   _setInnerHandlers() {
     const element = this.getElement();
 
@@ -227,8 +199,8 @@ export default class PointEdit extends SmartView {
     element.querySelector(`.event__input--destination`).addEventListener(`change`, this._destinationInputChangeHandler);
     this._setTypeInputChangeHandlers();
     this._setOfferCheckboxChangeHandlers();
-    this._setStartDateInputChangeHandler();
-    this._setEndDateInputChangeHandler();
+    this._setStartInputChangeHandler();
+    this._setEndInputChangeHandler();
   }
 
   _formSubmitHandler(evt) {
@@ -257,7 +229,7 @@ export default class PointEdit extends SmartView {
   _priceInputChangeHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      price: Number(evt.target.value),
+      price: Math.round(Number(evt.target.value)),
     }, true);
   }
 
@@ -307,17 +279,53 @@ export default class PointEdit extends SmartView {
     }, true);
   }
 
+  _setStartInputChangeHandler() {
+    this._destroyFlatpickrStart();
+    this._flatpickrStart = flatpickr(
+        this.getElement().querySelector(`#event-start-time-1`),
+        {
+          'enableTime': true,
+          'time_24hr': true,
+          'dateFormat': `d/m/y H:i`,
+          'defaultDate': this._data.start || `today`,
+          'onChange': this._startDateInputChangeHandler,
+        }
+    );
+  }
+
+  _setEndInputChangeHandler() {
+    this._destroyFlatpickrEnd();
+    this._flatpickrEnd = flatpickr(
+        this.getElement().querySelector(`#event-end-time-1`),
+        {
+          'enableTime': true,
+          'time_24hr': true,
+          'dateFormat': `d/m/y H:i`,
+          'defaultDate': this._data.end || `today`,
+          'minDate': this._data.start,
+          'maxDate': this._data.start.fp_incr(MAX_DAYS_DURATION),
+          'onChange': this._endDateInputChangeHandler,
+        }
+    );
+  }
+
   _startDateInputChangeHandler([start]) {
     const end = this._data.end;
 
     this.isStartDateUpdate = start !== this._data.start;
 
+    if (end < start) {
+      this.updateData({
+        end: start
+      });
+    }
+
     this.updateData({
       start,
       duration: end - start,
-    }, true);
+    });
 
-    this._endDatePicker.set(`minDate`, start);
+    this._flatpickrEnd.setDate(start, true, `d/m/y H:i`);
   }
 
   _endDateInputChangeHandler([end]) {
@@ -327,8 +335,6 @@ export default class PointEdit extends SmartView {
       end,
       duration: end - start,
     }, true);
-
-    this._startDatePicker.set(`maxDate`, end);
   }
 
   static parsePointToData(point, destinations, offers) {

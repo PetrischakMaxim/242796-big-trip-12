@@ -2,7 +2,6 @@ import PointView from "../../view/point/point.js";
 import PointEditView from "../../view/point-edit/point-edit.js";
 
 import {
-  RenderPosition,
   render,
   replace,
   remove,
@@ -70,7 +69,7 @@ export default class Point {
     );
 
     if (prevPointView === null || prevPointEditView === null) {
-      render(this._containerElement, this._view, RenderPosition.BEFORE_END);
+      render(this._containerElement, this._view);
       return;
     }
 

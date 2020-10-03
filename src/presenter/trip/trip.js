@@ -11,7 +11,6 @@ import PointNewPresenter from '../point-new/point-new.js';
 import {formatDateISODdMmYyyyHhMm} from '../../utils/date-utils.js';
 
 import {
-  RenderPosition,
   render,
   remove,
   getElement,
@@ -29,10 +28,6 @@ import {
 } from '../../const.js';
 
 import {filter} from '../../utils/filter-utils.js';
-
-const {
-  BEFORE_END,
-} = RenderPosition;
 
 const DEFAULT_SORT_TYPE = SortType.EVENT;
 
@@ -54,8 +49,8 @@ const groupPointsByDays = (points) => points
   .sort((pointA, pointB) => pointA.start - pointB.start)
   .reduce(reducePointByDay, {});
 
-
 export default class Trip {
+
   constructor(container, tripModel, filterModel, api) {
     this._containerElement = getElement(container);
     this._model = tripModel;
@@ -141,7 +136,7 @@ export default class Trip {
 
   _renderSort() {
     this._sortView = new SortView(this._currentSortType);
-    render(this._containerElement, this._sortView, BEFORE_END);
+    render(this._containerElement, this._sortView);
     this._sortView.setChangeHandler(this._sortChangeHandler);
   }
 
@@ -191,13 +186,9 @@ export default class Trip {
       fragment.appendChild(pointsItem.getElement());
     });
 
-    render(
-        pointsListView,
-        fragment,
-        BEFORE_END
-    );
+    render(pointsListView, fragment);
 
-    render(dayView, pointsListView, BEFORE_END);
+    render(dayView, pointsListView);
 
     return dayView;
   }
@@ -215,28 +206,24 @@ export default class Trip {
       fragment.appendChild(dayView.getElement());
     });
 
-    render(
-        this._daysView,
-        fragment,
-        BEFORE_END
-    );
+    render(this._daysView, fragment);
 
-    render(this._containerElement, this._daysView, BEFORE_END);
+    render(this._containerElement, this._daysView);
   }
 
   _renderNoEvents() {
     this._pointMessageNoEventsView = new MessageView(PointMessage.NO_EVENTS);
-    render(this._containerElement, this._pointMessageNoEventsView, BEFORE_END);
+    render(this._containerElement, this._pointMessageNoEventsView);
   }
 
   _renderLoading() {
     this._pointMessageLoadingView = new MessageView(PointMessage.LOADING);
-    render(this._containerElement, this._pointMessageLoadingView, BEFORE_END);
+    render(this._containerElement, this._pointMessageLoadingView);
   }
 
   _renderError() {
     this._pointMessageErrorView = new MessageView(PointMessage.ERROR);
-    render(this._containerElement, this._pointMessageErrorView, BEFORE_END);
+    render(this._containerElement, this._pointMessageErrorView);
   }
 
   _render() {

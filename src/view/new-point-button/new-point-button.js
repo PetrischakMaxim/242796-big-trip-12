@@ -3,15 +3,17 @@ import AbstractView from '../abstract/abstract.js';
 const createNewPointButtonTemplate = () => (
   `<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">
       New event
-    </button>`
+   </button>`
 );
 
 export default class NewPointButton extends AbstractView {
+
   constructor() {
     super();
-    this._newPointButtonClickHandler = this._newPointButtonClickHandler.bind(this);
-    this._newPointButtonClick = null;
+    this._clickHandler = this._clickHandler.bind(this);
+    this._click = null;
   }
+
   getTemplate() {
     return createNewPointButtonTemplate();
   }
@@ -21,12 +23,12 @@ export default class NewPointButton extends AbstractView {
   }
 
   setClickHandler(callback) {
-    this._newPointButtonClick = callback;
-    this.getElement().addEventListener(`click`, this._newPointButtonClickHandler);
+    this._click = callback;
+    this.getElement().addEventListener(`click`, this._clickHandler);
   }
 
-  _newPointButtonClickHandler(evt) {
+  _clickHandler(evt) {
     evt.preventDefault();
-    this._newPointButtonClick();
+    this._click();
   }
 }

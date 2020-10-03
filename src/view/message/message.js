@@ -1,13 +1,13 @@
 import AbstractView from '../abstract/abstract.js';
 
-
 export default class Message extends AbstractView {
-  constructor(message) {
+
+  constructor(note) {
     super();
-    this._message = message;
+    this._note = note;
   }
 
   getTemplate() {
-    return `<p class="trip-events__msg">${this._message}</p>`;
+    return `<p class="trip-events__msg">${this._note}</p>`;
   }
 }

@@ -3,7 +3,8 @@ import {extend} from '../utils/utils.js';
 import TripModel from "../model/trip/trip.js";
 
 const getSyncedPoints = (items) => {
-  return items.filter(({success}) => success)
+  return items
+     .filter(({success}) => success)
      .map(({payload}) => payload.point);
 };
 
@@ -16,6 +17,7 @@ const createStoreStructure = (items) => {
 };
 
 export default class Provider {
+
   constructor(api, store) {
     this._api = api;
     this._store = store;

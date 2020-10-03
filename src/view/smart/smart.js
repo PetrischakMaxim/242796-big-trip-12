@@ -2,6 +2,7 @@ import AbstractView from '../abstract/abstract.js';
 import {extend} from '../../utils/utils.js';
 
 export default class Smart extends AbstractView {
+
   constructor() {
     super();
     this._data = {};

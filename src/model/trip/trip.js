@@ -3,6 +3,7 @@ import Observer from "../../utils/observer.js";
 const getPointIndex = (points, point) => points.findIndex((item) => item.id === point.id);
 
 export default class Trip extends Observer {
+
   constructor() {
     super();
     this._destinations = [];
@@ -11,7 +12,7 @@ export default class Trip extends Observer {
   }
 
   setDestinations(destinations) {
-    this._destinations = destinations.slice();
+    this._destinations = [...destinations];
   }
 
   getDestinations() {
@@ -27,11 +28,7 @@ export default class Trip extends Observer {
   }
 
   setPoints(updateType, points) {
-    this._points = points.slice();
-    this._notify(updateType);
-  }
-
-  setError(updateType) {
+    this._points = [...points];
     this._notify(updateType);
   }
 
@@ -79,6 +76,10 @@ export default class Trip extends Observer {
     this._notify(updateType);
   }
 
+  setError(updateType) {
+    this._notify(updateType);
+  }
+
   isEmpty() {
     return this._points.length === 0;
   }
@@ -114,9 +115,9 @@ export default class Trip extends Observer {
   }
 
   static adaptOffersToClient(offers) {
-    return offers.reduce((mapOffer, offer) => {
-      mapOffer[offer.type] = offer.offers;
-      return mapOffer;
+    return offers.reduce((acc, current) => {
+      acc[current.type] = current.offers;
+      return acc;
     }, {});
   }
 

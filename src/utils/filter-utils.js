@@ -1,5 +1,5 @@
-import {FilterType} from "../const";
-import {isDateAfter, isDateBefore} from './date-utils';
+import {FilterType} from "../const.js";
+import {isDateAfter, isDateBefore} from './date-utils.js';
 
 export const filter = {
   [FilterType.FUTURE]: (points) => points.filter((point) => isDateAfter(point.start, new Date())),

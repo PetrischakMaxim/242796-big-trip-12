@@ -2,15 +2,15 @@ import StatsView from '../../view/stats/stats.js';
 
 import {
   render,
-  RenderPosition,
   remove,
   getElement,
-} from '../../utils/dom-utils';
+} from '../../utils/dom-utils.js';
 
-import {FilterType, TabItem} from '../../const';
-import {filter} from '../../utils/filter-utils';
+import {FilterType, TabItem} from '../../const.js';
+import {filter} from '../../utils/filter-utils.js';
 
 export default class Stats {
+
   constructor(container, tripModel, filterModel, mode) {
     this._containerElement = getElement(container);
     this._tripModel = tripModel;
@@ -35,7 +35,7 @@ export default class Stats {
 
       this._clear();
       this._view = new StatsView(filteredPoints);
-      render(this._containerElement, this._view, RenderPosition.BEFORE_END);
+      render(this._containerElement, this._view);
     }
   }
 

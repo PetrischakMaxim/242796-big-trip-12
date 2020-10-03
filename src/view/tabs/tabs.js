@@ -5,9 +5,11 @@ const TABS = Object.values(TabItem);
 const ACTIVE_TAB_CLASS = `trip-tabs__btn--active`;
 
 export default class Tabs extends AbstractView {
+
   constructor() {
     super();
-    this._tabsClickHandler = this._tabsClickHandler.bind(this);
+    this._clickHandler = this._clickHandler.bind(this);
+    this._click = null;
   }
 
   getTemplate() {
@@ -15,22 +17,20 @@ export default class Tabs extends AbstractView {
       `<nav class="trip-controls__trip-tabs  trip-tabs">
         ${TABS.map((tab) => (
         `<a class="trip-tabs__btn ${tab === TabItem.TABLE ? ACTIVE_TAB_CLASS : ``}"
-              href="#"
-              data-tab="${tab}"
-            >
-              ${tab}
-            </a>`
+          href="#" data-tab="${tab}" >
+          ${tab}
+        </a>`
       )).join(``)}
       </nav>`
     );
   }
 
   setClickHandler(callback) {
-    this._tabsClick = callback;
-    this.getElement().addEventListener(`click`, this._tabsClickHandler);
+    this._click = callback;
+    this.getElement().addEventListener(`click`, this._clickHandler);
   }
 
-  _tabsClickHandler(evt) {
+  _clickHandler(evt) {
     evt.preventDefault();
     const prevActiveTabElement = this.getElement().querySelector(`.${ACTIVE_TAB_CLASS}`);
     const prevActiveTab = prevActiveTabElement.dataset.tab;
@@ -40,7 +40,7 @@ export default class Tabs extends AbstractView {
     const activeTab = evt.target.dataset.tab;
 
     if (activeTab !== prevActiveTab) {
-      this._tabsClick(activeTab);
+      this._click(activeTab);
     }
   }
 }

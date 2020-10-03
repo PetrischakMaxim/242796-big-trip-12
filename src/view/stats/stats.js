@@ -165,7 +165,7 @@ const renderChart = (chartCtx, chartData, chartConfig) => {
   });
 };
 
-const createStatisticsTemplate = () => {
+const createStatsTemplate = () => {
   return (
     `<section class="statistics">
       <h2 class="visually-hidden">
@@ -196,9 +196,8 @@ export default class Stats extends AbstractView {
     this._setChart();
   }
 
-
   getTemplate() {
-    return createStatisticsTemplate();
+    return createStatsTemplate();
   }
 
   _getMoneyChartData() {
@@ -216,7 +215,6 @@ export default class Stats extends AbstractView {
   }
 
   _setChart() {
-
     const element = this.getElement();
     const moneyCtx = element.querySelector(`.statistics__chart--money`);
     const transportCtx = element.querySelector(`.statistics__chart--transport`);

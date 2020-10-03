@@ -17,8 +17,9 @@ import Provider from './api/provider.js';
 import Store from './api/store.js';
 import Api from './api/api.js';
 
-const AUTHORIZATION = `Basic fjewfjewf213213`;
+const AUTHORIZATION = `Basic r32r23r!@!`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
+
 const STORE_PREFIX = `big-trip`;
 const STORE_VER = `v1`;
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
@@ -36,18 +37,19 @@ const controlsView = new ControlsView();
 render(tripMainElement, controlsView);
 
 const tabsView = new TabsView();
-render(controlsView.getFilterEventsHeaderElement(), tabsView, RenderPosition.BEFORE_BEGIN);
+render(controlsView.getFilterHeaderElement(), tabsView, RenderPosition.BEFORE_BEGIN);
 
 const newPointButtonView = new NewPointButtonView();
 render(tripMainElement, newPointButtonView);
 
-const bodyContainerElement = document.querySelector(`.page-main`).querySelector(`.page-body__container`);
-const tripEventsElement = bodyContainerElement.querySelector(`.trip-events`);
+const pageMainElement = document.querySelector(`.page-main`);
+const pageContainerElement = pageMainElement.querySelector(`.page-body__container`);
+const tripEventsElement = pageContainerElement.querySelector(`.trip-events`);
 
 const tripPresenter = new TripPresenter(tripEventsElement, tripModel, filterModel, apiWithProvider);
 const filterPresenter = new FilterPresenter(controlsView, tripModel, filterModel);
 const infoPresenter = new InfoPresenter(tripMainElement, tripModel, filterModel);
-const statisticsPresenter = new StatsPresenter(bodyContainerElement, tripModel, filterModel);
+const statisticsPresenter = new StatsPresenter(pageContainerElement, tripModel, filterModel);
 
 const newPointButtonClickHandler = () => {
   newPointButtonView.setEnabled();
@@ -110,5 +112,5 @@ window.addEventListener(`online`, () => {
 });
 
 window.addEventListener(`offline`, () => {
-  document.title += ` [offline]`;
+  document.title = `${document.title} [offline]`;
 });

@@ -1,4 +1,4 @@
-import {convertNumberOfDate, convertMsToDHM} from './date-utils';
+import {convertNumberOfDate, convertMsToDHM} from './date-utils.js';
 
 const Key = {
   ESCAPE: `Escape`,

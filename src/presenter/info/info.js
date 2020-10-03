@@ -8,9 +8,7 @@ import {
   getElement,
 } from '../../utils/dom-utils.js';
 
-import {
-  formatDateMmmDd,
-} from '../../utils/date-utils.js';
+import {formatDateMmmDd} from '../../utils/date-utils.js';
 
 import {FilterType} from '../../const';
 import {filter} from '../../utils/filter-utils.js';
@@ -19,13 +17,13 @@ const DESTINATION_COUNT = 3;
 
 const getPeriodTitle = (date) => formatDateMmmDd(date).toLocaleUpperCase();
 
-const calcOffersCost = (offers) => offers.reduce((sum, offer) => sum + offer.price, 0);
+const calcOffersCost = (offers) => offers.reduce((acc, current) => acc + current.price, 0);
 
-const calcCost = (points) => points.reduce((sum, point) => {
-  if (point.offers.length > 0) {
-    sum += calcOffersCost(point.offers);
+const calcCost = (points) => points.reduce((acc, current) => {
+  if (current.offers.length > 0) {
+    acc += calcOffersCost(current.offers);
   }
-  return sum + point.price;
+  return acc + current.price;
 }, 0);
 
 const getRoute = (points) => {
@@ -80,7 +78,6 @@ export default class Info {
     const period = getPeriod(filteredPoints);
 
     const prevView = this._view;
-
 
     this._view = new InfoView(route, period, cost);
 

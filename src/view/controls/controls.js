@@ -11,7 +11,7 @@ export default class Controls extends AbstractView {
     );
   }
 
-  getFilterEventsHeaderElement() {
+  getFilterHeaderElement() {
     return this.getElement().querySelector(`#trip-filter-events`);
   }
 }

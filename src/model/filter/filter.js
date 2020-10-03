@@ -5,15 +5,15 @@ export default class Filter extends Observer {
 
   constructor() {
     super();
-    this._active = FilterType.EVERYTHING;
+    this._current = FilterType.EVERYTHING;
   }
 
   set(updateType, filter) {
-    this._active = filter;
+    this._current = filter;
     this._notify(updateType, filter);
   }
 
   get() {
-    return this._active;
+    return this._current;
   }
 }

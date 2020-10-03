@@ -3,24 +3,13 @@ import moment from 'moment';
 const isDate = (date) => date instanceof Date;
 
 export const convertNumberOfDate = (value) => String(value).padStart(2, `0`);
-/**
- * @param {date} date
- * @return {date} 17/08/20 18:00
- */
+
 export const formatDateYyyyMmDdHhMmWithDash = (date) => isDate(date) ? moment(date).format(`DD/MM/YY HH:mm`) : ``;
 
-/**
- * @param {date} date
- * @return {date} 2020-08-17T18:00
- */
 export const formatDateISODdMmYyyyHhMm = (date) => isDate(date) ? moment(date).format(`YYYY-MM-DD[T]HH:mm`) : ``;
 
 export const formatDateMmmDd = (date) => isDate(date) ? moment(date).format(`MMM DD`) : ``;
 
-/**
- * @param {number} ms
- * @return {object} {days: number, hours: number, minutes: number}
- */
 export const convertMsToDHM = (ms) => {
   const duration = moment.duration(ms);
   return {

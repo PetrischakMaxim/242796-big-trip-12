@@ -1,4 +1,4 @@
-import {extend} from '../utils/utils';
+import {extend} from '../utils/utils.js';
 
 const Key = {
   POINTS: `points`,
@@ -8,9 +8,10 @@ const Key = {
 };
 
 export default class Store {
+
   constructor(key, storage) {
     this._storage = storage;
-    this._storeKey = key;
+    this._key = key;
   }
 
   getPoints() {
@@ -63,7 +64,7 @@ export default class Store {
     const store = this._getItems();
 
     this._storage.setItem(
-        this._storeKey,
+        this._key,
         JSON.stringify(
             extend(store, {
               [key]: value,
@@ -74,7 +75,7 @@ export default class Store {
 
   _getItems() {
     try {
-      return JSON.parse(this._storage.getItem(this._storeKey)) || {};
+      return JSON.parse(this._storage.getItem(this._key)) || {};
     } catch (err) {
       return {};
     }

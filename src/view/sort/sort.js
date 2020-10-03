@@ -3,9 +3,7 @@ import {SortType} from '../../const.js';
 
 const SORT_ICON = (
   `<svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
-    <path
-      d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"
-    />
+    <path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z" />
   </svg>`
 );
 
@@ -48,22 +46,22 @@ const createSortTemplate = (defaultSortType) => {
 export default class Sort extends AbstractView {
   constructor(sortType = SortType.EVENT) {
     super();
-    this._sortType = sortType;
-    this._formChangeHandler = this._formChangeHandler.bind(this);
-    this._formChange = null;
+    this._type = sortType;
+    this._changeHandler = this._changeHandler.bind(this);
+    this._change = null;
   }
 
   getTemplate() {
-    return createSortTemplate(this._sortType);
+    return createSortTemplate(this._type);
   }
 
   setChangeHandler(callback) {
-    this._formChange = callback;
-    this.getElement().addEventListener(`change`, this._formChangeHandler);
+    this._change = callback;
+    this.getElement().addEventListener(`change`, this._changeHandler);
   }
 
-  _formChangeHandler(evt) {
+  _changeHandler(evt) {
     evt.preventDefault();
-    this._formChange(evt.target.dataset.sortType);
+    this._change(evt.target.dataset.sortType);
   }
 }

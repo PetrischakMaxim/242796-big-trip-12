@@ -1,6 +1,7 @@
 import AbstractView from '../abstract/abstract.js';
 
 export default class Info extends AbstractView {
+
   constructor(route, period, cost) {
     super();
     this._route = route;

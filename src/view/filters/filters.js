@@ -3,7 +3,7 @@ import {FilterType} from '../../const.js';
 
 const FILTERS = Object.values(FilterType);
 
-const createFiltersTemplate = (activeFilter, filtersStatus) => {
+const createFiltersTemplate = (active, status) => {
   return (
     `<form class="trip-filters" action="#" method="get">
       ${FILTERS
@@ -17,8 +17,8 @@ const createFiltersTemplate = (activeFilter, filtersStatus) => {
                 type="radio"
                 name="trip-filter"
                 value="${filter}"
-                ${filter === activeFilter ? `checked` : ``}
-                ${filtersStatus[filter] ? `` : `disabled`}
+                ${filter === active ? `checked` : ``}
+                ${status[filter] ? `` : `disabled`}
               >
               <label class="trip-filters__filter-label" for="filter-${key}">
                 ${filter}
@@ -35,25 +35,26 @@ const createFiltersTemplate = (activeFilter, filtersStatus) => {
 };
 
 export default class Filters extends AbstractView {
-  constructor(activeFilter, filtersStatus) {
+
+  constructor(active, status) {
     super();
-    this._filtersStatus = filtersStatus;
-    this._activeFilter = activeFilter;
-    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
-    this._filterTypeChange = null;
+    this._status = status;
+    this._active = active;
+    this._typeChangeHandler = this._typeChangeHandler.bind(this);
+    this._typeChange = null;
   }
 
   getTemplate() {
-    return createFiltersTemplate(this._activeFilter, this._filtersStatus);
+    return createFiltersTemplate(this._active, this._status);
   }
 
   setChangeHandler(callback) {
-    this._filterTypeChange = callback;
-    this.getElement().addEventListener(`change`, this._filterTypeChangeHandler);
+    this._typeChange = callback;
+    this.getElement().addEventListener(`change`, this._typeChangeHandler);
   }
 
-  _filterTypeChangeHandler(evt) {
+  _typeChangeHandler(evt) {
     evt.preventDefault();
-    this._filterTypeChange(evt.target.value);
+    this._typeChange(evt.target.value);
   }
 }

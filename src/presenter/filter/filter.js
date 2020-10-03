@@ -10,8 +10,8 @@ import {filter} from '../../utils/filter-utils.js';
 import {getElement} from '../../utils/dom-utils';
 import {UpdateType, FilterType} from '../../const';
 
-
 export default class Filter {
+
   constructor(container, tripModel, filterModel) {
     this._containerElement = getElement(container);
     this._tripModel = tripModel;

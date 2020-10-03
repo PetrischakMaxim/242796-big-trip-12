@@ -1,13 +1,14 @@
-import {createTypeListTemplate} from './create-type-list-template';
-import {createHeaderDestinationTemplate} from './create-header-destination-template';
-import {createTimeTemplate} from './create-time-template';
-import {createPriceTemplate} from './create-price-template';
-import {createSaveButtonTemplate} from './create-save-button-template';
-import {createResetButtonTemplate} from './create-reset-button-template';
-import {createFavoriteTemplate} from './create-favorite-template';
-import {createRollupButtonTemplate} from './create-rollup-button-template';
+import {createTypeListTemplate} from './create-type-list-template.js';
+import {createHeaderDestinationTemplate} from './create-header-destination-template.js';
+import {createTimeTemplate} from './create-time-template.js';
+import {createPriceTemplate} from './create-price-template.js';
+import {createSaveButtonTemplate} from './create-save-button-template.js';
+import {createResetButtonTemplate} from './create-reset-button-template.js';
+import {createFavoriteTemplate} from './create-favorite-template.js';
+import {createRollupButtonTemplate} from './create-rollup-button-template.js';
 
 export const createHeaderTemplate = (pointData, destinations, isAddMode) => {
+
   const {
     type,
     destination,
