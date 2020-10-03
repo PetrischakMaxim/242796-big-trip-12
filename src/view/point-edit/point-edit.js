@@ -325,6 +325,7 @@ export default class PointEdit extends SmartView {
       duration: end - start,
     });
 
+    this._flatpickrEnd.set(`minDate`, start);
     this._flatpickrEnd.setDate(start, true, `d/m/y H:i`);
   }
 
